@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مصمم اللوحة التفاعلية (EduCanvas Pro) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-3d { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); transition: all 0.2s ease; }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5); }
+        select option { background-color: #0f172a !important; color: #ffffff !important; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-pink-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-paintbrush"></i>
+                </div>
+                <span class="font-bold text-white" data-i18n="t35Title">مصمم اللوحة التفاعلية (EduCanvas Pro)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Controls Section -->
+        <div class="lg:col-span-4 glass-card p-6 rounded-3xl border border-white/10 flex flex-col space-y-5">
+            <h2 class="text-lg font-extrabold text-white border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-pink-400"></i> أدوات الرسم والتصاميم
+            </h2>
+
+            <!-- Mode Selection -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">أداة الرسم الحالية</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="setTool('pen')" id="toolPen" class="tool-btn active-tool py-2.5 px-3 rounded-xl bg-pink-500 text-white font-bold text-xs flex flex-col items-center gap-1 border border-pink-400">
+                        <i class="fa-solid fa-pen-nib"></i>
+                        <span>قلم رسم</span>
+                    </button>
+                    <button onclick="setTool('eraser')" id="toolEraser" class="tool-btn py-2.5 px-3 rounded-xl bg-slate-900 text-slate-300 font-bold text-xs flex flex-col items-center gap-1 border border-slate-700 hover:border-slate-500">
+                        <i class="fa-solid fa-eraser"></i>
+                        <span>ممحاة</span>
+                    </button>
+                    <button onclick="setTool('text')" id="toolText" class="tool-btn py-2.5 px-3 rounded-xl bg-slate-900 text-slate-300 font-bold text-xs flex flex-col items-center gap-1 border border-slate-700 hover:border-slate-500">
+                        <i class="fa-solid fa-font"></i>
+                        <span>نص شاشة</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Color Palette -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">لون القلم / العنصر</label>
+                <div class="flex items-center gap-2">
+                    <input type="color" id="drawColor" value="#ec4899" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 cursor-pointer">
+                    <div class="flex gap-1.5 flex-1">
+                        <button onclick="setColor('#ec4899')" class="w-7 h-7 rounded-full bg-pink-500 border border-white/20"></button>
+                        <button onclick="setColor('#8b5cf6')" class="w-7 h-7 rounded-full bg-purple-500 border border-white/20"></button>
+                        <button onclick="setColor('#3b82f6')" class="w-7 h-7 rounded-full bg-blue-500 border border-white/20"></button>
+                        <button onclick="setColor('#10b981')" class="w-7 h-7 rounded-full bg-emerald-500 border border-white/20"></button>
+                        <button onclick="setColor('#f59e0b')" class="w-7 h-7 rounded-full bg-amber-500 border border-white/20"></button>
+                        <button onclick="setColor('#ffffff')" class="w-7 h-7 rounded-full bg-white border border-white/20"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Line Width -->
+            <div>
+                <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
+                    <span>حجم القلم / السمك</span>
+                    <span id="widthValue">4px</span>
+                </div>
+                <input type="range" id="lineWidth" min="1" max="30" value="4" oninput="updateLineWidth(this.value)" class="w-full accent-pink-500 cursor-pointer">
+            </div>
+
+            <!-- Background Grid Selection -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">نمط خلفية الكانفاس</label>
+                <select id="canvasBgSelect" onchange="changeCanvasBg(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-400 font-bold">
+                    <option value="dark" selected>🌌 داكن أسود مع شبكة ضبابية</option>
+                    <option value="grid">📐 شبكة مربعات هندسية</option>
+                    <option value="white">⬜ خلفية بيضاء ناصعة للطباعة</option>
+                    <option value="green">🟩 سبورة مدرسية خضراء كلاسيكية</option>
+                </select>
+            </div>
+
+            <!-- Actions -->
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="clearCanvas()" class="py-3 px-4 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span>مسح اللوحة</span>
+                </button>
+                <button onclick="downloadCanvasImage()" class="btn-3d py-3 px-4 rounded-xl text-white font-extrabold text-xs flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-download"></i>
+                    <span>تنزيل PNG 🖼️</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas Display Area -->
+        <div class="lg:col-span-8 flex flex-col space-y-4">
+            <div class="glass-card p-4 rounded-3xl border border-white/10 flex-1 flex flex-col items-center justify-center relative min-h-[500px]">
+                <canvas id="eduCanvas" class="w-full h-full min-h-[480px] rounded-2xl bg-slate-900 border border-white/10 cursor-crosshair touch-none shadow-2xl"></canvas>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        const canvas = document.getElementById('eduCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let currentTool = 'pen';
+        let currentColor = '#ec4899';
+        let currentLineWidth = 4;
+
+        // Resize Canvas to Container Size
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth - 32;
+            canvas.height = 500;
+            drawBackground('dark');
+        }
+
+        function drawBackground(style) {
+            ctx.fillStyle = style === 'white' ? '#ffffff' : (style === 'green' ? '#064e3b' : '#0f172a');
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (style === 'grid') {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 30) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height);
+                    ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 30) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width, y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function setTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.classList.remove('bg-pink-500', 'text-white', 'border-pink-400');
+                btn.classList.add('bg-slate-900', 'text-slate-300', 'border-slate-700');
+            });
+            const activeBtn = document.getElementById(tool === 'pen' ? 'toolPen' : (tool === 'eraser' ? 'toolEraser' : 'toolText'));
+            activeBtn.classList.remove('bg-slate-900', 'text-slate-300', 'border-slate-700');
+            activeBtn.classList.add('bg-pink-500', 'text-white', 'border-pink-400');
+        }
+
+        function setColor(hex) {
+            currentColor = hex;
+            document.getElementById('drawColor').value = hex;
+        }
+
+        function updateLineWidth(val) {
+            currentLineWidth = val;
+            document.getElementById('widthValue').textContent = val + 'px';
+        }
+
+        function changeCanvasBg(val) {
+            drawBackground(val);
+        }
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const pos = getPos(e);
+
+            if (currentTool === 'text') {
+                const text = prompt('أدخلي النص المطلوب إضافته إلى الكانفاس:');
+                if (text) {
+                    ctx.font = 'bold 20px Cairo';
+                    ctx.fillStyle = currentColor;
+                    ctx.fillText(text, pos.x, pos.y);
+                }
+                isDrawing = false;
+                return;
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getPos(e);
+
+            ctx.lineTo(pos.x, pos.y);
+            ctx.strokeStyle = currentTool === 'eraser' ? (document.getElementById('canvasBgSelect').value === 'white' ? '#ffffff' : '#0f172a') : currentColor;
+            ctx.lineWidth = currentTool === 'eraser' ? currentLineWidth * 3 : currentLineWidth;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        function clearCanvas() {
+            const bgStyle = document.getElementById('canvasBgSelect').value;
+            drawBackground(bgStyle);
+            if (typeof showToast === 'function') {
+                showToast("تم مسح الكانفاس بالكامل!");
+            }
+        }
+
+        function downloadCanvasImage() {
+            const link = document.createElement('a');
+            link.download = `educanvas-design-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            if (typeof showToast === 'function') {
+                showToast("جاري تنزيل صورة الكانفاس بنجاح 🖼️!");
+            }
+        }
+
+        // Event Listeners for Mouse and Touch
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        document.getElementById('drawColor').addEventListener('input', (e) => {
+            currentColor = e.target.value;
+        });
+
+        window.addEventListener('load', () => {
+            resizeCanvas();
+        });
+        window.addEventListener('resize', resizeCanvas);
+    </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محول المحتوى التعليمي إلى صور بطاقات (EduTxt2Img) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #4f46e5 0%, #be185d 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-indigo-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-image"></i>
+                </div>
+                <span class="font-bold text-white">محول المحتوى التعليمي إلى صور وانفوجرافيك (EduTxt2Img)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- How It Works Banner -->
+    <div class="bg-indigo-950/90 border-b border-indigo-500/20 text-white py-4 px-6 shadow-inner">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs md:text-sm">
+            <div class="flex items-center gap-3">
+                <span class="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center font-bold text-white shrink-0">💡</span>
+                <div>
+                    <span class="font-bold text-pink-300">كيف تعمل هذه الأداة؟</span> أدخلي نص الدرس والمعلومات، وسنقوم بتوليد "مطالبة تصويرية احترافية" تحول النص إلى بطاقات وانفوجرافيك تعليمي مصور عبر أدوات الذكاء الاصطناعي لتصميم الصور.
+                </div>
+            </div>
+            <div class="flex gap-2 shrink-0 font-bold">
+                <a href="https://copilot.microsoft.com" target="_blank" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">Copilot</a>
+                <a href="https://gemini.google.com" target="_blank" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">Gemini</a>
+                <a href="https://www.bing.com/images/create" target="_blank" class="px-3 py-1.5 rounded-lg bg-pink-600 hover:bg-pink-500 transition text-white">Bing Image Creator</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Form Section -->
+        <div class="lg:col-span-5 glass-card p-6 rounded-3xl border border-white/10 flex flex-col space-y-5">
+            <h2 class="text-xl font-bold text-white border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-indigo-400"></i> بيانات المحتوى والصورة
+            </h2>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">محتوى / نص الدرس المراد تحويله إلى صورة</label>
+                <textarea id="lessonContent" rows="4" placeholder="مثال: دورة حياة الفراشة تبدأ بالبيضة ثم اليرقة ثم الشرنقة ثم الفراشة المكتملة..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-400 leading-relaxed"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2">المادة الدراسية</label>
+                    <input type="text" id="imgSubject" placeholder="علوم، جغرافيا..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-400">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2">أسلوب/نمط الصورة</label>
+                    <select id="imgStyle" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-400">
+                        <option value="انفوجرافيك تعليمي مبسط">📊 انفوجرافيك تعليمي</option>
+                        <option value="رسم كرتوني ثلاثي الأبعاد 3D">🎨 كرتوني 3D لطيف</option>
+                        <option value="بطاقة توضيحية مصورة مع عناوين">🖼️ بطاقات شرح ملونة</option>
+                        <option value="رسم واقعي توضيحي">📸 رسم علمي واقعي</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="generateImagePrompt(this)" class="w-full py-3.5 rounded-xl text-white font-bold gradient-bg shadow-md hover:shadow-lg transition">
+                توليد مطالبة تصميم الصورة 🎨
+            </button>
+        </div>
+
+        <!-- Output Result Section -->
+        <div class="lg:col-span-7 glass-card p-6 rounded-3xl border border-white/10 flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-3 mb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-code text-indigo-400"></i> مطالبة توليد الصورة (Image Prompt)
+                    </h2>
+                    <button onclick="copyToClipboard('imgPromptOutput')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/30 transition">
+                        <i class="fa-solid fa-copy mr-1"></i> نسخ المطالبة
+                    </button>
+                </div>
+
+                <div id="imgPromptOutput" class="prose max-w-none text-slate-300 text-sm leading-relaxed space-y-4">
+                    <div class="text-center py-16 text-slate-500">
+                        <i class="fa-solid fa-photo-film text-4xl mb-3 text-slate-600"></i>
+                        <p>أدخلي نص الدرس واضغطي على "توليد مطالبة تصميم الصورة".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function generateImagePrompt(btn) {
+            const content = document.getElementById('lessonContent').value || 'المحتوى التعليمي المستهدف';
+            const subject = document.getElementById('imgSubject').value || 'عام';
+            const style = document.getElementById('imgStyle').value;
+
+            const promptText = `High quality educational illustration, style: ${style}, subject: ${subject}.\nConvert the following Arabic educational text into a clear, vibrant, visually attractive educational visual chart/infographic for students:\n\n"${content}"\n\nDesign requirements: Clean layout, bright friendly colors, clear Arabic typography headers, high detail, school teacher friendly, isolated on clean background, 8k resolution.`;
+
+            document.getElementById('imgPromptOutput').innerHTML = `
+                <div class="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 mb-4">
+                    <div class="font-bold text-white text-base">🖼️ مطالبة تصميم الصورة الابتكارية:</div>
+                    <div class="text-xs text-indigo-300 mt-1">انسخي المطالبة أدناه والصقيها في Microsoft Designer / Bing Image Creator أو Midjourney للحصول على صور تعليمية مذهلة!</div>
+                </div>
+                <div class="bg-slate-900 text-indigo-300 p-5 rounded-2xl font-mono text-xs leading-relaxed whitespace-pre-line border border-white/10">
+                    ${promptText}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة تحويل المحتوى العلمي لـ فيديو (EduVideo Creator) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #f97316 0%, #8b5cf6 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-3d { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); transition: all 0.2s ease; }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-amber-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-video"></i>
+                </div>
+                <span class="font-bold text-white">أداة تحويل المحتوى العلمي لـ فيديو (EduVideo Creator)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="max-w-4xl mx-auto px-4 py-12 flex-1 w-full flex flex-col items-center justify-center text-center">
+        
+        <div class="glass-card p-8 md:p-12 rounded-3xl border border-white/10 space-y-6 w-full shadow-2xl relative overflow-hidden">
+            <div class="w-20 h-20 rounded-3xl gradient-bg flex items-center justify-center text-white text-3xl mx-auto shadow-xl">
+                <i class="fa-solid fa-video"></i>
+            </div>
+
+            <div class="space-y-2">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-orange-500/10 text-orange-300 text-xs font-bold border border-orange-500/30">
+                    🎬 مساعد الذكاء الاصطناعي المباشر
+                </span>
+                <h1 class="text-2xl md:text-3xl font-black text-white">صانع ومحول الفيديو التعليمي (EduVideo Creator Gem)</h1>
+                <p class="text-slate-300 text-xs md:text-sm max-w-xl mx-auto leading-relaxed">
+                    تم ربط هذه الأداة بمساعد إنتاج وتحويل المحتوى العلمي لـ فيديو المباشر EduVideo Creator على Google Gemini لبناء المشاهد وتوليد السكربتات البصرية السينمائية.
+                </p>
+            </div>
+
+            <div class="pt-4">
+                <a href="https://gemini.google.com/gem/1mqiF-jBJn6JWJZg2OSVQkD0OH8KmniXH?usp=sharing" target="_blank" class="btn-3d inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-white font-extrabold text-sm md:text-base cursor-pointer shadow-lg w-full sm:w-auto">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-lg"></i>
+                    <span>الانتقال والدخول لأداة صناعة الفيديو على Gemini 🚀</span>
+                </a>
+            </div>
+
+            <div class="text-[11px] text-slate-400 font-bold border-t border-white/10 pt-4 mt-6">
+                💡 ينقلك هذا الرابط مباشرة إلى مساعد تحويل المحتوى العلمي لفيديو المعتمَد لبدء العمل وإنشاء السكربتات المباشرة.
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function buildVideoPrompt() {
+            const topic = document.getElementById('videoTopic').value || 'المحتوى العلمي المحدد';
+            const grade = document.getElementById('videoGrade').value;
+            const duration = document.getElementById('videoDuration').value;
+            const style = document.getElementById('videoStyle').style || document.getElementById('videoStyle').value;
+            const content = document.getElementById('videoContent').value || 'شرح المفهوم العلمي خطوة بخطوة';
+            const btn = event.currentTarget;
+
+            generateAIResponse(btn, 'videoOutput', () => {
+                const promptJSON = `{
+  "video_title": "${topic}",
+  "target_audience": "${grade}",
+  "duration": "${duration}",
+  "visual_style": "${style}",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "scene_type": "Intro Hook",
+      "visual_prompt": "Cinematic opening shot of ${topic}, ${style}, highly detailed, vibrant lighting, 8k render.",
+      "voiceover_ar": "مرحباً بكم يا أصدقائي! هل تساءلتم يوماً كيف يحدث ${topic}؟ تعالوا لنكتشف السر معاً!",
+      "on_screen_text": "${topic}"
+    },
+    {
+      "scene_number": 2,
+      "scene_type": "Scientific Concept Breakdown",
+      "visual_prompt": "Detailed 3D diagram showing ${content.substring(0, 40)}, color-coded indicators, educational aesthetic.",
+      "voiceover_ar": "أولاً: ${content.substring(0, 100)}...",
+      "on_screen_text": "الخطوة الأولى: الفهم الأساسي"
+    },
+    {
+      "scene_number": 3,
+      "scene_type": "Summary & Call to Action",
+      "visual_prompt": "Warm classroom environment, glowing stars icon, ${style}, high quality finish.",
+      "voiceover_ar": "وهكذا نكون قد تعلمنا سر ${topic} ببساطة! لا تنسوا تطبيق ما تعلمناه اليوم.",
+      "on_screen_text": "الخلاصة والتطبيق"
+    }
+  ]
+}`;
+                return `🎬 **تم إنشاء بنية مشاهد الفيديو والسكربت المنظم (JSON):**\n\n\`\`\`json\n${promptJSON}\n\`\`\`\n\n💡 **طريقة الاستخدام:** يمكنكِ نسخ كود الـ JSON أعلاه مباشرة واستخدامه داخل محركات إنتاج الفيديو الذكية (مثل CapCut, Runway, HeyGen أو Gemini).`;
+            });
+        }
+    </script>
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>

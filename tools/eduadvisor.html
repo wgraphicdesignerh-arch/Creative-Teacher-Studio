@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المرشد التربوي والتعليمي (EduAdvisor AI) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-3d { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); transition: all 0.2s ease; }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-orange-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <span class="font-bold text-white">المرشد والمستشار التربوي (EduAdvisor AI)</span>
+            </div>
+        </div>
+    </header>
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+            --spacing-3xl: 64px;
+            --spacing-4xl: 80px;
+            
+            --container-padding: clamp(16px, 4vw, 48px);
+            --container-max-width: 1280px;
+            --radius: 18px;
+        }
+
+        /* ============================================================
+           DARK MODE - نسخة ليلية محسّنة
+           ============================================================ */
+        body.dark-mode {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-elevated: #1c2333;
+            --bg-card: #161b22;
+            --bg-input: #0d1117;
+            --bg-hover: #1c2333;
+            --bg-active: #252d3f;
+            
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --text-disabled: #484f58;
+            --text-inverse: #0d1117;
+            
+            --border-default: #30363d;
+            --border-subtle: #21262d;
+            --border-focus: #f97316;
+            --border-card: #21262d;
+            
+            --accent-primary: #f97316;
+            --accent-secondary: #60a5fa;
+            --accent-hover: #fb923c;
+            --accent-active: #ea580c;
+            --accent-light: rgba(249, 115, 22, 0.15);
+            --accent-secondary-light: rgba(96, 165, 250, 0.1);
+            
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.6);
+            --shadow-card: 0 10px 15px -6px rgba(0,0,0,0.4), 0 0 1px rgba(255,255,255,0.04);
+            --shadow-cta: 0 15px 30px -10px rgba(249, 115, 22, 0.4);
+            
+            --glow-primary: 0 0 40px rgba(249, 115, 22, 0.06);
+        }
+
+        /* ============================================================
+           BASE STYLES
+           ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Almarai', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            transition: background var(--transition-base), color var(--transition-base);
+        }
+        
+        body.en {
+            font-family: 'Poppins', 'Almarai', sans-serif;
+        }
+
+        body:not(.loaded) .navbar {
+            opacity: 0 !important;
+            transition: none !important;
+        }
+        body:not(.loaded) .navbar * {
+            transition: none !important;
+        }
+        body.loaded .navbar {
+            opacity: 1;
+            transition: opacity 0.15s ease;
+        }
+
+        .container {
+            max-width: var(--container-max-width);
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+            width: 100%;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-hover); }
+
+        /* ============================================================
+           HERO SECTION
+           ============================================================ */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-2xl);
+            align-items: center;
+            padding: var(--spacing-2xl) 0 var(--spacing-3xl);
+        }
+        @media (min-width: 1024px) {
+            .hero {
+                grid-template-columns: 1.1fr 0.9fr;
+                gap: var(--spacing-3xl);
+                padding: var(--spacing-3xl) 0 var(--spacing-4xl);
+            }
+        }
+        
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .hero-icon-wrap {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            max-width: 340px;
+            margin: 0 auto;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-default);
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            transition: background var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+        }
+        .hero-icon-wrap::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: 32px;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.5;
+            transition: opacity var(--transition-base);
+        }
+        .hero-icon-wrap:hover::before {
+            opacity: 0.8;
+        }
+        .hero-icon-wrap i {
+            font-size: 7rem;
+            color: var(--accent-primary);
+            transition: transform var(--transition-base), color var(--transition-base);
+        }
+        .hero-icon-wrap:hover i {
+            transform: scale(1.05) rotate(-5deg);
+        }
+
+        /* ============================================================
+           TYPOGRAPHY
+           ============================================================ */
+        .eyebrow {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            letter-spacing: 0.05em;
+            background: var(--accent-light);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 999px;
+            margin-bottom: var(--spacing-md);
+            transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base);
+            align-self: flex-start;
+        }
+        
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 2.6rem);
+            font-weight: 800;
+            color: var(--accent-secondary);
+            line-height: 1.2;
+            margin-bottom: var(--spacing-sm);
+            transition: color var(--transition-base);
+        }
+        .hero-tagline {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            transition: color var(--transition-base);
+        }
+        .hero-desc {
+            font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: var(--spacing-xl);
+            max-width: 640px;
+            transition: color var(--transition-base);
+        }
+
+        /* ============================================================
+           TAGS + BUTTON ROW (على نفس السطر)
+           ============================================================ */
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .tag-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+            background: var(--accent-secondary-light);
+            border: 1px solid var(--border-default);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: 999px;
+            transition: all var(--transition-base);
+            cursor: default;
+            white-space: nowrap;
+        }
+        .tag-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        body.dark-mode .tag-pill {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: var(--border-default);
+            color: #60a5fa;
+        }
+
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--spacing-md);
+            flex-shrink: 0;
+        }
+
+        .btn-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            background: var(--accent-primary);
+            color: #fff;
+            font-weight: 800;
+            font-size: 1rem;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: 14px;
+            text-decoration: none;
+            box-shadow: var(--shadow-cta);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .btn-cta::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+        .btn-cta:hover::after {
+            opacity: 1;
+        }
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            background: var(--accent-hover);
+            box-shadow: 0 20px 35px -12px rgba(249, 115, 22, 0.6);
+        }
+        .btn-cta:active {
+            transform: scale(0.98);
+        }
+        .btn-cta i {
+            font-size: 0.95rem;
+        }
+
+        /* ============================================================
+           RESPONSIVE - تعديلات للشاشات الصغيرة
+           ============================================================ */
+        @media (max-width: 640px) {
+            .hero-actions {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-md);
+            }
+            .tags-row {
+                flex-wrap: wrap;
+            }
+            .btn-row {
+                width: 100%;
+            }
+            .btn-cta {
+                width: 100%;
+                justify-content: center;
+                padding: var(--spacing-md) var(--spacing-lg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-actions {
+                gap: var(--spacing-sm);
+            }
+            .tags-row {
+                gap: var(--spacing-sm);
+            }
+            .tag-pill {
+                font-size: 0.7rem;
+                padding: var(--spacing-xs) var(--spacing-md);
+            }
+            .btn-cta {
+                font-size: 0.9rem;
+                padding: var(--spacing-sm) var(--spacing-lg);
+            }
+        }
+
+        /* ============================================================
+           باقي الأقسام (مثل السابق)
+           ============================================================ */
+        .section-block {
+            padding: var(--spacing-3xl) 0;
+        }
+        .section-block:last-of-type {
+            padding-bottom: var(--spacing-2xl);
+        }
+        .section-title {
+            font-size: clamp(1.5rem, 3.5vw, 1.9rem);
+            font-weight: 800;
+            color: var(--accent-secondary);
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+            position: relative;
+            transition: color var(--transition-base);
+        }
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 70px;
+            height: 5px;
+            background: var(--accent-primary);
+            border-radius: 10px;
+            margin: var(--spacing-lg) auto 0;
+            transition: width var(--transition-base);
+        }
+        .section-title:hover::after {
+            width: 100px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+        }
+        @media (min-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--spacing-xl);
+            }
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transform: scaleX(0);
+            transition: transform var(--transition-base);
+            transform-origin: left;
+        }
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-md);
+        }
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: var(--accent-secondary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-md);
+            color: var(--accent-secondary);
+            font-size: 1.3rem;
+            transition: all var(--transition-base);
+        }
+        .feature-card:hover .feature-icon {
+            background: var(--accent-primary);
+            color: #fff;
+            transform: scale(1.05) rotate(-5deg);
+        }
+        .feature-title {
+            font-weight: 800;
+            color: var(--text-primary);
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            margin-bottom: var(--spacing-sm);
+            transition: color var(--transition-base);
+        }
+        .feature-desc {
+            color: var(--text-muted);
+            font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+            line-height: 1.7;
+            transition: color var(--transition-base);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+            counter-reset: step;
+        }
+        @media (min-width: 768px) {
+            .steps-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--spacing-xl);
+            }
+        }
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: var(--spacing-xl);
+            position: relative;
+            box-shadow: var(--shadow-card);
+            transition: all var(--transition-base);
+            overflow: hidden;
+        }
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transform: scaleX(0);
+            transition: transform var(--transition-base);
+            transform-origin: left;
+        }
+        .step-card:hover::before {
+            transform: scaleX(1);
+        }
+        .step-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-md);
+        }
+        .step-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--accent-secondary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-md);
+            transition: all var(--transition-base);
+        }
+        .step-card:hover .step-num {
+            background: var(--accent-primary);
+            transform: scale(1.05) rotate(-5deg);
+        }
+        .step-title {
+            font-weight: 800;
+            color: var(--text-primary);
+            font-size: clamp(1rem, 2vw, 1.05rem);
+            margin-bottom: var(--spacing-sm);
+            transition: color var(--transition-base);
+        }
+        .step-desc {
+            color: var(--text-muted);
+            font-size: clamp(0.85rem, 1.5vw, 0.92rem);
+            line-height: 1.7;
+            transition: color var(--transition-base);
+        }
+
+        .cta-banner {
+            background: linear-gradient(135deg, var(--accent-secondary), #1e40af);
+            border-radius: 28px;
+            padding: var(--spacing-3xl) var(--spacing-2xl);
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 30px 60px -25px rgba(30, 58, 138, 0.5);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 30%, rgba(249, 115, 22, 0.15), transparent);
+            pointer-events: none;
+        }
+        .cta-banner:hover {
+            transform: scale(1.01);
+            box-shadow: 0 40px 70px -25px rgba(30, 58, 138, 0.6);
+        }
+        body.dark-mode .cta-banner {
+            background: linear-gradient(135deg, #1e293b, #1e3a8a);
+        }
+        .cta-banner h3 {
+            font-size: clamp(1.4rem, 3vw, 1.8rem);
+            font-weight: 800;
+            margin-bottom: var(--spacing-md);
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-banner p {
+            color: #cbd5e1;
+            font-size: clamp(0.95rem, 1.5vw, 1rem);
+            margin-bottom: var(--spacing-xl);
+            max-width: 520px;
+            margin-inline: auto;
+            position: relative;
+            z-index: 1;
+            transition: color var(--transition-base);
+        }
+        .cta-banner .btn-cta {
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3);
+        }
+        .cta-banner .btn-cta:hover {
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ============================================================
+           DARK MODE OVERRIDES
+           ============================================================ */
+        body.dark-mode .hero-icon-wrap {
+            background: radial-gradient(circle at 30% 30%, #1e293b, #0d1117);
+            border-color: #30363d;
+        }
+        body.dark-mode .hero-icon-wrap i {
+            color: var(--accent-primary);
+        }
+        body.dark-mode .eyebrow {
+            background: rgba(249, 115, 22, 0.15);
+            border-color: rgba(249, 115, 22, 0.3);
+            color: #93c5fd;
+        }
+        body.dark-mode .hero-title {
+            color: #60a5fa;
+        }
+        body.dark-mode .hero-tagline {
+            color: var(--text-secondary);
+        }
+        body.dark-mode .hero-desc {
+            color: #94a3b8;
+        }
+        body.dark-mode .feature-card,
+        body.dark-mode .step-card {
+            background: var(--card-dark, #1e293b);
+            border-color: var(--border-dark, #334155);
+        }
+        body.dark-mode .feature-title,
+        body.dark-mode .step-title {
+            color: #60a5fa;
+        }
+        body.dark-mode .feature-desc,
+        body.dark-mode .step-desc {
+            color: #94a3b8;
+        }
+        body.dark-mode .feature-icon {
+            background: #0f172a;
+            color: #60a5fa;
+        }
+        body.dark-mode .feature-card:hover .feature-icon {
+            background: var(--accent-primary);
+            color: #fff;
+        }
+        body.dark-mode .cta-banner p {
+            color: #94a3b8;
+        }
+        body.dark-mode .skip-link {
+            background: var(--accent-primary);
+        }
+        body.dark-mode #header-placeholder {
+            background: var(--bg-elevated);
+            border-bottom-color: var(--border-subtle);
+        }
+
+        /* ============================================================
+           ANIMATIONS
+           ============================================================ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-in {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        .animate-in-delay-1 { animation-delay: 0.1s; }
+        .animate-in-delay-2 { animation-delay: 0.2s; }
+        .animate-in-delay-3 { animation-delay: 0.3s; }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 768px) {
+            :root {
+                --container-padding: clamp(12px, 3vw, 24px);
+                --radius: 16px;
+            }
+            .hero {
+                padding: var(--spacing-lg) 0 var(--spacing-xl);
+                gap: var(--spacing-xl);
+            }
+            .section-block {
+                padding: var(--spacing-xl) 0;
+            }
+            .section-block:last-of-type {
+                padding-bottom: var(--spacing-lg);
+            }
+            .cta-banner {
+                padding: var(--spacing-xl) var(--spacing-lg);
+                border-radius: 20px;
+            }
+            .hero-icon-wrap {
+                max-width: 240px;
+            }
+            .hero-icon-wrap i {
+                font-size: 5rem;
+            }
+            .feature-card, .step-card {
+                padding: var(--spacing-lg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --container-padding: clamp(8px, 2vw, 16px);
+                --radius: 14px;
+            }
+            .hero {
+                padding: var(--spacing-md) 0 var(--spacing-lg);
+                gap: var(--spacing-lg);
+            }
+            .section-block {
+                padding: var(--spacing-lg) 0;
+            }
+            .cta-banner {
+                padding: var(--spacing-lg) var(--spacing-md);
+                border-radius: 16px;
+            }
+            .hero-icon-wrap {
+                max-width: 180px;
+            }
+            .hero-icon-wrap i {
+                font-size: 3.5rem;
+            }
+        }
+
+        /* ============================================================
+           RTL/LTR ALIGNMENT
+           ============================================================ */
+        [dir="rtl"] .eyebrow {
+            align-self: flex-start;
+        }
+        [dir="ltr"] .eyebrow {
+            align-self: flex-start;
+        }
+        [dir="rtl"] .hero-desc {
+            text-align: right;
+        }
+        [dir="ltr"] .hero-desc {
+            text-align: left;
+        }
+        [dir="rtl"] .hero-actions {
+            justify-content: flex-start;
+        }
+        [dir="ltr"] .hero-actions {
+            justify-content: flex-start;
+        }
+        [dir="rtl"] .feature-card::before,
+        [dir="rtl"] .step-card::before {
+            transform-origin: right;
+        }
+        [dir="ltr"] .feature-card::before,
+        [dir="ltr"] .step-card::before {
+            transform-origin: left;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .focus-visible:focus-visible {
+            outline: 3px solid var(--accent-primary);
+            outline-offset: 2px;
+        }
+        .text-center { text-align: center; }
+    </style>
+
+    <!-- ===== 11. EXTERNAL SCRIPTS ===== -->
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script defer src="/assets/js/auth.js"></script>
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+
+    <!-- ===== 12. FONTS ===== -->
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    </noscript>
+
+    <!-- ===== 13. TAILWIND (معطل جزئياً) ===== -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
+</head>
+<body><a href="https://edufiresoft.com/cdn-cgi/content?id=rD9rBblbnw_Gm4mdBBJqSupArMTGmQ.6S.86GI2bmFA-1787519872.0910602-1.2.1.1-zmduz4u.tgURTkP7SDdkzm15.6hS1GmmK_6oIKMCImhim4oepbHq8LjcEB7KXh8q" aria-hidden="true" rel="nofollow noopener" style="display: none !important; visibility: hidden !important"></a>
+    <!-- ===== SKIP TO CONTENT ===== -->
+    <a href="#main-content" class="skip-link">تخطي إلى المحتوى الرئيسي</a>
+
+    <!-- ===== HEADER ===== -->
+    <div id="header-placeholder" role="banner" aria-label="رأس الصفحة"></div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main id="main-content" class="container flex-grow" role="main">
+
+        <!-- ===== HERO SECTION ===== -->
+        <section class="hero" aria-label="مقدمة الأداة">
+            <div class="hero-content">
+                <span class="eyebrow" id="eyebrow" aria-hidden="true">Edues</span>
+                <h1 class="hero-title" id="heroTitle">📋 المرشد التربوي</h1>
+                <p class="hero-tagline" id="heroTagline">خطط دروسك في دقائق لا ساعات</p>
+                <p class="hero-desc" id="heroDesc">تخطيط آلي للدروس وفق الاستراتيجيات التعليمية التي يحددها المعلم، لإنتاج خطة درس متكاملة تراعي الأهداف والأنشطة والتقويم.</p>
+                
+                <!-- ===== HERO ACTIONS: TAGS + BUTTON على نفس السطر ===== -->
+                <div class="hero-actions">
+                    <div class="tags-row" id="tagsRow" role="list" aria-label="تصنيفات الأداة">
+                        <span class="tag-pill" role="listitem"><i class="fas fa-tag" aria-hidden="true"></i> تخطيط دروس</span>
+                        <span class="tag-pill" role="listitem"><i class="fas fa-tag" aria-hidden="true"></i> استراتيجيات</span>
+                    </div>
+                    <div class="btn-row">
+                        <a class="btn-cta focus-visible" id="startBtn" href="https://gemini.google.com/gem/1yaS5KapyR4fXi5tDoXnk9cylHj91ewhh?usp=sharing" target="_blank" rel="noopener noreferrer" aria-label="ابدأ الآن - يفتح في نافذة جديدة">
+                            <i class="fas fa-bolt" aria-hidden="true"></i>
+                            <span id="startLabel">ابدأ الآن</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-icon-wrap" aria-hidden="true">
+                <i class="fas fa-compass"></i>
+            </div>
+        </section>
+
+        <!-- ===== FEATURES SECTION ===== -->
+        <section class="section-block" aria-labelledby="featuresTitle">
+            <h2 class="section-title" id="featuresTitle">لماذا هذه الأداة؟</h2>
+            <div class="features-grid" id="featuresGrid" role="list">
+                <!-- Generated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- ===== STEPS SECTION ===== -->
+        <section class="section-block" aria-labelledby="stepsTitle">
+            <h2 class="section-title" id="stepsTitle">كيف تعمل؟</h2>
+            <div class="steps-grid" id="stepsGrid" role="list">
+                <!-- Generated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- ===== CTA SECTION ===== -->
+        <section class="section-block" aria-labelledby="ctaTitle">
+            <div class="cta-banner">
+                <h3 id="ctaTitle">جاهز للبدء؟</h3>
+                <p id="ctaDesc">افتح الأداة الآن وجرّبها مباشرة على Gemini، مجاناً وبدون أي إعداد.</p>
+                <a class="btn-cta focus-visible" href="https://gemini.google.com/gem/1yaS5KapyR4fXi5tDoXnk9cylHj91ewhh?usp=sharing" target="_blank" rel="noopener noreferrer" aria-label="ابدأ الآن - يفتح في نافذة جديدة">
+                    <i class="fas fa-bolt" aria-hidden="true"></i>
+                    <span id="startLabel2">ابدأ الآن</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer-tools" role="contentinfo">
+        <span id="footerText">© 2026 Edufiresoft — جميع الحقوق محفوظة</span>
+    </footer>
+
+    <!-- ===== HEADER SCRIPTS ===== -->
+    <script src="/assets/js/header-loader.js"></script>
+    <script src="/assets/js/header-behavior.js"></script>
+
+    <script>
+        // ============================================================
+        // منع وميض السمة الخاطئة
+        // ============================================================
+        (function() {
+            var darkMode = localStorage.getItem('darkMode') === 'true';
+            if (darkMode) {
+                document.documentElement.classList.add('dark-mode');
+                document.body.classList.add('dark-mode');
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.body.setAttribute('data-theme', 'dark');
+            }
+        })();
+
+        // ============================================================
+        // نظام الترجمة
+        // ============================================================
+        const TRANSLATIONS = {
+            ar: {
+                startNow: "ابدأ الآن",
+                name: "📋 المرشد التربوي",
+                tagline: "خطط دروسك في دقائق لا ساعات",
+                desc: "تخطيط آلي للدروس وفق الاستراتيجيات التعليمية التي يحددها المعلم، لإنتاج خطة درس متكاملة تراعي الأهداف والأنشطة والتقويم.",
+                tags: ["تخطيط دروس", "استراتيجيات"],
+                featuresTitle: "لماذا هذه الأداة؟",
+                features: [
+                    ["استراتيجيات مخصصة", "اختيار الاستراتيجية التعليمية التي تناسب دروسك."],
+                    ["خطة متكاملة", "أهداف، أنشطة، وتقويم في وثيقة واحدة جاهزة."],
+                    ["توفير جهد الإعداد", "تقليل الوقت المستهلك في التحضير اليومي للدروس."]
+                ],
+                stepsTitle: "كيف تعمل؟",
+                steps: [
+                    ["حدد موضوع الدرس", "اذكر عنوان الدرس والمادة والمرحلة الدراسية."],
+                    ["اختر الاستراتيجية", "حدد الاستراتيجية التعليمية التي تفضل استخدامها."],
+                    ["استلم خطة الدرس", "احصل على خطة درس كاملة جاهزة للتنفيذ في الصف."]
+                ],
+                ctaTitle: "جاهز للبدء؟",
+                ctaDesc: "افتح الأداة الآن وجرّبها مباشرة على Gemini، مجاناً وبدون أي إعداد.",
+                footer: "© 2026 Edufiresoft — جميع الحقوق محفوظة"
+            },
+            en: {
+                startNow: "Start Now",
+                name: "📋 Educational Advisor",
+                tagline: "Plan your lessons in minutes, not hours",
+                desc: "Automated lesson planning based on the teaching strategies you choose, producing a complete lesson plan with objectives, activities, and assessment.",
+                tags: ["Lesson Planning", "Strategies"],
+                featuresTitle: "Why this tool?",
+                features: [
+                    ["Custom Strategies", "Pick the teaching strategy that fits your lesson."],
+                    ["Complete Plan", "Objectives, activities, and assessment in one ready document."],
+                    ["Less Prep Effort", "Cuts down the time spent on daily lesson preparation."]
+                ],
+                stepsTitle: "How it works",
+                steps: [
+                    ["Specify the lesson", "State the lesson title, subject, and grade level."],
+                    ["Choose a strategy", "Select the teaching strategy you'd like to use."],
+                    ["Get your lesson plan", "Receive a complete lesson plan ready for the classroom."]
+                ],
+                ctaTitle: "Ready to start?",
+                ctaDesc: "Open the tool now and try it directly on Gemini, free and with no setup.",
+                footer: "© 2026 Edufiresoft — All Rights Reserved"
+            }
+        };
+
+        let currentLang = localStorage.getItem('preferredLanguage') || 'ar';
+
+        // ============================================================
+        // دوال مساعدة
+        // ============================================================
+        function tagPill(tag) {
+            return '<span class="tag-pill" role="listitem"><i class="fas fa-tag" aria-hidden="true"></i> ' + tag + '</span>';
+        }
+
+        function featureCard(f, i) {
+            return '<div class="feature-card animate-in animate-in-delay-' + (i + 1) + '" role="listitem">' +
+                '<div class="feature-icon"><i class="fas fa-check" aria-hidden="true"></i></div>' +
+                '<div class="feature-title">' + f[0] + '</div>' +
+                '<div class="feature-desc">' + f[1] + '</div>' +
+                '</div>';
+        }
+
+        function stepCard(s, i) {
+            return '<div class="step-card animate-in animate-in-delay-' + (i + 1) + '" role="listitem">' +
+                '<div class="step-num">' + (i + 1) + '</div>' +
+                '<div class="step-title">' + s[0] + '</div>' +
+                '<div class="step-desc">' + s[1] + '</div>' +
+                '</div>';
+
+            // Hero
+            document.getElementById('heroTitle').textContent = t.name;
+            document.getElementById('heroTagline').textContent = t.tagline;
+            document.getElementById('heroDesc').textContent = t.desc;
+            document.getElementById('tagsRow').innerHTML = t.tags.map(tagPill).join('');
+            document.getElementById('startLabel').textContent = t.startNow;
+            document.getElementById('startLabel2').textContent = t.startNow;
+
+            // Features
+            document.getElementById('featuresTitle').textContent = t.featuresTitle;
+            document.getElementById('featuresGrid').innerHTML = t.features.map(featureCard).join('');
+
+            // Steps
+            document.getElementById('stepsTitle').textContent = t.stepsTitle;
+            document.getElementById('stepsGrid').innerHTML = t.steps.map(stepCard).join('');
+
+            // CTA
+            document.getElementById('ctaTitle').textContent = t.ctaTitle;
+            document.getElementById('ctaDesc').textContent = t.ctaDesc;
+
+            // Footer
+            document.getElementById('footerText').textContent = t.footer;
+        }
+
+        render(currentLang);
+
+        // ============================================================
+        // مزامنة مع الهيدر الموحد
+        // ============================================================
+        document.addEventListener('header:languageChanged', function(e) {
+            currentLang = e.detail.lang;
+            localStorage.setItem('preferredLanguage', currentLang);
+            render(currentLang);
+        });
+
+        document.addEventListener('header:darkModeChanged', function(e) {
+            if (e.detail.darkMode) {
+                document.body.classList.add('dark-mode');
+                document.documentElement.classList.add('dark-mode');
+                document.body.setAttribute('data-theme', 'dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.documentElement.classList.remove('dark-mode');
+                document.body.setAttribute('data-theme', 'light');
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+
+        // ============================================================
+        // إظهار الهيدر بعد التحميل
+        // ============================================================
+        document.addEventListener('headerLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+
+        setTimeout(function() {
+            document.body.classList.add('loaded');
+        }, 500);
+
+        // ============================================================
+        // DOMContentLoaded
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                document.documentElement.classList.add('dark-mode');
+                document.body.setAttribute('data-theme', 'dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+
+            // Intersection Observer للأنيميشن
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate-in');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.1,
+                    rootMargin: '50px'
+                });
+
+                document.querySelectorAll('.feature-card, .step-card').forEach(function(card) {
+                    if (!card.classList.contains('animate-in')) {
+                        observer.observe(card);
+                    }
+                });
+            } else {
+                document.querySelectorAll('.feature-card, .step-card').forEach(function(card) {
+                    card.classList.add('animate-in');
+                });
+            }
+        });
+
+        console.log('📋 Educational Advisor loaded successfully!');
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2fd25809bade16a',t:'MTc4NzUxOTg3Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"457d7ebe5e3f45da85d840b0394f2a42","r":1}' crossorigin="anonymous"></script>
+</body>
+</html>

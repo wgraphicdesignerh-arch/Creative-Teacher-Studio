@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صانع الاختبارات والأسئلة | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #8b5cf6 0%, #be185d 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        select option { background-color: #0f172a !important; color: #ffffff !important; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-purple-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-file-pen"></i>
+                </div>
+                <span class="font-bold text-white" data-i18n="quizTitle">صانع الاختبارات الذكي</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Form Section -->
+        <div class="lg:col-span-5 glass-card p-6 rounded-3xl border border-white/10 flex flex-col space-y-5">
+            <h2 class="text-xl font-bold text-white border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-purple-400"></i> <span data-i18n="questionBankSettings">إعدادات بنك الأسئلة</span>
+            </h2>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2" data-i18n="lessonTopicLabel">موضوع / محتوى الدرس</label>
+                <textarea id="quizTopic" rows="4" placeholder="أدخلي موضوع الدرس أو النص المراد إنشاء أسئلة عنه..." data-i18n-placeholder="quizTopicPlaceholder" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-400 leading-relaxed"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2" data-i18n="questionTypeLabel">نوع الأسئلة</label>
+                    <select id="questionType" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-400">
+                        <option data-i18n-option="qMCQ">اختيار من متعدد</option>
+                        <option data-i18n-option="qTF">صح أم خطأ</option>
+                        <option data-i18n-option="qEssay">أسئلة مقالية قصيرة</option>
+                        <option data-i18n-option="qMix">مزيج متنوع</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2" data-i18n="questionCountLabel">عدد الأسئلة</label>
+                    <select id="questionCount" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-400">
+                        <option data-i18n-option="q3">3 أسئلة</option>
+                        <option data-i18n-option="q5">5 أسئلة</option>
+                        <option data-i18n-option="q10">10 أسئلة</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="generateQuiz(this)" class="w-full py-3.5 rounded-xl text-white font-bold gradient-bg shadow-md hover:shadow-lg transition cursor-pointer">
+                <span data-i18n="generateQuizBtn">توليد الاختبار بنمط إجابة نموذجية ✍️</span>
+            </button>
+        </div>
+
+        <!-- Output Result Section -->
+        <div class="lg:col-span-7 glass-card p-6 rounded-3xl border border-white/10 flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-3 mb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-purple-400"></i> <span data-i18n="generatedQuestionBank">بنك الأسئلة المولد</span>
+                    </h2>
+                    <button onclick="copyToClipboard('quizContent')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 hover:bg-purple-500/30 transition cursor-pointer">
+                        <i class="fa-solid fa-copy mr-1"></i> <span data-i18n="copyQuizBtn">نسخ الاختبار</span>
+                    </button>
+                </div>
+
+                <div id="quizContent" class="prose max-w-none text-slate-300 text-sm leading-relaxed space-y-4">
+                    <div class="text-center py-16 text-slate-500">
+                        <i class="fa-solid fa-file-signature text-4xl mb-3 text-slate-600"></i>
+                        <p data-i18n="quizPlaceholderText">أدخلي موضوع الاختبار واضغطي على "توليد الاختبار".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function generateQuiz(btn) {
+            const topic = document.getElementById('quizTopic').value.trim() || (currentLang === 'en' ? 'Target Concept' : (currentLang === 'fr' ? 'Concept Cible' : 'المفهوم المستهدف في الدرس'));
+            const type = document.getElementById('questionType').value;
+            const countStr = document.getElementById('questionCount').value;
+            const count = parseInt(countStr) || 3;
+
+            generateAIResponse(btn, 'quizContent', () => {
+                let questionsHtml = '';
+                
+                for (let i = 1; i <= count; i++) {
+                    if (currentLang === 'en') {
+                        if (type.includes('متعدد') || type.includes('Multiple') || (i % 3 === 1)) {
+                            questionsHtml += `
+                                <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-2 text-left">
+                                    <p class="font-bold text-white text-xs">Question ${i}: Select the correct answer regarding (${topic}):</p>
+                                    <p class="text-slate-300 text-xs">What is the key element related to concept #${i}?</p>
+                                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-400 pt-1">
+                                        <div>A) Indirect Option 1</div>
+                                        <div class="text-emerald-400 font-bold">B) ${topic} (Correct Answer) ✔</div>
+                                        <div>C) Default Option C</div>
+                                        <div>D) Default Option D</div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (type.includes('صح') || type.includes('True') || (i % 3 === 2)) {
+                            questionsHtml += `
+                                <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-2 text-left">
+                                    <p class="font-bold text-white text-xs">Question ${i}: Mark (True) or (False) for the statement:</p>
+                                    <p class="text-slate-300 text-xs">Skill #${i} is considered essential for mastering (${topic}).</p>
+                                    <div class="text-xs text-emerald-400 font-bold pt-1">Model Answer: ( True ) Statement is accurate.</div>
+                                </div>
+                            `;
+                        } else {
+                            questionsHtml += `
+                                <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-2 text-left">
+                                    <p class="font-bold text-white text-xs">Question ${i}: Short Essay Question:</p>
+                                    <p class="text-slate-300 text-xs">Briefly explain the practical importance of point #${i} in (${topic}).</p>
+                                    <div class="text-xs text-purple-300 font-bold pt-1">Model Answer: Direct analytical application of lesson content.</div>
+                                </div>
+                            `;
+                        }
+                    } else if (currentLang === 'fr') {
+                        if (type.includes('متعدد') || type.includes('Multiple') || (i % 3 === 1)) {
+                            questionsHtml += `
+                                <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-2 text-left">
+                                    <p class="font-bold text-white text-xs">Question ${i}: Choisissez la bonne réponse concernant (${topic}) :</p>
+                                    <p class="text-slate-300 text-xs">Quel est l'élément clé lié au concept #${i} ?</p>
+                                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-400 pt-1">
+                                        <div>A) Option indirecte 1</div>
+                                        <div class="text-emerald-400 font-bold">B) ${topic} (Réponse Correcte) ✔</div>
+                                        <div>C) Option C</div>
+                                        <div>D) Option D</div>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            questionsHtml += `
+                                <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-2 text-left">
+                                    <p class="font-bold text-white text-xs">Question ${i}: Question à réponse courte :</p>
+                                    <p class="text-slate-300 text-xs">Expliquez brièvement l'importance pratique du point #${i} dans (${topic}).</p>
+                                    <div class="text-xs text-purple-300 font-bold pt-1">Réponse modèle: Application analytique directe du contenu du cours.</div>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        // Default Arabic
+                        if (type === 'اختيار من متعدد' || (type === 'مزيج متنوع' && i % 3 === 1)) {
+                            questionsHtml += `
+                                <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-2">
+                                    <p class="font-bold text-white text-xs">السؤال ${i}: اختر الإجابة الصحيحة المتعلقة بـ (${topic}):</p>
+                                    <p class="text-slate-300 text-xs">ما العنصر الأساسي المرتبط بالخاصية رقم (${i}) في الموضوع؟</p>
+                                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-400 pt-1">
+                                        <div>أ) الخيار الأول غير المباشر</div>
+                                        <div class="text-emerald-400 font-bold">ب) ${topic} (الإجابة الصحيحة) ✔</div>
+                                        <div>ج) خيار افتراضي ج</div>
+                                        <div>د) خيار افتراضي د</div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (type === 'صح أم خطأ' || (type === 'مزيج متنوع' && i % 3 === 2)) {
+                            questionsHtml += `
+                                <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-2">
+                                    <p class="font-bold text-white text-xs">السؤال ${i}: ضعي علامة (✓) أو (✗) أمام العبارة الآتية:</p>
+                                    <p class="text-slate-300 text-xs">تعتبر المهارة رقم (${i}) من الركائز الأساسية في موضوع (${topic}).</p>
+                                    <div class="text-xs text-emerald-400 font-bold pt-1">الإجابة النموذجية: ( ✓ ) العبارة صحيحة تماماً.</div>
+                                </div>
+                            `;
+                        } else {
+                            questionsHtml += `
+                                <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-2">
+                                    <p class="font-bold text-white text-xs">السؤال ${i}: سؤال مقالي / استنتاجي قصير:</p>
+                                    <p class="text-slate-300 text-xs">اذكري بأسلوبك أهمية التطبيق العملي للنقطة رقم (${i}) في (${topic}).</p>
+                                    <div class="text-xs text-purple-300 font-bold pt-1">الإجابة النموذجية: التحليل والتطبيق المباشر لمحتوى الدرس.</div>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+
+                const titleText = currentLang === 'en' ? `📝 Sample Quiz: ${topic}` : (currentLang === 'fr' ? `📝 Exemple d'évaluation : ${topic}` : `📝 نموذج اختبار قصير: ${topic}`);
+                const subText = currentLang === 'en' ? `Type: ${type} | Count: ${count} Questions | Model Answers Included` : (currentLang === 'fr' ? `Type: ${type} | Nombre: ${count} Questions` : `النمط: ${type} | العدد: ${count} أسئلة | متضمن الإجابة النموذجية`);
+
+                document.getElementById('quizContent').innerHTML = `
+                    <div class="bg-purple-500/10 p-4 rounded-2xl border border-purple-500/20 mb-4">
+                        <div class="font-bold text-white text-sm">${titleText}</div>
+                        <div class="text-xs text-purple-300 mt-1">${subText}</div>
+                    </div>
+                    <div class="space-y-3">
+                        ${questionsHtml}
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>

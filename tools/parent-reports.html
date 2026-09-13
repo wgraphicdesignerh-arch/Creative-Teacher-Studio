@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مساعد تقارير أولياء الأمور | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #6366f1 0%, #be185d 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-indigo-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <span class="font-bold text-white">مساعد إشعارات وتقارير أولياء الأمور</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Form Section -->
+        <div class="lg:col-span-5 glass-card p-6 rounded-3xl border border-white/10 flex flex-col space-y-5">
+            <h2 class="text-xl font-bold text-white border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-user-graduate text-indigo-400"></i> بيانات الطالبة والرسالة
+            </h2>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">اسم الطالبة</label>
+                <input type="text" id="studentName" placeholder="مثال: سارة، نورة..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-400">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">نوع التقرير / الرسالة</label>
+                <select id="reportType" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-400">
+                    <option value="praise">ثناء وتشجيع على التفوق والتميز</option>
+                    <option value="academic">تنبيه على تراجع المستوى الدراسي</option>
+                    <option value="behavior">ملاحظة سلوكية لطيفة وخفيفة</option>
+                    <option value="thankyou">شكر لولي الأمر على المتابعة</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">تفاصيل إضافية (اختياري)</label>
+                <textarea id="reportDetails" rows="3" placeholder="مثال: تميزت في المشاركة اليوم، تحتاج مراجعة في جدول الضرب..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-400 leading-relaxed"></textarea>
+            </div>
+
+            <button onclick="generateReport(this)" class="w-full py-3.5 rounded-xl text-white font-bold gradient-bg shadow-md hover:shadow-lg transition">
+                صياغة الرسالة والتقرير ✨
+            </button>
+        </div>
+
+        <!-- Output Result Section -->
+        <div class="lg:col-span-7 glass-card p-6 rounded-3xl border border-white/10 flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-3 mb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane text-indigo-400"></i> نص الرسالة الجاهز للإرسال
+                    </h2>
+                    <button onclick="copyToClipboard('reportContent')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/30 transition">
+                        <i class="fa-solid fa-copy mr-1"></i> نسخ النص
+                    </button>
+                </div>
+
+                <div id="reportContent" class="prose max-w-none text-slate-300 text-sm leading-relaxed space-y-4">
+                    <div class="text-center py-16 text-slate-500">
+                        <i class="fa-solid fa-message text-4xl mb-3 text-slate-600"></i>
+                        <p>أدخلي اسم الطالبة ونوع الرسالة ثم اضغطي على "صياغة الرسالة".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function generateReport(btn) {
+            const name = document.getElementById('studentName').value.trim() || (currentLang === 'en' ? 'Distinguished Student' : (currentLang === 'fr' ? 'Élève Distinguée' : 'الطالبة المتميزة'));
+            const type = document.getElementById('reportType').value;
+            const details = document.getElementById('reportDetails').value.trim();
+
+            let msg = '';
+            let extraNote = '';
+
+            if (currentLang === 'en') {
+                extraNote = details ? `\n\n📌 **Additional Note:** ${details}` : '';
+                if (type === 'praise') {
+                    msg = `Dear Parent of ${name},\n\nI would like to share my delight with the wonderful progress and active participation of our student today in class! Her dedication and enthusiasm are truly admirable. Thank you very much for your continuous support at home. We wish her continued success and excellence! 🌟✨${extraNote}\n\nWarm regards,\nSubject Teacher.`;
+                } else if (type === 'academic') {
+                    msg = `Dear Parent of ${name},\n\nIn our shared interest in the academic success of our student, I noticed a slight dip in recent assignment submissions or test review. I am confident in our joint cooperation to help guide her and review lesson concepts together over the coming week.${extraNote}\n\nBest regards and thank you for your support ❤️\nSubject Teacher.`;
+                } else if (type === 'behavior') {
+                    msg = `Dear Parent of ${name},\n\nTo foster a supportive classroom environment and ensure our student's wellbeing, I wanted to share a gentle observation so we can work together to help improve her focus and engagement in class.${extraNote}\n\nThank you for your understanding and cooperation 💖\nSubject Teacher.`;
+                } else if (type === 'thankyou') {
+                    msg = `Dear Parent of ${name},\n\nI would like to express my sincere appreciation and gratitude for your continuous follow-up and fruitful partnership, which has made a noticeable positive impact on our student's academic standing and classroom discipline 🌟.${extraNote}\n\nWith utmost appreciation 🌸\nSubject Teacher.`;
+                }
+
+                generateAIResponse(btn, 'reportContent', () => {
+                    document.getElementById('reportContent').innerHTML = `
+                        <div class="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 mb-3 text-left">
+                            <div class="font-bold text-white text-sm">💬 Message Draft for (${name}):</div>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 text-slate-200 font-medium whitespace-pre-line leading-relaxed text-xs text-left">
+                            ${msg}
+                        </div>
+                    `;
+                });
+            } else if (currentLang === 'fr') {
+                extraNote = details ? `\n\n📌 **Remarque Complémentaire :** ${details}` : '';
+                if (type === 'praise') {
+                    msg = `Chers Parents de ${name},\n\nJe tiens à partager avec vous ma grande fierté face au travail remarquable et à la participation active de notre élève en classe aujourd'hui. Félicitations pour ses efforts continus et merci pour votre précieux accompagnement à la maison ! 🌟✨${extraNote}\n\nBien cordialement,\nL'enseignante.`;
+                } else if (type === 'academic') {
+                    msg = `Chers Parents de ${name},\n\nSoucieuse de la réussite scolaire de notre élève, j'ai remarqué un léger ralentissement dans ses récents devoirs. Je compte sur notre collaboration bienveillante pour l'encourager à réviser ses leçons cette semaine.${extraNote}\n\nAvec tous mes remerciements ❤️\nL'enseignante.`;
+                } else if (type === 'behavior') {
+                    msg = `Chers Parents de ${name},\n\nAfin de préserver un cadre d'apprentissage optimal, je souhaitais partager avec vous une brève observation pour accompagner au mieux notre élève dans sa concentration en classe.${extraNote}\n\nMerci pour votre écoute et votre coopération 💖\nL'enseignante.`;
+                } else if (type === 'thankyou') {
+                    msg = `Chers Parents de ${name},\n\nJe vous adresse mes sincères remerciements pour votre suivi attentif et votre soutien constant, qui portent pleinement leurs fruits dans les excellents résultats et la discipline de notre élève 🌟.${extraNote}\n\nAvec toute ma reconnaissance 🌸\nL'enseignante.`;
+                }
+
+                generateAIResponse(btn, 'reportContent', () => {
+                    document.getElementById('reportContent').innerHTML = `
+                        <div class="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 mb-3 text-left">
+                            <div class="font-bold text-white text-sm">💬 Modèle de Message pour (${name}) :</div>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 text-slate-200 font-medium whitespace-pre-line leading-relaxed text-xs text-left">
+                            ${msg}
+                        </div>
+                    `;
+                });
+            } else {
+                extraNote = details ? `\n\n📌 **ملاحظة إضافية:** ${details}` : '';
+                if (type === 'praise') {
+                    msg = `السلام عليكم ورحمة الله وبركاته 🌹\n\nأختي الكريمة وليّة أمر الطالبة الرائعة / ${name}،\n\nحبيت أشاركك فرحتي بتألق وإبداع ابنتنا اليوم في الفصل. ما شاء الله تميز واجتهاد يُثلج الصدر! أشكركِ جداً على حسن المتابعة والاهتمام في المنزل، ونتمنى لها دوام التوفيق والنجاح 🌟✨${extraNote}\n\nتحياتي وتقديري، معلمة المادة.`;
+                } else if (type === 'academic') {
+                    msg = `السلام عليكم ورحمة الله وبركاته 💐\n\nأختي الفاضلة وليّة أمر الطالبة / ${name}،\n\nحرصاً منا على مصلحة ابنتنا العزيزة ومستواها المتميز، لاحظت وجود تراجع بسيط في أدائها الواجبات أو التكليفات مؤخراً. كلي ثقة بتعاونك واهتمامك الدائم لمساعدتها في مراجعة دروسها والتأكيد عليها الفترة القادمة.${extraNote}\n\nدمتِ بخير ودام تميز ابنتنا ❤️\nمعلمة المادة.`;
+                } else if (type === 'behavior') {
+                    msg = `السلام عليكم ورحمة الله وبركاته 🌸\n\nأختي العزيزة وليّة أمر الطالبة / ${name}،\n\nحرصاً على بيئة الفصل والاهتمام بابنتنا الغالية، أحببت مشاركتك ملاحظة خفيفة لطيفة لنعمل معاً على توجيهها وتطوير سلوكها وحضورها الصفي للأفضل دائماً.${extraNote}\n\nشاكرة لكِ حسن التعاون والاهتمام الدائم 💖\nمعلمة المادة.`;
+                } else if (type === 'thankyou') {
+                    msg = `السلام عليكم ورحمة الله وبركاته ✨\n\nوليّة أمر الطالبة الخلوقة / ${name}،\n\nأود أن أعرب لكِ عن جزيل الشكر والتقدير لجهودك ومتابعتك المستمرة والمثمرة لمستوى ابنتنا، مما كان له الأثر البالغ في تفوقها وانضباطها الصفي 🌟.${extraNote}\n\nشاكرة لكِ حسن التعاون والمتابعة 🌸\nمعلمة المادة.`;
+                }
+
+                generateAIResponse(btn, 'reportContent', () => {
+                    document.getElementById('reportContent').innerHTML = `
+                        <div class="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 mb-3">
+                            <div class="font-bold text-white text-sm">💬 نص الرسالة التفاعلي لـ (${name}):</div>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 text-slate-200 font-medium whitespace-pre-line leading-relaxed text-xs">
+                            ${msg}
+                        </div>
+                    `;
+                });
+            }
+        }
+    </script>
+</body>
+</html>

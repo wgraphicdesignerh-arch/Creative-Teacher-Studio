@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محرر ومعاين كود HTML التفاعلي (EduRunHTML) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .code-editor { font-family: 'Fira Code', monospace; }
+        .btn-3d {
+            background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+            box-shadow: 0 4px 0 #6b21a8, 0 8px 20px rgba(168, 85, 247, 0.4);
+            transition: all 0.15s ease-in-out;
+        }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #6b21a8, 0 12px 25px rgba(168, 85, 247, 0.6); }
+        .btn-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 #6b21a8; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-purple-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center text-white text-base shadow-lg">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <span class="font-extrabold text-white text-base">محرر ومعاين البطاقات وأكواد الـ HTML التفاعلية (EduRunHTML Editor)</span>
+            </div>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <input type="file" id="htmlFileInput" accept=".html,.htm,.txt" class="hidden" onchange="handleFileUpload(event)">
+                <button onclick="document.getElementById('htmlFileInput').click()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 border border-purple-500/30 font-bold text-xs transition flex items-center gap-1.5 shadow-md cursor-pointer">
+                    <i class="fa-solid fa-cloud-arrow-up text-purple-400"></i>
+                    <span>رفع ملف HTML</span>
+                </button>
+                <button onclick="downloadHTMLFile()" class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md cursor-pointer">
+                    <i class="fa-solid fa-download"></i>
+                    <span>تنزيل الملف (.html)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Code Editor Section -->
+        <div class="lg:col-span-6 glass-card p-6 rounded-3xl flex flex-col space-y-4 border border-white/10">
+            <div class="flex flex-wrap justify-between items-center border-b border-white/10 pb-3 gap-2">
+                <h2 class="text-base font-extrabold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-purple-400"></i> تحرير كود HTML & CSS
+                </h2>
+                <div class="flex items-center gap-2">
+                    <button onclick="document.getElementById('htmlFileInput').click()" class="px-3 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 text-xs font-bold transition flex items-center gap-1">
+                        <i class="fa-solid fa-folder-open"></i> استيراد ملف
+                    </button>
+                    <button onclick="loadSampleTemplate()" class="px-3 py-1 rounded-lg bg-slate-800 text-purple-300 hover:bg-slate-700 text-xs font-bold transition">قالب تجريبي 🪄</button>
+                    <button onclick="copyHTMLCode()" class="px-3 py-1 rounded-lg bg-slate-800 text-purple-300 hover:bg-slate-700 text-xs font-bold transition">نسخ</button>
+                    <button onclick="clearHTMLCode()" class="px-3 py-1 rounded-lg bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 text-xs font-bold transition">مسح</button>
+                </div>
+            </div>
+
+            <!-- Upload / Drag Drop Hint Bar -->
+            <div id="dropArea" class="p-3 bg-slate-900/80 border-2 border-dashed border-slate-700 rounded-2xl flex items-center justify-between text-xs text-slate-400 cursor-pointer hover:border-purple-500 transition" onclick="document.getElementById('htmlFileInput').click()">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-code text-purple-400 text-base"></i>
+                    <span id="uploadStatusText">اسحبي ملف .html هنا أو انقري لرفع كود البطاقة</span>
+                </div>
+                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold text-[10px]">HTML / HTM</span>
+            </div>
+
+            <textarea id="htmlCodeInput" rows="18" placeholder="الصقي كود الـ HTML / CSS الخاص بالبطاقة التفاعلية هنا أو قومي برفع الملف..." class="code-editor w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 text-xs text-purple-200 focus:outline-none focus:border-purple-400 leading-relaxed resize-none flex-1"></textarea>
+
+            <button onclick="runHtmlCode()" class="btn-3d w-full py-3.5 rounded-2xl text-white font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-play"></i>
+                <span>معاينة البطاقات والكود مباشرة 🚀</span>
+            </button>
+        </div>
+
+        <!-- Live Preview Output Section -->
+        <div class="lg:col-span-6 flex flex-col space-y-4">
+            <div class="glass-card p-6 rounded-3xl border border-white/10 flex-1 flex flex-col">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
+                    <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-desktop text-purple-400"></i> المعاينة المباشرة (Live Preview)
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <button onclick="refreshPreview()" class="px-3 py-1 rounded-lg bg-slate-800 text-purple-300 hover:bg-slate-700 text-xs font-bold transition flex items-center gap-1">
+                            <i class="fa-solid fa-rotate-right"></i> تحديث
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full flex-1 bg-white rounded-2xl border border-slate-700 overflow-hidden relative min-h-[450px]">
+                    <iframe id="htmlPreviewFrame" class="w-full h-full border-0 min-h-[450px]"></iframe>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function runHtmlCode() {
+            const code = document.getElementById('htmlCodeInput').value;
+            const iframe = document.getElementById('htmlPreviewFrame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(code || '<div style="font-family:sans-serif; text-align:center; padding: 40px; color:#64748b;"><h2>لا يوجد كود للمعاينة!</h2><p>أدخلي الكود على اليمين أو ارفعي ملف HTML واضغطي تشغيل.</p></div>');
+            iframeDoc.close();
+            showToast("تم تحديث المعاينة المباشرة! ✨");
+        }
+
+        function refreshPreview() {
+            runHtmlCode();
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            readFileContent(file);
+        }
+
+        function readFileContent(file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                document.getElementById('htmlCodeInput').value = evt.target.result;
+                document.getElementById('uploadStatusText').innerText = `تم تحميل: ${file.name}`;
+                runHtmlCode();
+                showToast(`تم استيراد ${file.name} بنجاح! 🚀`);
+            };
+            reader.readAsText(file);
+        }
+
+        // Drag & Drop Setup
+        const dropArea = document.getElementById('dropArea');
+        if (dropArea) {
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropArea.classList.add('border-purple-500', 'bg-purple-950/20');
+                }, false);
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropArea.classList.remove('border-purple-500', 'bg-purple-950/20');
+                }, false);
+            });
+            dropArea.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const file = dt.files[0];
+                if (file) readFileContent(file);
+            }, false);
+        }
+
+        function loadSampleTemplate() {
+            const sampleHTML = `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: white; text-align: center; padding: 30px; }
+        .card { background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: inline-block; max-width: 400px; }
+        h2 { font-size: 22px; margin-bottom: 10px; }
+        p { font-size: 14px; opacity: 0.9; }
+        .btn { background: white; color: #4f46e5; border: none; padding: 10px 20px; font-weight: bold; border-radius: 10px; margin-top: 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>✨ بطاقة تشجيعية تفاعلية</h2>
+        <p>ممتازة يا بطلة! لقد حققتِ نجاحاً باهراً في درس اليوم.</p>
+        <button class="btn" onclick="alert('مبروك التفوق! 🎉')">اضغطي هنا للتكريم 🏆</button>
+    </div>
+</body>
+</html>`;
+            document.getElementById('htmlCodeInput').value = sampleHTML;
+            document.getElementById('uploadStatusText').innerText = "تم تحميل القالب التجريبي 🪄";
+            runHtmlCode();
+        }
+
+        function clearHTMLCode() {
+            document.getElementById('htmlCodeInput').value = '';
+            document.getElementById('uploadStatusText').innerText = "اسحبي ملف .html هنا أو انقري لرفع كود البطاقة";
+            runHtmlCode();
+            showToast("تم مسح محرر الأكواد");
+        }
+
+        function copyHTMLCode() {
+            const code = document.getElementById('htmlCodeInput').value;
+            if (!code) return;
+            navigator.clipboard.writeText(code).then(() => showToast("تم نسخ كود الـ HTML بنجاح!"));
+        }
+
+        function downloadHTMLFile() {
+            const code = document.getElementById('htmlCodeInput').value;
+            if (!code) return;
+            const blob = new Blob([code], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Interactive_Card.html';
+            link.click();
+            showToast("تم تنزيل ملف الـ HTML بنجاح!");
+        }
+
+        // Load sample on init
+        loadSampleTemplate();
+    </script>
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>

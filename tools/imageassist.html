@@ -1,0 +1,3474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="mainHtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Image Assist | Cinematic Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 py-4 px-6 sticky top-0 z-50 shadow-sm text-white">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-200 hover:text-orange-400 transition font-bold">
+                <i class="fa-solid fa-arrow-right text-lg"></i>
+                <span>العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <span class="font-bold text-white">أستوديو الصور السينمائية الذكي (Image Assist Studio)</span>
+            </div>
+        </div>
+    </header>
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; scroll-behavior: smooth; }
+        body {
+            overflow-x: hidden;
+            padding: 0.5rem 1rem 80px !important;
+        }
+
+        :root {
+            --primary-orange: #f97316;
+            --cinematic-dark: #020617;
+            --card-bg: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --bg-gradient: radial-gradient(circle at 0% 0%, rgba(249, 115, 22, 0.15) 0%, transparent 50%),
+                          radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.1) 0%, transparent 50%);
+        }
+
+        body.light-mode {
+            --cinematic-dark: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(0, 0, 0, 0.12);
+            --text-main: #0f172a;
+            --text-muted: #1e293b;
+            --bg-gradient: radial-gradient(circle at 0% 0%, rgba(249, 115, 22, 0.05) 0%, transparent 60%),
+                          radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.03) 0%, transparent 60%);
+            background-color: #f8fafc !important;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Kufi Arabic', sans-serif;
+            background-color: var(--cinematic-dark);
+            color: var(--text-main);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            min-height: 100dvh;
+            font-size: clamp(0.85rem, 1.2vw, 1rem);
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(249,115,22,0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 80% at 80% 90%, rgba(37,99,235,0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 60% 40%, rgba(139,92,246,0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body > * { position: relative; z-index: 1; }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            padding: clamp(1rem, 3vw, 2rem);
+        }
+        body.light-mode .glass-card { box-shadow: 0 8px 20px rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.12); }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: var(--cinematic-dark); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        body.light-mode .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
+        #header-placeholder {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        body:not(.loaded) .navbar {
+            opacity: 0 !important;
+            transition: none !important;
+        }
+        body:not(.loaded) .navbar * {
+            transition: none !important;
+        }
+        body.loaded .navbar {
+            opacity: 1;
+            transition: opacity 0.15s ease;
+        }
+
+        .footer-tools {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding: 16px 20px;
+            text-align: center;
+            font-size: clamp(0.7rem, 0.9vw, 0.8rem);
+            color: #64748b;
+            font-weight: 500;
+            margin-top: 40px;
+        }
+        body.dark-mode .footer-tools {
+            background: rgba(15, 23, 42, 0.85);
+            border-top-color: #1e293b;
+            color: #94a3b8;
+        }
+        body.light-mode .footer-tools {
+            background: rgba(255,255,255,0.85);
+            border-top-color: rgba(0,0,0,0.05);
+            color: #64748b;
+        }
+
+        [data-lang="en"] .lang-ar-only { display: none !important; }
+        [data-lang="ar"] .lang-en-only { display: none !important; }
+
+        /* ===== SCROLL TO TOP BUTTON ===== */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 90px;
+            inset-inline-end: 20px;
+            z-index: 999;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-orange), #ea6500);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 20px rgba(249, 115, 22, 0.4);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        #scrollTopBtn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        #scrollTopBtn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(249, 115, 22, 0.5);
+        }
+        #scrollTopBtn:active { transform: scale(0.92); }
+        #scrollTopBtn .tooltip {
+            position: absolute;
+            inset-inline-end: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            pointer-events: none;
+        }
+        #scrollTopBtn:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        #scrollTopBtn .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            inset-inline-end: -6px;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-inline-start-color: rgba(0,0,0,0.8);
+        }
+        [dir="rtl"] #scrollTopBtn .tooltip::after {
+            border-inline-start-color: transparent;
+            border-inline-end-color: rgba(0,0,0,0.8);
+            inset-inline-end: auto;
+            inset-inline-start: -6px;
+        }
+
+        @media (max-width: 768px) {
+            #scrollTopBtn {
+                bottom: 80px;
+                inset-inline-end: 12px;
+                width: 44px;
+                height: 44px;
+                font-size: 17px;
+            }
+            #scrollTopBtn .tooltip { display: none; }
+        }
+
+        /* ===== TABS ===== */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .tab-nav::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: clamp(8px, 1.2vw, 10px) clamp(12px, 2vw, 20px);
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: clamp(11px, 0.8vw, 13px);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            white-space: nowrap;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            position: relative;
+            min-height: 44px;
+            min-width: 44px;
+        }
+        .tab-btn.active {
+            background: var(--primary-orange);
+            color: white;
+            box-shadow: 0 4px 16px rgba(249,115,22,0.4);
+        }
+        .tab-btn:not(.active):hover { background: rgba(249,115,22,0.1); color: var(--primary-orange); }
+        .tab-panel { display: none; animation: tabFadeIn 0.35s cubic-bezier(0.4,0,0.2,1); }
+        .tab-panel.active { display: block; }
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== PROMPT INPUT ===== */
+        .prompt-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 24px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+        .prompt-container:focus-within {
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.15), 0 8px 40px rgba(249,115,22,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        #userMainText {
+            background: transparent;
+            border: none;
+            outline: none;
+            resize: none;
+            width: 100%;
+            min-height: 60px;
+            max-height: 300px;
+            padding: 16px 18px 0;
+            font-size: clamp(15px, 1.1vw, 16px);
+            line-height: 1.7;
+            color: var(--text-main);
+            font-family: inherit;
+            overflow-y: auto;
+        }
+        #userMainText::placeholder { color: var(--text-muted); opacity: 0.6; }
+        .prompt-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px 12px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .char-count { font-size: clamp(10px, 0.7vw, 11px); color: var(--text-muted); opacity: 0.6; }
+        .char-count.warning { color: #eab308 !important; opacity: 1 !important; }
+        .char-count.danger { color: #ef4444 !important; opacity: 1 !important; font-weight: 800; }
+        
+        .prompt-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .btn-clear-prompt {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted);
+            font-size: 10px;
+            transition: all 0.2s;
+            min-width: 44px;
+            min-height: 44px;
+        }
+        .btn-clear-prompt:hover { background: rgba(239,68,68,0.15); color: #ef4444; border-color: rgba(239,68,68,0.3); }
+        .btn-gen-inline {
+            display: flex; align-items: center; gap: 6px;
+            padding: clamp(8px, 1vw, 8px) clamp(14px, 2vw, 18px);
+            background: var(--primary-orange);
+            color: white;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: clamp(11px, 0.8vw, 12px);
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            box-shadow: 0 3px 12px rgba(249,115,22,0.35);
+            min-height: 44px;
+        }
+        .btn-gen-inline:hover { background: #ea6500; transform: translateY(-1px); box-shadow: 0 5px 18px rgba(249,115,22,0.45); }
+        .btn-gen-inline:active { transform: translateY(0); }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .chip {
+            padding: clamp(6px, 0.6vw, 5px) clamp(10px, 1.2vw, 14px);
+            border-radius: 20px;
+            font-size: clamp(10px, 0.7vw, 11px);
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(249,115,22,0.08);
+            border: 1px solid rgba(249,115,22,0.2);
+            color: var(--primary-orange);
+            transition: all 0.2s;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .chip:hover { background: rgba(249,115,22,0.18); transform: translateY(-1px); }
+
+        .shortcut-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: clamp(8px, 0.5vw, 10px);
+            color: var(--text-muted);
+            opacity: 0.5;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+        }
+        .shortcut-hint kbd {
+            font-family: inherit;
+            font-weight: 700;
+            color: var(--text-main);
+            background: rgba(255,255,255,0.08);
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+
+        /* ===== PRESETS ===== */
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(clamp(200px, 22vw, 300px), 1fr));
+            gap: clamp(0.75rem, 1.5vw, 1.5rem);
+        }
+        .presets-grid.masonry { columns: 3 280px; display: block; column-gap: 1.5rem; }
+        .presets-grid.masonry .preset-card { break-inside: avoid; margin-bottom: 1.5rem; display: inline-block; width: 100%; }
+        .presets-grid.compact { grid-template-columns: repeat(auto-fill, minmax(clamp(150px, 18vw, 200px), 1fr)); gap: 0.75rem; }
+
+        .preset-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .preset-card:hover {
+            border-color: var(--primary-orange);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.3);
+        }
+        body.light-mode .preset-card { background: rgba(255,255,255,0.9); border-color: rgba(0,0,0,0.1); }
+        body.light-mode .preset-card:hover { border-color: var(--primary-orange); box-shadow: 0 20px 30px -12px rgba(0,0,0,0.15); }
+
+        .img-container { width: 100%; aspect-ratio: 16/9; overflow: hidden; position: relative; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; max-width: 100%; display: block; }
+        .preset-card:hover img { transform: scale(1.05); }
+
+        .preset-number {
+            position: absolute; top: 12px; inset-inline-start: 12px;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            color: white; padding: 2px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 800; z-index: 10;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .fav-btn {
+            position: absolute; top: 10px; inset-inline-end: 10px; z-index: 10;
+            width: 30px; height: 30px; border-radius: 50%;
+            background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s; font-size: 12px; color: white;
+            min-width: 44px;
+            min-height: 44px;
+        }
+        .fav-btn:hover { background: rgba(239,68,68,0.5); }
+        .fav-btn.active { background: rgba(239,68,68,0.8); color: white; }
+        .use-count {
+            font-size: clamp(8px, 0.6vw, 9px); color: var(--text-muted);
+            display: flex; align-items: center; gap: 3px; margin-bottom: 8px;
+        }
+        .quality-bar {
+            height: 3px; border-radius: 2px;
+            background: linear-gradient(90deg, var(--primary-orange), #fcd34d);
+            margin-bottom: 10px;
+        }
+
+        .custom-select {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 16px;
+            width: 100%;
+            font-size: clamp(13px, 0.9vw, 14px);
+            outline: none;
+            appearance: none;
+            transition: all 0.2s;
+            min-height: 48px;
+        }
+        .custom-select:focus { border-color: var(--primary-orange); box-shadow: 0 0 0 2px rgba(249,115,22,0.2); }
+        .main-lang-ar .custom-select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23f97316'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: left 12px center; background-size: 16px;
+        }
+        .main-lang-en .custom-select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23f97316'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 16px;
+        }
+
+        .detail-row {
+            display: flex; justify-content: space-between; font-size: clamp(9px, 0.65vw, 10.5px);
+            color: var(--text-muted); border-bottom: 1px solid var(--glass-border);
+            padding: 6px 0; gap: 8px;
+        }
+        .detail-row label { font-weight: 700; opacity: 0.8; }
+        .detail-row span { text-align: end; color: var(--text-main); font-weight: 500; }
+
+        .btn-shine { position: relative; overflow: hidden; }
+        .btn-shine::after {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: rotate(45deg); transition: 0.5s;
+        }
+        .btn-shine:hover::after { left: 100%; }
+
+        .select-category-group {
+            background: rgba(255,255,255,0.04); border-radius: 24px; padding: clamp(0.75rem, 1.5vw, 1.2rem);
+            margin-bottom: 1rem; border: 1px solid var(--glass-border); backdrop-filter: blur(4px);
+        }
+        body.light-mode .select-category-group { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.1); }
+        .select-category-title {
+            font-size: clamp(0.6rem, 0.7vw, 0.75rem); font-weight: 800; letter-spacing: 1px;
+            color: var(--primary-orange); margin-bottom: 1rem; display: block;
+            border-inline-start: 3px solid var(--primary-orange); padding-inline-start: 0.75rem;
+        }
+
+        /* ===== ARTISTS ===== */
+        .artists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 20vw, 260px), 1fr));
+            gap: clamp(0.6rem, 1.2vw, 1.25rem);
+        }
+        .artist-card {
+            border-radius: 22px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            aspect-ratio: 4/5;
+            background: var(--card-bg);
+        }
+        .artist-card:hover { border-color: var(--primary-orange); transform: translateY(-5px) scale(1.01); box-shadow: 0 24px 50px -12px rgba(0,0,0,0.5); }
+        .artist-card.selected { border-color: var(--primary-orange); box-shadow: 0 0 0 3px rgba(249,115,22,0.3), 0 24px 50px -12px rgba(249,115,22,0.2); }
+        .artist-card img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s ease;
+            filter: brightness(0.95) contrast(1.05);
+            max-width: 100%;
+            display: block;
+            background: #0f172a;
+        }
+        .artist-card:hover img { transform: scale(1.08); filter: brightness(1) contrast(1.05); }
+        .artist-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.3) 80%, transparent 100%);
+            padding: 28px 18px 18px;
+            transition: all 0.3s ease;
+        }
+        .artist-card:hover .artist-overlay { padding-bottom: 22px; }
+        .artist-name {
+            font-weight: 900;
+            font-size: clamp(14px, 1.1vw, 17px);
+            color: #facc15;
+            line-height: 1.2;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.5);
+            margin-bottom: 2px;
+        }
+        .artist-school {
+            font-size: clamp(8px, 0.6vw, 10px);
+            font-weight: 700;
+            color: #fde047;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+        }
+        .artist-traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .artist-card:hover .artist-traits { max-height: 120px; }
+        .artist-trait {
+            font-size: clamp(7px, 0.5vw, 9px);
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: rgba(250,204,21,0.2);
+            color: #facc15;
+            border: 1px solid rgba(250,204,21,0.3);
+            font-weight: 700;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+        }
+        .artist-selected-badge {
+            position: absolute; top: 10px; inset-inline-end: 10px; z-index: 10;
+            background: var(--primary-orange); color: white;
+            width: 28px; height: 28px; border-radius: 50%;
+            display: none; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 900;
+            box-shadow: 0 0 20px rgba(249,115,22,0.5);
+        }
+        .artist-card.selected .artist-selected-badge { display: flex; }
+
+        .category-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .cat-btn {
+            padding: clamp(8px, 0.8vw, 6px) clamp(12px, 1.2vw, 16px);
+            border-radius: 20px;
+            font-size: clamp(10px, 0.7vw, 11px);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            min-height: 44px;
+        }
+        .cat-btn.active, .cat-btn:hover { background: rgba(249,115,22,0.15); color: var(--primary-orange); border-color: rgba(249,115,22,0.3); }
+        .cat-btn.active { background: var(--primary-orange); color: white; }
+        .cat-btn.all-category { display: inline-flex; }
+
+        .quick-mix-chip {
+            padding: clamp(8px, 0.8vw, 10px) clamp(12px, 1.2vw, 18px);
+            border-radius: 16px;
+            font-size: clamp(10px, 0.7vw, 11px);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 44px;
+        }
+        .quick-mix-chip:hover { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.3); color: var(--primary-orange); }
+
+        /* ===== SEARCH ===== */
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 180px;
+        }
+        .search-wrapper i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: clamp(11px, 0.7vw, 12px);
+            pointer-events: none;
+            z-index: 2;
+            transition: color 0.2s ease;
+        }
+        [dir="rtl"] .search-wrapper i { right: 16px; left: auto; }
+        [dir="ltr"] .search-wrapper i { left: 16px; right: auto; }
+        .search-input {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            border-radius: 16px;
+            width: 100%;
+            font-size: clamp(13px, 0.9vw, 16px);
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            min-height: 48px;
+            padding-block: clamp(8px, 0.8vw, 10px);
+        }
+        [dir="rtl"] .search-input { padding-right: 42px; padding-left: clamp(12px, 1.2vw, 16px); }
+        [dir="ltr"] .search-input { padding-left: 42px; padding-right: clamp(12px, 1.2vw, 16px); }
+        .search-input:focus {
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 2px rgba(249,115,22,0.15);
+        }
+        .search-input:focus + i,
+        .search-wrapper:focus-within i { color: var(--primary-orange); }
+
+        .artist-select-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: var(--primary-orange);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: clamp(10px, 0.7vw, 12px);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 16px rgba(249, 115, 22, 0.4);
+            min-height: 44px;
+            min-width: 120px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        .artist-select-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+            background: #ea6500;
+        }
+        @media (hover: hover) {
+            .artist-select-btn:hover {
+                background: #ea6500;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
+            }
+        }
+
+        .layout-btn {
+            width: 34px; height: 34px; border-radius: 10px; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+            transition: all 0.2s; border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.04); color: var(--text-muted); font-size: 12px;
+            min-width: 44px;
+            min-height: 44px;
+        }
+        .layout-btn.active { background: var(--primary-orange); border-color: var(--primary-orange); color: white; }
+
+        .sort-select {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: clamp(6px, 0.6vw, 8px) clamp(10px, 1vw, 14px);
+            border-radius: 12px;
+            font-size: clamp(11px, 0.7vw, 12px);
+            outline: none;
+            font-family: inherit;
+            cursor: pointer;
+            min-height: 44px;
+        }
+
+        /* ===== RESULT ===== */
+        .result-editable {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(249,115,22,0.25);
+            border-radius: 16px;
+            padding: clamp(12px, 1.5vw, 20px);
+            min-height: 100px;
+            color: var(--text-main);
+            font-size: clamp(13px, 0.9vw, 14px);
+            line-height: 1.8;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s;
+            position: relative;
+            z-index: 1;
+        }
+        .result-editable:focus { border-color: rgba(249,115,22,0.5); box-shadow: 0 0 0 2px rgba(249,115,22,0.1); }
+
+        .result-section-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== SAFETY WARNING ===== */
+        .safety-warning {
+            display: none;
+            background: rgba(239,68,68,0.12);
+            border: 2px solid rgba(239,68,68,0.4);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-top: 10px;
+            position: relative;
+            animation: safetyIn 0.3s ease;
+        }
+        .safety-warning.show { display: block; }
+        @keyframes safetyIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .safety-warning .safety-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .safety-warning .safety-header i {
+            font-size: 24px;
+            color: #ef4444;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .safety-warning .safety-title {
+            font-size: clamp(16px, 1.2vw, 20px);
+            font-weight: 900;
+            color: #ef4444;
+            margin: 0;
+        }
+        .safety-warning .safety-body { padding-right: 36px; }
+        .safety-warning .safety-body p {
+            font-size: clamp(13px, 0.9vw, 15px);
+            color: var(--text-main);
+            margin: 0 0 10px 0;
+            line-height: 1.6;
+        }
+        .safety-warning .safety-details {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(239,68,68,0.2);
+        }
+        .safety-warning .safety-details.show { display: block; }
+        .safety-warning .safety-list {
+            font-size: clamp(11px, 0.8vw, 13px);
+            color: var(--text-muted);
+            margin: 0 0 14px 0;
+            padding-right: 20px;
+            line-height: 1.8;
+        }
+        .safety-warning .safety-list li { list-style: none; position: relative; }
+        .safety-warning .safety-list li::before {
+            content: "•";
+            position: absolute;
+            right: -16px;
+            color: #ef4444;
+        }
+        .safety-warning .safety-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .safety-warning .safety-close-btn {
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #ef4444;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: clamp(12px, 0.8vw, 14px);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .safety-warning .safety-close-btn:hover {
+            background: rgba(239,68,68,0.25);
+            transform: translateY(-1px);
+        }
+        .safety-warning .safety-more-btn {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: clamp(12px, 0.8vw, 14px);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .safety-warning .safety-more-btn:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--primary-orange);
+            color: var(--primary-orange);
+        }
+
+        /* ===== TOAST ===== */
+        #toast {
+            position: fixed; top: 5px; left: 50%; transform: translateX(-50%); z-index: 100;
+            background: #ea580c; color: white; padding: 10px 24px;
+            border-radius: 999px; font-weight: 700; box-shadow: 0 8px 30px rgba(249,115,22,0.4);
+            display: none; font-size: clamp(12px, 0.8vw, 13px); animation: toastIn 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        @keyframes toastIn { from { opacity:0; top: -20px; } to { opacity:1; top: 5px; } }
+
+        .safety-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 10px; border-radius: 20px; font-size: clamp(9px, 0.6vw, 10px); font-weight: 800;
+        }
+        .safety-badge.safe { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+        .safety-badge.warn { background: rgba(234,179,8,0.15); color: #eab308; border: 1px solid rgba(234,179,8,0.3); }
+        .safety-badge.block { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+
+        nav { margin-bottom: 1.5rem; }
+        header { margin-bottom: 1.5rem; }
+        #ui-title {
+            font-size: clamp(1.6rem, 4vw, 2.5rem);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-style: normal !important;
+        }
+        #ui-desc {
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            color: var(--text-main) !important;
+        }
+        #ui-badge { display: none; }
+
+        img.lazy { opacity: 0; transition: opacity 0.4s ease; }
+        img.lazy.loaded { opacity: 1; }
+
+        .active-path-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            border-radius: 12px;
+            font-size: clamp(12px, 0.8vw, 14px);
+            color: var(--text-main);
+            animation: tabFadeIn 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .active-path-indicator.free {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--glass-border);
+        }
+        body.light-mode .active-path-indicator.free {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        .path-label { font-weight: 800; color: var(--primary-orange); }
+        .path-name { font-weight: 600; }
+        .path-clear {
+            width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 11px; margin-inline-start: 4px;
+            transition: all 0.2s; padding: 0;
+            min-width: 22px; min-height: 22px;
+        }
+        .path-clear:hover { background: rgba(239, 68, 68, 0.3); transform: scale(1.15); }
+
+        .tab-btn.dimmed { opacity: 0.35; pointer-events: none; filter: grayscale(0.6); }
+        .mob-nav-item.dimmed { opacity: 0.35; pointer-events: none; filter: grayscale(0.6); }
+
+        /* ===== MOBILE PRESETS - VERTICAL LIST ===== */
+        #mobilePresetsList {
+            display: none;
+            width: 100%;
+        }
+        .mob-presets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 4px 0;
+        }
+        .mob-presets-list .preset-card {
+            width: 100%;
+            margin: 0;
+            border-radius: 16px;
+        }
+
+        /* ===== MOBILE ARTISTS - VERTICAL LIST ===== */
+        #mobileArtistsList {
+            display: none;
+            width: 100%;
+        }
+        .mob-artists-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 4px 0;
+        }
+        .mob-artists-list .artist-card {
+            width: 100%;
+            margin: 0;
+            border-radius: 16px;
+            aspect-ratio: 16/9;
+        }
+        .mob-artists-list .artist-card .artist-overlay {
+            padding: 20px 16px 16px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.3) 70%, transparent 100%);
+        }
+        .mob-artists-list .artist-card .artist-name {
+            font-size: 17px !important;
+            font-weight: 900;
+            line-height: 1.3;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+            color: #facc15;
+        }
+        .mob-artists-list .artist-card .artist-school {
+            font-size: 10px !important;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+            color: #fde047;
+        }
+        .mob-artists-list .artist-card .artist-traits {
+            max-height: none !important;
+            justify-content: flex-start;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .mob-artists-list .artist-card .artist-trait {
+            font-size: 8px !important;
+            padding: 2px 8px !important;
+            border-radius: 12px !important;
+            background: rgba(250,204,21,0.15);
+            color: #facc15;
+            border: 1px solid rgba(250,204,21,0.25);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+        }
+        .mob-artists-list .artist-card .artist-overlay > div:nth-child(3) {
+            display: block !important;
+            font-size: 11px !important;
+            color: #fde047 !important;
+            opacity: 0.9;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+        }
+        .mob-artists-list .artist-select-btn {
+            margin-top: 8px;
+            padding: 8px 14px;
+            min-height: 40px;
+            font-size: 12px;
+            border-radius: 10px;
+            width: 100%;
+        }
+        .mob-artists-list .artist-card .artist-selected-badge {
+            width: 24px;
+            height: 24px;
+            font-size: 11px;
+            top: 8px;
+            inset-inline-end: 8px;
+        }
+
+        .glow-dot {
+            position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+            filter: blur(80px); animation: floatGlow 8s ease-in-out infinite;
+        }
+        @keyframes floatGlow {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(30px, -20px); }
+            66% { transform: translate(-20px, 15px); }
+        }
+
+        body.dark-mode .glow-dot { opacity: 0.7; }
+        #header-placeholder { flex-shrink: 0; }
+
+        [dir="rtl"] .main-lang-ar .custom-select { background-position: left 12px center; }
+        [dir="ltr"] .main-lang-en .custom-select { background-position: right 12px center; }
+
+        /* ===== MOBILE BOTTOM NAV ===== */
+        #mobileBottomNav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 4px 0 calc(4px + env(safe-area-inset-bottom));
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.12);
+        }
+        body.light-mode #mobileBottomNav {
+            background: rgba(255,255,255,0.95);
+            border-top-color: rgba(0,0,0,0.12);
+        }
+
+        .mob-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0px;
+            cursor: pointer;
+            padding: 6px 0 4px;
+            transition: all 0.2s;
+            min-height: 52px;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .mob-nav-item i {
+            font-size: 18px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .mob-nav-item span {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            margin-top: 1px;
+        }
+        .mob-nav-item.active i,
+        .mob-nav-item.active span { color: var(--primary-orange); }
+        .mob-nav-item.active i { transform: translateY(-1px); }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 0.75rem 0.75rem 75px !important;
+                text-align: start;
+            }
+            .glass-card {
+                padding: 1rem !important;
+                border-radius: 18px;
+                text-align: start;
+            }
+
+            #presetsGrid { display: none !important; }
+            #mobilePresetsList { display: block !important; }
+            #artistsGrid { display: none !important; }
+            #mobileArtistsList { display: block !important; }
+
+            .cat-btn.all-category {
+                display: none !important;
+            }
+
+            #presetSort {
+                display: none !important;
+            }
+
+            .category-filter {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 4px;
+            }
+            .category-filter::-webkit-scrollbar { display: none; }
+            .category-filter .cat-btn {
+                flex-shrink: 0;
+                white-space: nowrap;
+            }
+
+            #presetTagFilter {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 4px;
+            }
+            #presetTagFilter::-webkit-scrollbar { display: none; }
+            #presetTagFilter .cat-btn {
+                flex-shrink: 0;
+                white-space: nowrap;
+            }
+
+            .mob-presets-list .preset-card {
+                border-radius: 16px;
+            }
+            .mob-presets-list .preset-card .detail-row {
+                font-size: 10px;
+            }
+            .mob-presets-list .preset-card .detail-row span {
+                text-align: end;
+            }
+
+            .mob-artists-list .artist-card {
+                aspect-ratio: 16/9;
+                border-radius: 14px;
+            }
+            .mob-artists-list .artist-card .artist-overlay {
+                padding: 18px 14px 14px;
+                background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.3) 70%, transparent 100%);
+            }
+            .mob-artists-list .artist-card .artist-name {
+                font-size: 16px !important;
+                font-weight: 900;
+                line-height: 1.3;
+                margin-bottom: 2px;
+                text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+            }
+            .mob-artists-list .artist-card .artist-school {
+                font-size: 9px !important;
+                font-weight: 800;
+                letter-spacing: 0.5px;
+                margin-bottom: 4px;
+                text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+            }
+            .mob-artists-list .artist-card .artist-traits {
+                justify-content: flex-start;
+                max-height: none !important;
+                gap: 4px;
+                margin-top: 6px;
+            }
+            .mob-artists-list .artist-trait {
+                font-size: 8px !important;
+                padding: 2px 8px !important;
+                border-radius: 12px !important;
+                background: rgba(250,204,21,0.15);
+                color: #facc15;
+                border: 1px solid rgba(250,204,21,0.25);
+                text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+            }
+            .mob-artists-list .artist-card .artist-overlay > div:nth-child(3) {
+                display: block !important;
+                font-size: 11px !important;
+                color: #fde047 !important;
+                opacity: 0.9;
+                text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+            }
+            .mob-artists-list .artist-select-btn {
+                margin-top: 8px;
+                padding: 8px 14px;
+                min-height: 40px;
+                font-size: 12px;
+                border-radius: 10px;
+                width: 100%;
+            }
+            .mob-artists-list .artist-card .artist-selected-badge {
+                width: 24px;
+                height: 24px;
+                font-size: 11px;
+                top: 8px;
+                inset-inline-end: 8px;
+            }
+
+            .tab-btn { padding: 9px 13px; font-size: 11px; justify-content: center; }
+            .tab-nav { justify-content: center; }
+
+            #ui-title {
+                font-size: 1.6rem !important;
+                margin-bottom: 0.25rem;
+                text-align: center;
+                font-style: normal !important;
+            }
+
+            #ui-desc {
+                font-size: 0.8rem !important;
+                text-align: center;
+                color: var(--text-main) !important;
+            }
+
+            .prompt-container { border-radius: 16px; }
+            .select-category-group { padding: 0.75rem; text-align: start; }
+            .select-category-title { text-align: start; border-inline-start: none; padding-inline-start: 0; }
+            #builderOptions { text-align: start; }
+            header { margin-bottom: 0.75rem !important; }
+            nav { margin-bottom: 0.75rem !important; }
+
+            #mainTabNav { display: none !important; }
+            #mobileBottomNav { display: flex !important; }
+
+            .layout-btn { display: none; }
+            button, .cat-btn, .chip, select { min-height: 44px; }
+            .cat-btn { padding: 10px 14px; font-size: 11px; }
+            .chip { padding: 8px 14px; font-size: 12px; }
+            #userMainText { font-size: 16px !important; }
+            .result-editable { font-size: 13px; padding: 14px; min-height: 80px; text-align: start; }
+            #resultSection .flex-wrap.gap-3 { justify-content: center; }
+
+            #quickMixContainer {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 6px;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+            }
+            #quickMixContainer::-webkit-scrollbar { display: none; }
+            .quick-mix-chip { flex-shrink: 0; min-height: 44px; white-space: nowrap; }
+
+            .detail-row { font-size: 10px; }
+
+            .suggestion-chips {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                scrollbar-width: none;
+                justify-content: flex-start !important;
+                -webkit-overflow-scrolling: touch;
+            }
+            .suggestion-chips::-webkit-scrollbar { display: none; }
+            .chip { justify-content: center; text-align: center; flex-shrink: 0; }
+
+            .safety-warning { padding: 16px; text-align: start; }
+            .safety-warning .safety-body { padding-right: 0; text-align: start; }
+            .safety-warning .safety-header { justify-content: flex-start; }
+            .safety-warning .safety-header i { font-size: 20px; }
+            .safety-warning .safety-actions { flex-direction: row; }
+            .safety-warning .safety-actions button { flex: 1; justify-content: center; }
+
+            .active-path-indicator { width: 100%; justify-content: center; }
+            #selectionIndicator { justify-content: center !important; }
+
+            .search-wrapper { min-width: 120px; }
+            [dir="rtl"] .search-input { padding-right: 38px; }
+            [dir="ltr"] .search-input { padding-left: 38px; }
+            .search-wrapper i { font-size: 14px; }
+            [dir="rtl"] .search-wrapper i { right: 12px; }
+            [dir="ltr"] .search-wrapper i { left: 12px; }
+
+            .artist-select-btn {
+                padding: 10px 16px;
+                min-height: 44px;
+                font-size: 12px;
+                border-radius: 12px;
+                margin-top: 6px;
+            }
+
+            #mobnav-result { display: none !important; }
+
+            #ui-btn-copy.copied {
+                background: #22c55e !important;
+                transition: background 0.3s ease;
+            }
+            #ui-btn-copy.copied:hover {
+                background: #16a34a !important;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            #presetsGrid { display: none !important; }
+            #mobilePresetsList { display: block !important; }
+            #artistsGrid { display: none !important; }
+            #mobileArtistsList { display: block !important; }
+
+            .cat-btn.all-category {
+                display: none !important;
+            }
+
+            #presetSort {
+                display: none !important;
+            }
+
+            .category-filter {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 4px;
+            }
+            .category-filter::-webkit-scrollbar { display: none; }
+            .category-filter .cat-btn {
+                flex-shrink: 0;
+                white-space: nowrap;
+            }
+
+            #presetTagFilter {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 4px;
+            }
+            #presetTagFilter::-webkit-scrollbar { display: none; }
+            #presetTagFilter .cat-btn {
+                flex-shrink: 0;
+                white-space: nowrap;
+            }
+
+            .mob-presets-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            .mob-presets-list .preset-card {
+                border-radius: 16px;
+            }
+
+            .mob-artists-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            .mob-artists-list .artist-card {
+                aspect-ratio: 4/5;
+                border-radius: 14px;
+            }
+            .mob-artists-list .artist-card .artist-overlay {
+                padding: 18px 14px 14px;
+                background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.3) 70%, transparent 100%);
+            }
+            .mob-artists-list .artist-card .artist-name {
+                font-size: 15px !important;
+            }
+            .mob-artists-list .artist-card .artist-school {
+                font-size: 9px !important;
+            }
+            .mob-artists-list .artist-card .artist-traits {
+                justify-content: flex-start;
+                max-height: none !important;
+                gap: 4px;
+                margin-top: 6px;
+            }
+            .mob-artists-list .artist-trait {
+                font-size: 7px !important;
+                padding: 2px 6px !important;
+                border-radius: 10px !important;
+                background: rgba(250,204,21,0.15);
+                color: #facc15;
+                border: 1px solid rgba(250,204,21,0.25);
+            }
+            .mob-artists-list .artist-card .artist-overlay > div:nth-child(3) {
+                display: block !important;
+                font-size: 10px !important;
+                color: #fde047 !important;
+                opacity: 0.9;
+                text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+            }
+            .mob-artists-list .artist-select-btn {
+                margin-top: 8px;
+                padding: 8px 14px;
+                min-height: 40px;
+                font-size: 11px;
+                border-radius: 10px;
+                width: 100%;
+            }
+            .mob-artists-list .artist-card .artist-selected-badge {
+                width: 24px;
+                height: 24px;
+                font-size: 11px;
+                top: 8px;
+                inset-inline-end: 8px;
+            }
+
+            #ui-title {
+                font-style: normal !important;
+            }
+
+            #ui-desc {
+                color: var(--text-main) !important;
+            }
+
+            #mainTabNav { display: none !important; }
+            #mobileBottomNav { display: flex !important; }
+
+            .layout-btn { display: none; }
+            #mobnav-result { display: none !important; }
+        }
+
+        @media (max-width: 480px) {
+            [dir="rtl"] .search-input { padding-right: 34px; }
+            [dir="ltr"] .search-input { padding-left: 34px; }
+            [dir="rtl"] .search-wrapper i { right: 10px; }
+            [dir="ltr"] .search-wrapper i { left: 10px; }
+
+            .prompt-footer {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .prompt-actions { justify-content: center; width: 100%; }
+            .tab-btn { font-size: 10px; padding: 8px 10px; }
+
+            .detail-row { flex-direction: row; align-items: center; gap: 4px; }
+            .detail-row span { text-align: end; }
+
+            .safety-warning .safety-actions { flex-direction: column; }
+            .safety-warning .safety-actions button { width: 100%; }
+
+            .mob-artists-list .artist-card {
+                aspect-ratio: 16/9;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            #presetsGrid { display: grid !important; }
+            #mobilePresetsList { display: none !important; }
+            #artistsGrid { display: grid !important; }
+            #mobileArtistsList { display: none !important; }
+            #mainTabNav { display: flex !important; }
+            #mobileBottomNav { display: none !important; }
+            .layout-btn { display: flex !important; }
+            #presetSort { display: inline-block !important; }
+            .cat-btn.all-category { display: inline-flex !important; }
+        }
+
+        @media (min-width: 1025px) and (max-width: 1280px) {
+            .presets-grid { grid-template-columns: repeat(3, 1fr); }
+            .artists-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (min-width: 1281px) {
+            .presets-grid { grid-template-columns: repeat(4, 1fr); }
+            .artists-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (min-width: 1600px) {
+            .artists-grid { grid-template-columns: repeat(5, 1fr); }
+        }
+
+        img, video { max-width: 100%; height: auto; display: block; }
+        input, textarea, select { font-size: 16px !important; }
+
+        body.light-mode #header-placeholder {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --border-color: #e2e8f0;
+            --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+        body.dark-mode #header-placeholder {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #334155;
+            --shadow-card: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+        }
+        .navbar {
+            background: var(--bg-card) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-main) !important;
+        }
+
+        #ui-btn-copy.copied {
+            background: #22c55e !important;
+            transition: background 0.3s ease;
+        }
+        #ui-btn-copy.copied:hover {
+            background: #16a34a !important;
+        }
+
+        /* ===== تحسين ظهور النصوص على الصور ===== */
+        .artist-card .artist-overlay .artist-name,
+        .artist-card .artist-overlay .artist-school,
+        .artist-card .artist-overlay .artist-trait,
+        .artist-card .artist-overlay > div:nth-child(3) {
+            text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.6);
+        }
+        .mob-artists-list .artist-card .artist-overlay .artist-name,
+        .mob-artists-list .artist-card .artist-overlay .artist-school,
+        .mob-artists-list .artist-card .artist-overlay .artist-trait,
+        .mob-artists-list .artist-card .artist-overlay > div:nth-child(3) {
+            text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.6);
+        }
+    </style>
+    <base target="_blank">
+</head>
+<body class="p-4 md:p-6 custom-scrollbar main-lang-ar light-mode" data-lang="ar"><a href="https://edufiresoft.com/cdn-cgi/content?id=9h.4WwOu9Qb1qPTYmACViFqripyCvOHNW00bHempZEA-1787519171.0051508-1.2.1.1-MpsLkuwSAp_CWwCdVs3WTCyuZmNGSdv8XONAoKr61YzgRu4PUQmkhn6VAI3IPIR5" aria-hidden="true" rel="nofollow noopener" style="display: none !important; visibility: hidden !important"></a>
+
+    <!-- Ambient glows -->
+    <div class="glow-dot" style="width:400px;height:400px;background:rgba(249,115,22,0.12);top:-100px;right:-100px;animation-delay:0s;"></div>
+    <div class="glow-dot" style="width:350px;height:350px;background:rgba(37,99,235,0.08);bottom:-80px;left:-80px;animation-delay:3s;"></div>
+
+    <!-- ===== HEADER ===== -->
+    <div id="header-placeholder"></div>
+
+    <div id="toast"><span id="toastMsg">تم الإجراء بنجاح!</span></div>
+
+    <!-- ===== SCROLL TO TOP BUTTON ===== -->
+    <button id="scrollTopBtn" aria-label="الرجوع للأعلى" title="الرجوع للأعلى">
+        <i class="fas fa-chevron-up"></i>
+        <span class="tooltip">الرجوع للأعلى</span>
+    </button>
+
+    <header class="text-center">
+        <h1 class="font-black tracking-tighter" id="ui-title">Image Assist</h1>
+        <p class="text-slate-400 text-base max-w-2xl mx-auto leading-relaxed" id="ui-desc">حوّل خيالك إلى صور سينمائية فائقة الدقة.</p>
+    </header>
+
+    <!-- Smart Prompt Input -->
+    <section class="max-w-3xl mx-auto mb-6">
+        <div class="prompt-container">
+            <div class="flex items-start gap-3 pt-4 px-4">
+                <i class="fas fa-sparkles text-orange-500 mt-1 text-sm flex-shrink-0"></i>
+                <textarea id="userMainText" rows="2" placeholder="مثال: رائد فضاء يكتشف كهفاً متوهجاً على كوكب المريخ..." maxlength="600"></textarea>
+                <button class="btn-clear-prompt flex-shrink-0 mt-1" onclick="clearPromptInput()" title="مسح"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="prompt-footer">
+                <span class="char-count"><span id="charCount">0</span> / 600</span>
+                <div class="prompt-actions">
+                    <span class="shortcut-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd></span>
+                    <button onclick="generatePrompt()" class="btn-gen-inline" id="ui-btn-gen-inline">
+                        <i class="fas fa-sparkles"></i> <span id="ui-btn-gen-text">إنشاء البرومبت</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Safety warning -->
+        <div class="safety-warning" id="safetyWarning">
+            <div class="safety-header">
+                <i class="fas fa-ban"></i>
+                <div>
+                    <h3 class="safety-title" id="safetyTitle">❌ لا يمكن إنشاء هذه الصورة</h3>
+                </div>
+            </div>
+            <div class="safety-body">
+                <p id="safetyDesc">تم رفض الطلب لأنه يتضمن أو قد يؤدي إلى إنشاء محتوى يخالف سياسة Image Assist.</p>
+                <div class="safety-details" id="safetyDetails">
+                    <p style="font-weight:700;margin-top:8px;font-size:clamp(11px,0.8vw,13px);color:var(--text-muted);">لا يسمح النظام بإنشاء أو الترويج لمحتوى يتضمن:</p>
+                    <ul class="safety-list" id="safetyList">
+                        <li>العري أو الإباحية.</li>
+                        <li>المحتوى الجنسي.</li>
+                        <li>العنف أو الدماء المفرطة.</li>
+                        <li>استغلال الأطفال أو إيذاءهم.</li>
+                        <li>العنف ضد النساء.</li>
+                        <li>الإرهاب أو التطرف.</li>
+                        <li>خطاب الكراهية أو العنصرية.</li>
+                        <li>الشعارات أو الرموز المتطرفة.</li>
+                        <li>المحتوى الشيطاني أو الطقوسي.</li>
+                        <li>الجرائم أو المخدرات.</li>
+                        <li>أي محتوى غير قانوني أو ضار.</li>
+                    </ul>
+                </div>
+                <div class="safety-actions">
+                    <button class="safety-close-btn" id="safetyCloseBtn" onclick="hideSafetyWarning()">
+                        <i class="fas fa-times"></i> إغلاق
+                    </button>
+                    <button class="safety-more-btn" id="safetyMoreBtn" onclick="toggleSafetyDetails()">
+                        <i class="fas fa-chevron-down"></i> <span id="safetyMoreText">المزيد</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Suggestion chips -->
+        <div class="suggestion-chips mt-3" id="suggestionChips">
+            <span class="chip" onclick="insertSuggestion('مدينة عربية مستقبلية')">مدينة عربية مستقبلية</span>
+            <span class="chip" onclick="insertSuggestion('مشهد فرعوني سينمائي')">مشهد فرعوني سينمائي</span>
+            <span class="chip" onclick="insertSuggestion('أنمي بأسلوب جيبلي')">أنمي بأسلوب جيبلي</span>
+            <span class="chip" onclick="insertSuggestion('جبل وقت الغروب')">جبل وقت الغروب</span>
+        </div>
+    </section>
+
+    <!-- Selected Artist + Preset indicator -->
+    <div class="max-w-3xl mx-auto mb-4 flex flex-wrap gap-3 items-center justify-center" id="selectionIndicator"></div>
+
+    <!-- Main Tabs -->
+    <section class="max-w-[1600px] mx-auto">
+        <div class="tab-nav max-w-lg mx-auto mb-8" id="mainTabNav">
+            <button class="tab-btn active" onclick="switchTab('presets')" id="tab-presets" data-dimmed-msg="لاختيار مدرسة فنية، ألغِ القالب أولاً">
+                <i class="fas fa-th-large text-xs"></i> <span id="tab-label-presets">القوالب الجاهزة</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('artists')" id="tab-artists" data-dimmed-msg="لاختيار قالب، ألغِ المدرسة أولاً">
+                <i class="fas fa-palette text-xs"></i> <span id="tab-label-artists">المدارس الفنية</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('manual')" id="tab-manual">
+                <i class="fas fa-sliders-h text-xs"></i> <span id="tab-label-manual">التخصيص اليدوي</span>
+            </button>
+        </div>
+
+        <!-- TAB: PRESETS -->
+        <div id="panel-presets" class="tab-panel active">
+            <div class="glass-card p-5 md:p-8">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <div class="search-wrapper flex-1 min-w-[180px]">
+                        <input type="text" id="presetSearch" class="search-input" placeholder="ابحث في القوالب..." oninput="filterPresets()" />
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <select class="sort-select" id="presetSort" onchange="filterPresets()">
+                        <option value="default" id="sort-default">ترتيب افتراضي</option>
+                        <option value="cinematic" id="sort-cinematic">السينمائي</option>
+                        <option value="realistic" id="sort-realistic">الواقعي</option>
+                        <option value="artistic" id="sort-artistic">الفني</option>
+                    </select>
+                    <div class="flex gap-1">
+                        <div class="layout-btn active" onclick="setPresetLayout('grid')" id="layout-grid" title="Grid"><i class="fas fa-th-large"></i></div>
+                        <div class="layout-btn" onclick="setPresetLayout('masonry')" id="layout-masonry" title="Masonry"><i class="fas fa-stream"></i></div>
+                        <div class="layout-btn" onclick="setPresetLayout('compact')" id="layout-compact" title="Compact"><i class="fas fa-grip-horizontal"></i></div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-6" id="presetTagFilter"></div>
+                <!-- Desktop Presets Grid -->
+                <div id="presetsGrid" class="presets-grid"></div>
+                <!-- Mobile Presets Vertical List -->
+                <div id="mobilePresetsList">
+                    <div id="mobPresetsListContainer" class="mob-presets-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: ARTISTS -->
+        <div id="panel-artists" class="tab-panel">
+            <div class="glass-card p-5 md:p-8">
+                <div class="mb-6">
+                    <p class="text-xs font-bold opacity-60 uppercase tracking-wider mb-3" id="ui-quick-mix-label">مزج سريع للأساليب</p>
+                    <div class="flex flex-wrap gap-2" id="quickMixContainer"></div>
+                </div>
+                <hr class="border-white/10 mb-6">
+                <div class="flex flex-wrap items-center gap-3 mb-5">
+                    <div class="search-wrapper flex-1 min-w-[200px]">
+                        <input type="text" id="artistSearch" class="search-input" placeholder="ابحث عن مدرسة فنية..." oninput="filterArtists()" />
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div class="category-filter" id="artistCategoryFilter"></div>
+                <!-- Desktop Artists Grid -->
+                <div id="artistsGrid" class="artists-grid"></div>
+                <!-- Mobile Artists Vertical List -->
+                <div id="mobileArtistsList">
+                    <div id="mobArtistsListContainer" class="mob-artists-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: MANUAL -->
+        <div id="panel-manual" class="tab-panel">
+            <div class="glass-card p-5 md:p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/20">
+                        <i class="fas fa-sliders-h text-white text-base"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black" id="ui-builder-title">تخصيص الصورة</h2>
+                        <p class="text-xs text-slate-500" id="ui-builder-desc">اختر تفاصيل الكاميرا والإضاءة بدقة</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5" id="builderOptions"></div>
+                <div class="mt-8 flex flex-col sm:flex-row gap-3 items-center justify-center">
+                    <button onclick="generatePrompt()" class="btn-shine bg-orange-600 hover:bg-orange-500 text-white px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg w-full sm:w-auto justify-center" id="ui-btn-gen">
+                        <i class="fas fa-sparkles"></i> <span id="ui-btn-gen-label">إنشاء البرومبت</span>
+                    </button>
+                    <button onclick="resetAll()" class="bg-slate-500/10 hover:bg-slate-500/20 text-inherit px-6 py-3 rounded-xl font-bold transition-all w-full sm:w-auto text-sm" id="ui-btn-reset">إعادة تعيين الكل</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULT SECTION -->
+        <div id="resultSection" class="mt-8 hidden max-w-[1600px] mx-auto result-section-wrapper">
+            <div class="glass-card p-6 border-orange-500/40 bg-orange-600/5 relative overflow-hidden">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                        <span class="font-bold text-sm" id="ui-result-label">البرومبت النهائي</span>
+                    </div>
+                    <div id="safetyBadgeContainer"></div>
+                </div>
+                <div id="finalPromptDisplay" class="result-editable mb-4">...</div>
+                <div class="flex flex-wrap gap-3 mt-4 result-actions">
+                    <button onclick="copyResult()" class="flex-1 bg-orange-600 text-white hover:bg-orange-700 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm" id="ui-btn-copy">
+                        <i class="fas fa-copy"></i> <span id="ui-btn-copy-text">نسخ النص</span>
+                    </button>
+                    <button onclick="downloadTXT()" class="bg-slate-500/15 hover:bg-slate-500/25 text-inherit py-3 px-5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm">
+                        <i class="fas fa-download"></i> TXT
+                    </button>
+                    <button onclick="downloadJSON()" class="bg-slate-500/15 hover:bg-slate-500/25 text-inherit py-3 px-5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm">
+                        <i class="fas fa-code"></i> JSON
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer-tools">
+        <span class="lang-ar-only">© 2026 Edufiresoft — جميع الحقوق محفوظة</span>
+        <span class="lang-en-only">© 2026 Edufiresoft — All Rights Reserved</span>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <div id="mobileBottomNav">
+        <button class="mob-nav-item active" id="mobnav-presets" onclick="mobileSwitchTab('presets')" data-dimmed-msg="ألغِ المدرسة أولاً">
+            <i class="fas fa-th-large"></i>
+            <span id="mobnav-label-presets">القوالب</span>
+        </button>
+        <button class="mob-nav-item" id="mobnav-artists" onclick="mobileSwitchTab('artists')" data-dimmed-msg="ألغِ القالب أولاً">
+            <i class="fas fa-palette"></i>
+            <span id="mobnav-label-artists">المدارس</span>
+        </button>
+        <button class="mob-nav-item" id="mobnav-manual" onclick="mobileSwitchTab('manual')">
+            <i class="fas fa-sliders-h"></i>
+            <span id="mobnav-label-manual">تخصيص</span>
+        </button>
+    </div>
+
+    <script>
+        // ============================================================
+        // SCROLL TO TOP BUTTON
+        // ============================================================
+        (function initScrollTop() {
+            const btn = document.getElementById('scrollTopBtn');
+            let isVisible = false;
+            let timeoutId = null;
+
+            function checkScroll() {
+                const scrollY = window.scrollY || window.pageYOffset;
+                const threshold = 300;
+                if (scrollY > threshold && !isVisible) {
+                    isVisible = true;
+                    btn.classList.add('visible');
+                } else if (scrollY <= threshold && isVisible) {
+                    isVisible = false;
+                    btn.classList.remove('visible');
+                }
+            }
+
+            function scrollToTop() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const header = document.querySelector('header');
+                if (header) {
+                    setTimeout(() => {
+                        header.setAttribute('tabindex', '-1');
+                        header.focus({ preventScroll: true });
+                        header.removeAttribute('tabindex');
+                    }, 400);
+                }
+            }
+
+            function throttledCheck() {
+                if (timeoutId) cancelAnimationFrame(timeoutId);
+                timeoutId = requestAnimationFrame(checkScroll);
+            }
+
+            window.addEventListener('scroll', throttledCheck, { passive: true });
+            window.addEventListener('resize', throttledCheck, { passive: true });
+            btn.addEventListener('click', scrollToTop);
+            setTimeout(checkScroll, 200);
+        })();
+
+        // ============================================================
+        // TRANSLATION SYSTEM
+        // ============================================================
+        const UI_STRINGS = {
+            ar: {
+                title: "Image Assist",
+                desc: "حوّل خيالك إلى صور سينمائية فائقة الدقة.",
+                placeholder: "مثال: رائد فضاء يكتشف كهفاً متوهجاً على كوكب المريخ...",
+                builderTitle: "تخصيص الصورة",
+                builderDesc: "اختر تفاصيل الكاميرا والإضاءة بدقة",
+                btnGen: "إنشاء البرومبت",
+                btnReset: "إعادة تعيين الكل",
+                btnCopy: "نسخ النص",
+                resultLabel: "البرومبت النهائي",
+                btnApply: "تطبيق القالب",
+                toastCopy: "تم النسخ بنجاح!",
+                toastApply: "تم تطبيق القالب!",
+                toastArtist: "تم اختيار المدرسة الفنية!",
+                other: "إدخال يدوي...",
+                tabPresets: "القوالب الجاهزة",
+                tabArtists: "المدارس الفنية",
+                tabManual: "التخصيص اليدوي",
+                searchPresets: "ابحث في القوالب...",
+                searchArtists: "ابحث عن مدرسة فنية...",
+                sortDefault: "ترتيب افتراضي",
+                sortCinematic: "السينمائي",
+                sortRealistic: "الواقعي",
+                sortArtistic: "الفني",
+                quickMixLabel: "مزج سريع للأساليب",
+                safetyTitle: "❌ لا يمكن إنشاء هذه الصورة",
+                safetyDesc: "تم رفض الطلب لأنه يتضمن محتوى يخالف سياسة Image Assist.",
+                safetyList: ["العري أو الإباحية.", "المحتوى الجنسي.", "العنف أو الدماء المفرطة.", "استغلال الأطفال أو إيذاءهم.", "العنف ضد النساء.", "الإرهاب أو التطرف.", "خطاب الكراهية أو العنصرية.", "الشعارات أو الرموز المتطرفة.", "المحتوى الشيطاني أو الطقوسي.", "الجرائم أو المخدرات.", "أي محتوى غير قانوني أو ضار."],
+                suggestions: ["مدينة عربية مستقبلية", "مشهد فرعوني سينمائي", "أنمي بأسلوب جيبلي", "جبل وقت الغروب"],
+                labels: {
+                    time: "الزمن", light: "الإضاءة", weather: "الطقس", mood: "المزاج",
+                    camera: "الكاميرا", lens: "العدسة", angle: "الزاوية", detail: "التفاصيل",
+                    expression: "التعبير", clothing: "الملابس", environment: "المكان", action: "الحركة", quality: "الجودة", advanced: "إضافات"
+                },
+                categories: { time: "⏰ الوقت", light: "💡 الإضاءة", weather: "🌤️ الطقس", mood: "🎬 الأسلوب السينمائي", camera: "📷 الكاميرا", lens: "🔍 العدسة", angle: "📐 زاوية التصوير", expression: "😊 تعبيرات الوجه", clothing: "👔 الملابس", environment: "🏙️ المكان", action: "🚶 الحركة", quality: "🎨 جودة الصورة", advanced: "🧩 إضافات احترافية" },
+                scrollTop: "الرجوع للأعلى",
+                copied: "تم النسخ"
+            },
+            en: {
+                title: "Image Assist",
+                desc: "Bring imagination to life with cinematic realism.",
+                placeholder: "Example: An astronaut discovering a glowing cave on Mars...",
+                builderTitle: "Customize the image",
+                builderDesc: "Precisely select camera and lighting details",
+                btnGen: "Generate Prompt",
+                btnReset: "Reset Everything",
+                btnCopy: "Copy Prompt",
+                resultLabel: "Final Prompt",
+                btnApply: "Apply Preset",
+                toastCopy: "Copied to clipboard!",
+                toastApply: "Preset applied!",
+                toastArtist: "Art school selected!",
+                other: "Custom input...",
+                tabPresets: "Presets",
+                tabArtists: "Art Schools",
+                tabManual: "Manual",
+                searchPresets: "Search presets...",
+                searchArtists: "Search art schools...",
+                sortDefault: "Default",
+                sortCinematic: "Cinematic",
+                sortRealistic: "Realistic",
+                sortArtistic: "Artistic",
+                quickMixLabel: "Quick Style Mixes",
+                safetyTitle: "❌ Cannot generate this image",
+                safetyDesc: "The request has been rejected because it contains content that violates Image Assist policy.",
+                safetyList: ["Nudity or pornography.", "Sexual content.", "Excessive violence or gore.", "Child exploitation or abuse.", "Violence against women.", "Terrorism or extremism.", "Hate speech or racism.", "Extremist symbols or logos.", "Satanic or ritualistic content.", "Crimes or drugs.", "Any illegal or harmful content."],
+                suggestions: ["Futuristic Arab City", "Cinematic Pharaonic Scene", "Anime in Ghibli Style", "Golden Sunset"],
+                labels: {
+                    time: "Time", light: "Lighting", weather: "Weather", mood: "Mood",
+                    camera: "Camera", lens: "Lens", angle: "Angle", detail: "Details",
+                    expression: "Expression", clothing: "Clothing", environment: "Environment", action: "Action", quality: "Quality", advanced: "Advanced"
+                },
+                categories: { time: "⏰ Time", light: "💡 Lighting", weather: "🌤️ Weather", mood: "🎬 Cinematic Style", camera: "📷 Camera", lens: "🔍 Lens", angle: "📐 Angle", expression: "😊 Expression", clothing: "👔 Clothing", environment: "🏙️ Environment", action: "🚶 Action", quality: "🎨 Quality", advanced: "🧩 Advanced" },
+                scrollTop: "Back to Top",
+                copied: "Copied!"
+            }
+        };
+
+        let currentLang = localStorage.getItem('preferredLanguage') || 'ar';
+        let currentTab = 'presets';
+        let selectedArtistId = null;
+        let selectedPresetIndex = null;
+        let favoritePresets = JSON.parse(localStorage.getItem('favPresets') || '[]');
+        let presetUseCounts = JSON.parse(localStorage.getItem('presetUse') || '{}');
+        let currentPresetFilter = 'all';
+        let currentPresetLayout = 'grid';
+        let currentArtistCategory = 'all';
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function getUIS() { return UI_STRINGS[currentLang] || UI_STRINGS.ar; }
+
+        function updateDirection() {
+            const html = document.getElementById('mainHtml');
+            html.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            html.lang = currentLang;
+            document.body.classList.remove('ar', 'en', 'main-lang-ar', 'main-lang-en');
+            document.body.classList.add(`main-lang-${currentLang}`);
+            document.body.classList.add(currentLang);
+            document.body.setAttribute('data-lang', currentLang);
+            const tooltip = document.querySelector('#scrollTopBtn .tooltip');
+            if (tooltip) tooltip.textContent = getUIS().scrollTop;
+        }
+
+        function isMobile() { return window.innerWidth <= 768; }
+        function isTablet() { return window.innerWidth > 768 && window.innerWidth <= 1024; }
+
+        // ============================================================
+        // HEADER EVENTS
+        // ============================================================
+        document.addEventListener('header:languageChanged', (e) => {
+            currentLang = e.detail.lang;
+            localStorage.setItem('preferredLanguage', currentLang);
+            updateUIText();
+            initBuilder();
+            renderPresets();
+            renderArtists(currentArtistCategory, '');
+            renderQuickMixes();
+            updateMobileNavLabels();
+            updateDirection();
+        });
+
+        document.addEventListener('header:darkModeChanged', (e) => {
+            document.body.classList.remove('light-mode', 'dark-mode');
+            document.body.classList.add(e.detail.darkMode ? 'dark-mode' : 'light-mode');
+            localStorage.setItem('darkMode', e.detail.darkMode ? 'true' : 'false');
+        });
+
+        // ============================================================
+        // OPTIONS DATA
+        // ============================================================
+        const optionsData = {
+            time: { 
+                ar: ["الفجر الهادئ","شروق الشمس","صباح مبكر","صباح مشمس","منتصف النهار","ظهيرة حارة","العصر الذهبي","قبل الغروب","الغروب السينمائي","الساعة الذهبية","الساعة الزرقاء","المساء","ليل مبكر","منتصف الليل","ليل ممطر","فجر ضبابي"],
+                en: ["Quiet Dawn","Sunrise","Early Morning","Sunny Morning","Midday","Hot Afternoon","Golden Afternoon","Before Sunset","Cinematic Sunset","Golden Hour","Blue Hour","Evening","Early Night","Midnight","Rainy Night","Foggy Dawn"]
+            },
+            light: { 
+                ar: ["إضاءة دافئة ناعمة","إضاءة ذهبية","إضاءة حارة قوية","إضاءة باردة زرقاء","إضاءة سينمائية منخفضة","إضاءة نيون حضرية","ضوء قمر طبيعي","إضاءة جانبية ناعمة","إضاءة خلفية درامية","إضاءة نافذة طبيعية","ظلال قوية واقعية","إضاءة منتشرة ناعمة","إضاءة شارع قديم","إضاءة مصابيح زيتية","إضاءة شموع","إضاءة ضبابية حالمة","إضاءة مطر ليلية","إضاءة استوديو واقعية","إضاءة عالية التباين","إضاءة فيلم نوير"],
+                en: ["Soft Warm Light","Golden Light","Strong Warm Light","Cool Blue Light","Low Cinematic Light","Urban Neon Light","Natural Moonlight","Soft Side Light","Dramatic Backlight","Natural Window Light","Realistic Hard Shadows","Soft Diffused Light","Old Street Light","Oil Lamp Light","Candlelight","Dreamy Fog Light","Night Rain Light","Realistic Studio Light","High Contrast Light","Film Noir Light"]
+            },
+            weather: { 
+                ar: ["طقس مشمس صافٍ","سماء غائمة","غيوم كثيفة","ضباب خفيف","ضباب كثيف","مطر خفيف","مطر غزير","بعد المطر","عاصفة رملية","رياح قوية","أجواء رطبة","دخان المدينة","أجواء شتوية باردة","حرارة صيفية"],
+                en: ["Clear Sunny","Cloudy Sky","Thick Clouds","Light Fog","Heavy Fog","Light Rain","Heavy Rain","After Rain","Sandstorm","Strong Wind","Humid Atmosphere","City Smoke","Cold Winter","Summer Heat"]
+            },
+            mood: { 
+                ar: ["واقعي جدًا","فيلم قديم","سينما هوليوودية","فيلم نوير","وثائقي","دراما تاريخية","رومانسي","غامض","سوداوي","ملحمي","حالم","نوستالجيا","خام Raw Photo","Minimal cinematic","Vintage Kodak","Retro film grain","Modern cinematic","Dark atmosphere"],
+                en: ["Hyper Realistic","Old Film","Hollywood Cinema","Film Noir","Documentary","Historical Drama","Romantic","Mysterious","Melancholic","Epic","Dreamy","Nostalgia","Raw Photo","Minimal Cinematic","Vintage Kodak","Retro Film Grain","Modern Cinematic","Dark Atmosphere"]
+            },
+            camera: { ar: ["Sony A7R IV","Canon EOS R5","Nikon Z9","Fujifilm GFX100","Leica M11","ARRI Alexa Mini","RED Komodo","Hasselblad X2D"], en: ["Sony A7R IV","Canon EOS R5","Nikon Z9","Fujifilm GFX100","Leica M11","ARRI Alexa Mini","RED Komodo","Hasselblad X2D"] },
+            lens: { ar: ["24mm واسعة جدًا","35mm طبيعية سينمائية","50mm واقعية كلاسيكية","85mm بورتريه احترافي","135mm عزل قوي","Telephoto cinematic","Wide angle dramatic"], en: ["24mm Ultra Wide","35mm Cinematic Normal","50mm Classic Realistic","85mm Professional Portrait","135mm Strong Isolation","Telephoto Cinematic","Wide Angle Dramatic"] },
+            angle: { ar: ["Eye-level طبيعي","Low angle بطولي","High angle علوي","Over the shoulder","لقطة قريبة جدًا","لقطة متوسطة","لقطة واسعة","لقطة شارع عفوية","لقطة وثائقية","لقطة مراقبة خفية","Dutch angle درامي","Symmetrical framing","Center composition"], en: ["Eye-level Natural","Low angle Heroic","High angle Top","Over the Shoulder","Extreme Close-up","Medium Shot","Wide Shot","Street Candid","Documentary Shot","Surveillance Shot","Dutch Angle Dramatic","Symmetrical Framing","Center Composition"] },
+            expression: { ar: ["نظرة حادة","هادئ ومتأمل","ابتسامة خفيفة","مرهق","غاضب","حزين","غامض","واثق","قلق","شارد الذهن","سعيد","مذهول"], en: ["Sharp Look","Calm Thoughtful","Light Smile","Tired","Angry","Sad","Mysterious","Confident","Worried","Distracted","Happy","Amazed"] },
+            clothing: { ar: ["بدلة كلاسيكية","جلباب مصري","ملابس عمالية","طربوش عثماني","قبعة أوروبية قديمة","معطف طويل","ملابس ملكية","ملابس شعبية","زي ثلاثينيات فاخر","ملابس بسيطة متعبة"], en: ["Classic Suit","Egyptian Galabia","Work Clothes","Ottoman Tarboosh","Old European Hat","Long Coat","Royal Clothes","Folk Costume","Luxury 1930s Costume","Simple Tired Clothes"] },
+            environment: { ar: ["شارع في القاهرة القديمة","خان الخليلي","مقهى شعبي","محطة قطار قديمة","زقاق ضيق","سطح مبنى","سوق مزدحم","شارع فارغ","حي أوروبي قديم","ميناء قديم","أمام مسجد تاريخي","داخل ترام قديم"], en: ["Old Cairo Street","Khan el-Khalili","Local Cafe","Old Train Station","Narrow Alley","Rooftop","Crowded Market","Empty Street","Old European Quarter","Old Port","In front of Historic Mosque","Inside Old Tram"] },
+            action: { ar: ["يقف وينظر للكاميرا","يمشي بسرعة","يجلس في مقهى","يشعل سيجارة","يقرأ جريدة","يتحدث مع بائع","يعبر الشارع","يراقب الناس","يركض تحت المطر","يستند إلى الحائط"], en: ["Standing Looking at Camera","Walking Fast","Sitting in Cafe","Lighting a Cigarette","Reading Newspaper","Talking to Vendor","Crossing Street","Watching People","Running in Rain","Leaning on Wall"] },
+            quality: { ar: ["Ultra realistic","Hyper realistic","Raw photography","High detail skin texture","Natural colors","Film grain subtle","Sharp focus","Soft focus cinematic","HDR realistic","Authentic imperfections","No oversaturation","Realistic shadows"], en: ["Ultra realistic","Hyper realistic","Raw photography","High detail skin texture","Natural colors","Film grain subtle","Sharp focus","Soft focus cinematic","HDR realistic","Authentic imperfections","No oversaturation","Realistic shadows"] },
+            advanced: { ar: ["انعكاسات المطر","دخان خفيف","غبار الهواء","ازدحام المدينة","سيارات قديمة","ترام ثلاثينيات","لافتات عربية قديمة","أوراق متطايرة","إضاءة نيون","قطة تمر في الخلفية","أشخاص ضبابيون بالخلفية","Bokeh lights","Depth of field","Motion blur subtle","Atmospheric perspective"], en: ["Rain Reflections","Light Smoke","Air Dust","City Crowd","Old Cars","1930s Tram","Old Arabic Signs","Flying Leaves","Neon Light","Cat Passing in Background","Blurry People in Background","Bokeh Lights","Depth of Field","Subtle Motion Blur","Atmospheric Perspective"] }
+        };
+
+        // ============================================================
+        // PRESETS DB - تصنيفات محدثة بدون تكرار
+        // ============================================================
+        const presetsDB = [
+            { 
+                id:"01", 
+                title:{ar:"Hollywood Noir",en:"Hollywood Noir"}, 
+                tags:{ar:["غامض"],en:["Mysterious"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1536440136628-849c177e76a1", 
+                quality:95, 
+                data:{time:{ar:"منتصف الليل",en:"Midnight"},light:{ar:"إضاءة فيلم نوار",en:"Film noir lighting"},weather:{ar:"مطر غزير",en:"Heavy rain"},mood:{ar:"أجواء غامضة",en:"Mysterious atmosphere"},lens:{en:"35mm cinematic"},camera:{en:"Sony A7R IV"},angle:{ar:"مستوى العين",en:"Eye-level shot"},detail:{ar:"انعكاسات المطر، سيارات قديمة، ظلال درامية",en:"Rain reflections, vintage cars, dramatic shadows"},base:{ar:"محقق يرتدي معطفاً يقف في شارع مظلم",en:"A detective in a trench coat standing in a dark street"}}
+            },
+            { 
+                id:"02", 
+                title:{ar:"Cairo 1930s",en:"Cairo 1930s"}, 
+                tags:{ar:["تاريخي"],en:["Historical"]}, 
+                type:"realistic", 
+                img:"https://images.unsplash.com/photo-1553913861-c0fddf2619ee", 
+                quality:90, 
+                data:{time:{ar:"الساعة الذهبية",en:"Golden hour"},light:{ar:"ضوء طبيعي دافئ",en:"Warm natural light"},weather:{ar:"صافي",en:"Clear"},mood:{ar:"حنين",en:"Nostalgic"},lens:{en:"50mm classic"},camera:{en:"Leica M11"},angle:{ar:"لقطة عفوية",en:"Street candid"},detail:{ar:"سيارات قديمة، لافتات عربية قديمة، مبانٍ تاريخية",en:"Vintage cars, old arabic signs, historic buildings"},base:{ar:"شارع مصري قديم في الثلاثينيات مع عمارة عريقة",en:"Ancient Egyptian street in the 1930s with historic architecture"}}
+            },
+            { 
+                id:"03", 
+                title:{ar:"Cyberpunk Tokyo",en:"Cyberpunk Tokyo"}, 
+                tags:{ar:["خيال علمي"],en:["Sci-Fi"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1542641728-6ca359b085f4", 
+                quality:92, 
+                data:{time:{ar:"ليل متأخر",en:"Late night"},light:{ar:"توهج نيون",en:"Neon glow"},weather:{ar:"شوارع مبللة",en:"Wet streets"},mood:{ar:"مستقبلي",en:"Futuristic"},lens:{en:"24mm wide"},camera:{en:"Sony A7R IV"},angle:{ar:"زاوية منخفضة",en:"Low angle"},detail:{ar:"انعكاسات النيون، أفق المدينة المستقبلي، ضباب",en:"Neon reflections, cyberpunk cityscape, fog"},base:{ar:"شوارع طوكيو المستقبلية المليئة بأضواء النيون",en:"Futuristic Tokyo streets filled with neon lights"}}
+            },
+            { 
+                id:"04", 
+                title:{ar:"Desert Epic",en:"Desert Epic"}, 
+                tags:{ar:["ملحمي"],en:["Epic"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1509316785289-025f54846b43", 
+                quality:88, 
+                data:{time:{ar:"غروب",en:"Sunset"},light:{ar:"ضوء درامي ذهبي",en:"Golden dramatic light"},weather:{ar:"جاف وصافٍ",en:"Dry and clear"},mood:{ar:"مغامرة ملحمية",en:"Epic adventure"},lens:{en:"35mm cinematic"},camera:{en:"Canon EOS R5"},angle:{ar:"لقطة واسعة",en:"Wide landscape"},detail:{ar:"كثبان رملية، غبار، سحب ملحمية",en:"Sand dunes, dust, epic clouds"},base:{ar:"محارب وحيد يسير وسط كثبان رملية",en:"A lone warrior walking through endless sand dunes"}}
+            },
+            { 
+                id:"05", 
+                title:{ar:"Post-Apocalyptic",en:"Post-Apocalyptic"}, 
+                tags:{ar:["خيال علمي"],en:["Sci-Fi"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1478720568477-152d9b164e26", 
+                quality:85, 
+                data:{time:{ar:"نهار غائم",en:"Overcast day"},light:{ar:"ضوء مشتت حاد",en:"Harsh diffused light"},weather:{ar:"مغبر ومدخن",en:"Dusty, smoky"},mood:{ar:"بقاء",en:"Survival"},lens:{en:"24mm wide"},camera:{en:"RED Komodo"},angle:{ar:"زاوية منخفضة",en:"Low angle"},detail:{ar:"أنقاض، حطام، دخان",en:"Ruins, debris, smoke"},base:{ar:"مدينة مهجورة ومدمرة يكسوها الغبار",en:"An abandoned and destroyed city covered in dust"}}
+            },
+            { 
+                id:"06", 
+                title:{ar:"Ancient Egyptian Art",en:"Ancient Egyptian Art"}, 
+                tags:{ar:["تاريخي"],en:["Historical"]}, 
+                type:"artistic", 
+                img:"https://images.unsplash.com/photo-1503177119275-0aa32b3a9368", 
+                quality:91, 
+                data:{time:{ar:"ضوء النهار",en:"Daylight"},light:{ar:"ضوء دافئ قوي",en:"Strong warm light"},weather:{ar:"صحراوي صافي",en:"Clear desert"},mood:{ar:"أسطوري",en:"Mythical"},lens:{en:"35mm cinematic"},camera:{en:"Sony A7R IV"},angle:{ar:"متناظر",en:"Symmetrical"},detail:{ar:"هيروغليفية، تماثيل، أهرامات",en:"Hieroglyphs, statues, pyramids"},base:{ar:"مدخل معبد فرعوني مهيب مع تماثيل ضخمة",en:"Majestic pharaonic temple entrance with massive statues"}}
+            },
+            { 
+                id:"07", 
+                title:{ar:"Urban Graffiti",en:"Urban Graffiti"}, 
+                tags:{ar:["فني"],en:["Artistic"]}, 
+                type:"realistic", 
+                img:"https://images.unsplash.com/photo-1517466787919-ec65d493166d", 
+                quality:80, 
+                data:{time:{ar:"نهاراً",en:"Day"},light:{ar:"تباين طبيعي",en:"Natural contrast"},weather:{ar:"صافي",en:"Clear"},mood:{ar:"طاقة وحيوية",en:"Energetic"},lens:{en:"35mm street"},camera:{en:"Fujifilm GFX100"},angle:{ar:"لقطة عفوية",en:"Candid street shot"},detail:{ar:"جدار جرافيتي، فن شوارع",en:"Graffiti wall, street art, urban vibe"},base:{ar:"زاوية شارع مليئة بالجرافيتي الملون",en:"A street corner filled with colorful graffiti"}}
+            },
+            { 
+                id:"08", 
+                title:{ar:"Wild West",en:"Wild West"}, 
+                tags:{ar:["تاريخي","واقعي"],en:["Historical","Realistic"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1533240332313-0db36245e4a2", 
+                quality:87, 
+                data:{time:{ar:"غروب",en:"Sunset"},light:{ar:"درامي دافئ",en:"Warm dramatic"},weather:{ar:"جاف ومغبر",en:"Dry, dusty"},mood:{ar:"وسترن كلاسيك",en:"Classic western"},lens:{en:"50mm classic"},camera:{en:"Canon EOS R5"},angle:{ar:"زاوية منخفضة",en:"Low angle"},detail:{ar:"كاوبوي، خيول، غبار",en:"Cowboys, horses, dust, old west town"},base:{ar:"بلدة غرب قديمة وقت الغروب",en:"Old west town at sunset with a cowboy"}}
+            },
+            { 
+                id:"09", 
+                title:{ar:"Old Masters Art",en:"Old Masters Art"}, 
+                tags:{ar:["فني","كلاسيكي"],en:["Artistic","Classic"]}, 
+                type:"artistic", 
+                img:"https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5", 
+                quality:93, 
+                data:{time:{ar:"داخلي",en:"Indoor"},light:{ar:"ضوء شموع",en:"Candlelight"},weather:{ar:"غير متاح",en:"N/A"},mood:{ar:"خالد",en:"Timeless"},lens:{en:"50mm"},camera:{en:"Hasselblad X2D"},angle:{ar:"بورتريه",en:"Portrait"},detail:{ar:"أسلوب اللوحات الزيتية، قوام غني",en:"Oil painting style, rich textures, chiaroscuro"},base:{ar:"شخصية غامضة من القرن السابع عشر بأسلوب فني",en:"A mysterious 17th-century figure in artistic style"}}
+            },
+            { 
+                id:"10", 
+                title:{ar:"Origami Paper Art",en:"Origami Paper Art"}, 
+                tags:{ar:["فني","بسيط"],en:["Artistic","Minimal"]}, 
+                type:"artistic", 
+                img:"https://images.unsplash.com/photo-1586075010923-2dd4570fb338", 
+                quality:78, 
+                data:{time:{ar:"استوديو",en:"Studio"},light:{ar:"مشتت ناعم",en:"Soft diffused"},weather:{ar:"غير متاح",en:"N/A"},mood:{ar:"بسيط",en:"Minimal"},lens:{en:"85mm macro"},camera:{en:"Fujifilm GFX100"},angle:{ar:"لقطة قريبة",en:"Close-up"},detail:{ar:"قوام الأوريغامي، خلفية نظيفة",en:"Origami texture, clean background, soft shadows"},base:{ar:"تنين مصنوع من ورق الأوريغامي",en:"A meticulously crafted origami dragon"}}
+            },
+            { 
+                id:"11", 
+                title:{ar:"Carnival Scene",en:"Carnival Scene"}, 
+                tags:{ar:["مشرق"],en:["Bright"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1513151233558-d860c5398176", 
+                quality:82, 
+                data:{time:{ar:"ليلاً",en:"Night"},light:{ar:"ألوان نيون صناعية",en:"Colorful lights"},weather:{ar:"صافي",en:"Clear"},mood:{ar:"مرح",en:"Joyful"},lens:{en:"35mm wide"},camera:{en:"Canon EOS R5"},angle:{ar:"لقطة واسعة",en:"Wide shot"},detail:{ar:"عجلة دوارة، أضواء، حشود",en:"Ferris wheel, lights, crowd, vibrant colors"},base:{ar:"مدينة ملاهي ليلاً مع عجلة فيريس ضخمة",en:"A night amusement park with a massive colorful Ferris wheel"}}
+            },
+            { 
+                id:"12", 
+                title:{ar:"Retro Game Art",en:"Retro Game Art"}, 
+                tags:{ar:["فني"],en:["Artistic"]}, 
+                type:"artistic", 
+                img:"https://images.unsplash.com/photo-1493711662062-fa541adb3fc8", 
+                quality:75, 
+                data:{time:{ar:"غير متاح",en:"N/A"},light:{ar:"إضاءة بكسل",en:"Pixel style"},weather:{ar:"غير متاح",en:"N/A"},mood:{ar:"حنين",en:"Nostalgic"},lens:{en:"N/A"},camera:{en:"N/A"},angle:{ar:"عرض جانبي",en:"Side view"},detail:{ar:"فن البكسل، 8-bit، ألوان ريترو",en:"Pixel art, 8-bit, retro colors, game style"},base:{ar:"مشهد غابة خيالية بأسلوب ألعاب الـ 8 بت",en:"A fantasy forest scene in 8-bit game style"}}
+            },
+            { 
+                id:"13", 
+                title:{ar:"Action Figure",en:"Action Figure"}, 
+                tags:{ar:["خيال علمي","حيوي"],en:["Sci-Fi","Dynamic"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64", 
+                quality:83, 
+                data:{time:{ar:"استوديو",en:"Studio"},light:{ar:"ضوء دافئ قوي",en:"Dramatic"},weather:{ar:"غير متاح",en:"N/A"},mood:{ar:"طاقة وحيوية",en:"Action"},lens:{en:"85mm"},camera:{en:"Sony A7R IV"},angle:{ar:"زاوية منخفضة",en:"Low angle"},detail:{ar:"مجسم بوضعية قتالية، عمق ميدان ضحل",en:"Action figure, dramatic pose, shallow DOF"},base:{ar:"مجسم لبطل خارق في وضعية طيران ملحمية",en:"An action figure of a superhero in an epic flying pose"}}
+            },
+            { 
+                id:"14", 
+                title:{ar:"Greek Mythology",en:"Greek Mythology"}, 
+                tags:{ar:["ملحمي"],en:["Epic"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1555400038-63f5ba517a47", 
+                quality:90, 
+                data:{time:{ar:"ضوء النهار",en:"Daylight"},light:{ar:"درامي دافئ",en:"Dramatic clouds"},weather:{ar:"عاصف",en:"Stormy"},mood:{ar:"أسطوري",en:"Mythic"},lens:{en:"35mm cinematic"},camera:{en:"Canon EOS R5"},angle:{ar:"زاوية منخفضة",en:"Low angle"},detail:{ar:"آلهة، صواعق، يونان قديمة",en:"Gods, lightning, ancient greece, epic scale"},base:{ar:"تمثال مهيب لزيوس وسط عاصفة رعدية",en:"A majestic statue of Zeus amidst a lightning storm on Mount Olympus"}}
+            },
+            { 
+                id:"15", 
+                title:{ar:"Underground Cityscape",en:"Underground Cityscape"}, 
+                tags:{ar:["غامض"],en:["Mysterious"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1514565131-fce0801e5785", 
+                quality:86, 
+                data:{time:{ar:"ليلاً",en:"Night"},light:{ar:"ألوان نيون صناعية",en:"Neon & artificial"},weather:{ar:"ضبابي",en:"Foggy"},mood:{ar:"غامض",en:"Mysterious"},lens:{en:"24mm wide"},camera:{en:"Sony A7R IV"},angle:{ar:"لقطة واسعة",en:"Wide shot"},detail:{ar:"نفق تحت الأرض، جرافيتي، أضواء نيون",en:"Underground tunnel, graffiti, neon lights, reflections"},base:{ar:"قبو سري في مدينة مستقبلية مليء بالشاشات",en:"A secret bunker in a futuristic city filled with screens"}}
+            },
+            { 
+                id:"16", 
+                title:{ar:"Dreamscape",en:"Dreamscape"}, 
+                tags:{ar:["فني","حالم"],en:["Artistic","Dreamy"]}, 
+                type:"artistic", 
+                img:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23", 
+                quality:84, 
+                data:{time:{ar:"وقت سحري",en:"Magical hour"},light:{ar:"إضاءة سريالية ناعمة",en:"Soft surreal light"},weather:{ar:"غيوم حالمة",en:"Dreamy clouds"},mood:{ar:"حالم",en:"Dreamy"},lens:{en:"35mm"},camera:{en:"Fujifilm GFX100"},angle:{ar:"لقطة واسعة",en:"Wide shot"},detail:{ar:"عالم أحلام، أجسام طافية، نغمات ناعمة",en:"Dream world, floating objects, soft tones"},base:{ar:"جزيرة طائرة وسط سحب وردية سريالية",en:"A flying island amidst surreal pink clouds"}}
+            },
+            { 
+                id:"17", 
+                title:{ar:"Mecha Suit",en:"Mecha Suit"}, 
+                tags:{ar:["خيال علمي","آلي"],en:["Sci-Fi","Mechanical"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d", 
+                quality:88, 
+                data:{time:{ar:"نهاراً",en:"Day"},light:{ar:"ضوء مشتت حاد",en:"Harsh"},weather:{ar:"مغبر ومدخن",en:"Smoky"},mood:{ar:"مستقبلي",en:"Futuristic"},lens:{en:"24mm wide"},camera:{en:"RED Komodo"},angle:{ar:"زاوية منخفضة",en:"Low angle"},detail:{ar:"روبوت عملاق، شرارات، معدني",en:"Giant robot, sparks, metallic, futuristic warzone"},base:{ar:"آلي ضخم في وضعية صيانة داخل مرآب تكنولوجي",en:"A massive mech in maintenance mode inside a high-tech hangar"}}
+            },
+            { 
+                id:"18", 
+                title:{ar:"Abstract Expressionism",en:"Abstract Expressionism"}, 
+                tags:{ar:["فني","تجريدي"],en:["Artistic","Abstract"]}, 
+                type:"artistic", 
+                img:"https://images.unsplash.com/photo-1541701494587-cb58502866ab", 
+                quality:79, 
+                data:{time:{ar:"غير متاح",en:"N/A"},light:{ar:"إضاءة استوديو",en:"Studio"},weather:{ar:"غير متاح",en:"N/A"},mood:{ar:"إبداعي",en:"Creative"},lens:{en:"N/A"},camera:{en:"N/A"},angle:{ar:"عرض مسطح",en:"Flat view"},detail:{ar:"لوحة تجريدية، ضربات فرشاة، ألوان حيوية",en:"Abstract painting, brush strokes, vibrant colors"},base:{ar:"دوامة من الألوان المتفجرة تعبر عن الغضب",en:"A swirl of exploding colors representing anger"}}
+            },
+            { 
+                id:"19", 
+                title:{ar:"Supernatural Character",en:"Supernatural Character"}, 
+                tags:{ar:["غامض"],en:["Mysterious"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1519074002996-a69e7ac46a42", 
+                quality:87, 
+                data:{time:{ar:"منتصف الليل",en:"Midnight"},light:{ar:"إضاءة فيلم نوار",en:"Dramatic low light"},weather:{ar:"ضبابي",en:"Foggy"},mood:{ar:"غامض",en:"Mysterious"},lens:{en:"50mm"},camera:{en:"Sony A7R IV"},angle:{ar:"بورتريه",en:"Portrait"},detail:{ar:"كائن خارق، هالة مظلمة، ضباب",en:"Supernatural being, dark aura, fog, dramatic shadows"},base:{ar:"كيان غامض بعيون متوهجة يخرج من الضباب",en:"A mysterious entity with glowing eyes emerging from the fog"}}
+            },
+            { 
+                id:"20", 
+                title:{ar:"Gladiator Arena",en:"Gladiator Arena"}, 
+                tags:{ar:["تاريخي","ملحمي"],en:["Historical","Epic"]}, 
+                type:"cinematic", 
+                img:"https://images.unsplash.com/photo-1504384308090-c894fdcc538d", 
+                quality:91, 
+                data:{time:{ar:"ضوء النهار",en:"Daylight"},light:{ar:"ضوء طبيعي قوي",en:"Strong natural"},weather:{ar:"مغبر",en:"Dusty"},mood:{ar:"ملحمة قتالية",en:"Epic battle"},lens:{en:"35mm cinematic"},camera:{en:"Canon EOS R5"},angle:{ar:"زاوية منخفضة",en:"Low angle"},detail:{ar:"الحلبة، مصارعون، جمهور، غبار",en:"Arena, gladiators, crowd, dust, intense action"},base:{ar:"مصارع يقف وحيداً في الكولوسيوم الروماني",en:"A gladiator standing alone in the Roman Colosseum"}}
+            }
+        ];
+
+        // ============================================================
+        // ARTISTS DB - صور معبرة ومتنوعة
+        // ============================================================
+        const artistsDB = [
+            { 
+                id:"s02", 
+                name:{ar:"عصر النهضة",en:"Renaissance"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1544552861-16a1ebd8f4e2?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"الكمال الكلاسيكي مع دراسة دقيقة للتشريح والإضاءة الناعمة",en:"Classical perfection with precise anatomy and soft sfumato lighting"}, 
+                traits:["sfumato transitions","triangular composition","precise anatomy","classical balance","golden ratio"], 
+                lighting:"Soft chiaroscuro, gentle diffused sfumato", 
+                colors:"Earthy muted tones, warm ochres, deep shadows", 
+                textures:"Smooth glazed layers, refined oil surface", 
+                composition:"Triangular balanced composition, classical harmony", 
+                promptStyle:"sfumato soft light transitions, classical Renaissance composition, precise anatomical accuracy, muted earthy palette, gentle chiaroscuro, masterful glazing technique, golden ratio framing", 
+                styleStrength:0.9 
+            },
+            { 
+                id:"s03", 
+                name:{ar:"الباروك",en:"Baroque"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1513759206588-d18e2d5e7af4?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"إضاءة درامية عميقة وعواطف مكثفة في ظلام وذهب",en:"Dramatic deep lighting and intense emotion in darkness and gold"}, 
+                traits:["dramatic chiaroscuro","golden spotlight","emotional intensity","rich shadow","dynamic movement"], 
+                lighting:"Dramatic spotlight from darkness, golden glow", 
+                colors:"Deep browns, warm gold, velvet black", 
+                textures:"Rich layered oil glazes, impasto highlights", 
+                composition:"Diagonal tension, intimate portrait depth", 
+                promptStyle:"dramatic chiaroscuro lighting, deep shadow with golden spotlight emergence, rich oil texture, baroque emotional intensity, luminous tones from darkness, Rembrandt lighting style", 
+                styleStrength:0.9 
+            },
+            { 
+                id:"s04", 
+                name:{ar:"الرومانسية",en:"Romanticism"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"الطبيعة المهيبة والمشاعر الجياشة في لوحات بانورامية رائعة",en:"Sublime nature and surging emotion in grand panoramic scenes"}, 
+                traits:["sublime scale","god rays","atmospheric drama","misty landscape","emotional nature"], 
+                lighting:"God rays breaking clouds, theatrical warm glow", 
+                colors:"Golden warm tones, deep greens, misty blues", 
+                textures:"Atmospheric wet-on-wet, broad gestural strokes", 
+                composition:"Vast panoramic scale, tiny figure in grand nature", 
+                promptStyle:"romantic sublime landscape, god rays through dramatic clouds, emotional atmospheric glow, majestic scale, misty atmospheric depth, golden theatrical light, lone figure in vast nature", 
+                styleStrength:0.85 
+            },
+            { 
+                id:"s05", 
+                name:{ar:"الانطباعية",en:"Impressionism"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"التقاط الضوء المتحرك بضربات فرشاة حرة وألوان موحية بالحياة",en:"Captures fleeting light with free brushwork and vibrant color"}, 
+                traits:["loose visible brushwork","atmospheric haze","dappled light","soft blended edges","vibrant color patches"], 
+                lighting:"Dappled natural light, shimmering atmospheric glow", 
+                colors:"Soft lavender, blue-green, warm light reflections", 
+                textures:"Loose visible brushstrokes, textured paint surface", 
+                composition:"Atmospheric perspective, nature-centered", 
+                promptStyle:"Impressionist loose brushwork, atmospheric light and haze, soft blended color edges, dappled natural light, reflective surfaces, vibrant color patches, plein air painting aesthetic", 
+                styleStrength:0.8 
+            },
+            { 
+                id:"s06", 
+                name:{ar:"ما بعد الانطباعية",en:"Post-Impressionism"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1547333590-1c9bab8f0939?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"ضربات فرشاة دوامية وألوان مكثفة تعبّر عن المشاعر",en:"Swirling strokes and intense color conveying deep emotion"}, 
+                traits:["swirling brush strokes","vivid impasto","emotional color","dynamic movement","thick paint texture"], 
+                lighting:"Expressive warm light, emotional color glow", 
+                colors:"Vibrant blue, yellow, deep orange, electric greens", 
+                textures:"Heavy impasto, thick layered paint, visible strokes", 
+                composition:"Dynamic turbulent, emotionally charged", 
+                promptStyle:"expressive swirling brush strokes, vivid impasto texture, emotional color palette, dynamic movement, post-impressionist style, heavy paint texture, vibrant blue and yellow tones", 
+                styleStrength:0.85 
+            },
+            { 
+                id:"s07", 
+                name:{ar:"التعبيرية",en:"Expressionism"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"تشويه بصري متعمد للتعبير عن القلق والمشاعر الداخلية",en:"Deliberate visual distortion to express inner anxiety and raw emotion"}, 
+                traits:["distorted forms","raw emotion","high contrast","dark atmosphere","subjective reality"], 
+                lighting:"Harsh high contrast, anxiety-inducing shadow", 
+                colors:"Dark desaturated tones, blood red accents, sickly greens", 
+                textures:"Rough scratchy brush, jagged line work", 
+                composition:"Claustrophobic tilted composition, angular distortion", 
+                promptStyle:"expressionist distorted forms, raw emotional energy, high contrast harsh lighting, dark atmospheric mood, subjective inner reality, angular angular forms, anxiety-driven composition", 
+                styleStrength:0.8 
+            },
+            { 
+                id:"s08", 
+                name:{ar:"السريالية",en:"Surrealism"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"عوالم أحلام حيث المستحيل يصبح واقعاً بدقة فوتوغرافية",en:"Dreamworlds where the impossible becomes photorealistic reality"}, 
+                traits:["melting reality","dream logic","impossible objects","hyper-detail","infinite perspective"], 
+                lighting:"Ultra-sharp surreal clarity, impossible shadows", 
+                colors:"Desert yellows, deep blues, stark whites", 
+                textures:"Hyper-smooth photorealistic impossible surfaces", 
+                composition:"Infinite horizon, floating impossible objects", 
+                promptStyle:"surrealist dreamscape, melting impossible objects, hyper-detailed photorealistic surrealism, infinite desert perspective, dream logic composition, uncanny juxtaposition, impossible architecture", 
+                styleStrength:0.9 
+            },
+            { 
+                id:"s09", 
+                name:{ar:"التكعيبية",en:"Cubism"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1561059488-916d69792237?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"تفكيك الأشكال إلى مستويات هندسية من زوايا متعددة",en:"Deconstructs form into geometric planes from multiple viewpoints"}, 
+                traits:["geometric fragmentation","multiple viewpoints","flat planes","angular forms","visual deconstruction"], 
+                lighting:"Flat abstract multiple-source lighting", 
+                colors:"Monochrome browns, geometric primaries, muted tones", 
+                textures:"Flat geometric hard-edge surfaces", 
+                composition:"Multi-perspective simultaneous viewpoints", 
+                promptStyle:"cubist geometric fragmentation, multiple simultaneous viewpoints, bold angular flat planes, visual deconstruction, geometric abstraction, Cubism art style, fractured perspective", 
+                styleStrength:0.85 
+            },
+            { 
+                id:"s10", 
+                name:{ar:"الفن الحديث",en:"Modern Art"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1536924940846-227afb31e2a5?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"تجريد ملون بجماليات هندسية وعلاقات لونية بحتة",en:"Colorful abstraction with geometric aesthetics and pure color relationships"}, 
+                traits:["pure abstraction","bold geometry","primary colors","Bauhaus harmony","flat planes"], 
+                lighting:"Even flat internal glow", 
+                colors:"Bold primaries, black lines, primary palette", 
+                textures:"Clean flat geometric surfaces", 
+                composition:"Musical geometric rhythm, balanced abstraction", 
+                promptStyle:"modern abstract geometric composition, bold primary color relationships, Bauhaus aesthetic, pure abstraction, flat geometric planes, harmonious color theory, no representational elements", 
+                styleStrength:0.75 
+            },
+            { 
+                id:"s11", 
+                name:{ar:"الفن السينمائي",en:"Cinematic Art"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"جماليات الأفلام الاحترافية بإضاءة سينمائية وتكوين درامي",en:"Professional film aesthetics with cinematic lighting and dramatic composition"}, 
+                traits:["cinematic composition","motivated lighting","film grain","dramatic framing","color grading"], 
+                lighting:"Cinematic motivated sources, volumetric atmosphere", 
+                colors:"Film-graded palette, teal-orange contrast, muted elegance", 
+                textures:"Film grain, photographic depth of field", 
+                composition:"Rule of thirds, cinematic widescreen", 
+                promptStyle:"cinematic photography aesthetic, professional film composition, motivated cinematic lighting, teal-orange color grade, film grain texture, dramatic framing, widescreen aspect ratio, volumetric atmosphere", 
+                styleStrength:0.9 
+            },
+            { 
+                id:"s12", 
+                name:{ar:"الفانتازي",en:"Fantasy Art"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"عوالم خيالية فارهة بمخلوقات وأجواء سحرية آسرة",en:"Lush fantasy worlds with magical creatures and enchanting atmosphere"}, 
+                traits:["magical atmosphere","epic scale","otherworldly light","rich detail","mythological narrative"], 
+                lighting:"Magical ethereal glow, mystical light sources", 
+                colors:"Deep jewel tones, golden magic, mystical purples", 
+                textures:"Rich detailed painterly surface", 
+                composition:"Epic grandiose scale, mythological staging", 
+                promptStyle:"fantasy concept art, magical otherworldly atmosphere, epic mythological scale, ethereal glowing light sources, rich jewel-toned palette, intricate detailed world-building, enchanted environment", 
+                styleStrength:0.85 
+            },
+            { 
+                id:"s13", 
+                name:{ar:"السايبربنك",en:"Cyberpunk"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"مستقبل مظلم بأضواء نيون وتقنية فائقة وانحطاط حضري",en:"Dark future of neon lights, advanced tech and urban decay"}, 
+                traits:["neon glow","urban decay","wet streets","holographic elements","high-tech low-life"], 
+                lighting:"Neon color lighting, harsh artificial glow", 
+                colors:"Electric blue, neon pink, chrome silver", 
+                textures:"Wet reflective surfaces, metal and glass", 
+                composition:"Low angle urban scale, vertical city density", 
+                promptStyle:"cyberpunk aesthetic, neon-lit urban environment, holographic elements, wet street reflections, high-tech dystopian atmosphere, electric blue and magenta palette, chrome and glass textures, futuristic gritty city", 
+                styleStrength:0.9 
+            },
+            { 
+                id:"s14", 
+                name:{ar:"الأنمي والمانغا",en:"Anime & Manga"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"جماليات الرسوم المتحركة اليابانية بتفاصيل غنية وألوان حالمة",en:"Japanese animation aesthetics with rich detail and dreamy color"}, 
+                traits:["hand-painted backgrounds","emotional color","cel shading","expressive character","detailed scenery"], 
+                lighting:"Warm golden hour, soft atmospheric anime light", 
+                colors:"Lush greens, sky blues, warm golden tones", 
+                textures:"Smooth cel-shaded surfaces, hand-painted backgrounds", 
+                composition:"Wide cinematic landscape, emotional framing", 
+                promptStyle:"anime illustration style, hand-painted detailed backgrounds, cel-shaded surfaces, emotional color palette, soft atmospheric lighting, lush environmental detail, Japanese animation aesthetic", 
+                styleStrength:0.85 
+            },
+            { 
+                id:"s15", 
+                name:{ar:"الرسم الزيتي",en:"Oil Painting"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1541038545-6f75fcc0c28a?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"قوام الزيت الكلاسيكي الثري بطبقاته العميقة وألوانه الدافئة",en:"Classic rich oil texture with deep layering and warm tonal depth"}, 
+                traits:["rich impasto","glazing layers","deep color saturation","painterly texture","old master technique"], 
+                lighting:"Warm studio light, traditional portrait illumination", 
+                colors:"Rich warm earth tones, deep glazed shadows", 
+                textures:"Visible impasto brushwork, rich layered oil surface", 
+                composition:"Classical portrait or still life framing", 
+                promptStyle:"oil painting technique, rich impasto texture, classical glazing layers, warm earth tone palette, deep shadow with luminous highlight, old master painterly surface, thick brushstroke visible texture", 
+                styleStrength:0.85 
+            },
+            { 
+                id:"s16", 
+                name:{ar:"الرسم المائي",en:"Watercolor"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1579783901586-d88db74b4fe4?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"شفافية حالمة وتدفق طبيعي للألوان مع نعومة بصرية فريدة",en:"Dreamy transparency and natural color flow with unique visual softness"}, 
+                traits:["translucent washes","soft bleeding edges","paper texture","fluid color flow","delicate lightness"], 
+                lighting:"Soft diffused even light, delicate shadow", 
+                colors:"Soft pastels, translucent layers, white paper showing", 
+                textures:"Paper grain, soft bleeding wash edges", 
+                composition:"Loose gentle framing, breathing negative space", 
+                promptStyle:"watercolor illustration technique, translucent color washes, soft bleeding paint edges, paper texture showing through, fluid color flow, delicate lightness, luminous white highlights", 
+                styleStrength:0.75 
+            },
+            { 
+                id:"s17", 
+                name:{ar:"الفحم والرصاص",en:"Charcoal & Pencil"}, 
+                category:{ar:"غربي",en:"Western"}, 
+                image:"https://images.unsplash.com/photo-1523726491678-bf852e717f6a?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"تشكيل درامي بالظل والنور في أسلوب رسم كلاسيكي دقيق",en:"Dramatic form-building through shadow and light in precise classic drawing"}, 
+                traits:["monochrome tonal","cross-hatching","paper grain","precise line","tonal gradation"], 
+                lighting:"Side light tonal drama, strong shadow definition", 
+                colors:"Monochrome grey scale, black to white gradation", 
+                textures:"Paper grain, cross-hatch lines, charcoal smudge", 
+                composition:"Classical study framing, focused subject", 
+                promptStyle:"charcoal drawing technique, monochrome tonal range, cross-hatching and smudging texture, paper grain visible, dramatic side light shadow, precise line work, classical drawing study aesthetic", 
+                styleStrength:0.8 
+            },
+            { 
+                id:"s18", 
+                name:{ar:"الفن الإسلامي",en:"Islamic Art"}, 
+                category:{ar:"إسلامي",en:"Islamic"}, 
+                image:"https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"زخارف هندسية لا متناهية بتناسق رياضي وروحاني عميق",en:"Infinite geometric ornamentation with mathematical harmony and spiritual depth"}, 
+                traits:["geometric arabesque","infinite pattern","golden proportion","symmetrical order","spiritual harmony"], 
+                lighting:"Warm golden light, lantern glow", 
+                colors:"Deep blue, emerald green, gold, turquoise", 
+                textures:"Mosaic tile, carved plaster, gilded surface", 
+                composition:"Radial symmetrical, infinite repeat pattern", 
+                promptStyle:"Islamic geometric ornamentation, golden arabesque patterns, infinite symmetrical design, deep blue and gold palette, mosaic tile texture, radial composition, spiritual mathematical harmony, ornate decorative detail", 
+                styleStrength:0.9 
+            },
+            { 
+                id:"s19", 
+                name:{ar:"الزخرفة الإسلامية",en:"Islamic Ornamentation"}, 
+                category:{ar:"إسلامي",en:"Islamic"}, 
+                image:"https://images.unsplash.com/photo-1585386959984-a4155224a1ad?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"تشابك نباتي وهندسي في زخارف بالغة الثراء والتعقيد",en:"Intertwined vegetal and geometric motifs of extreme richness"}, 
+                traits:["arabesques","vegetal interlace","floral scrolls","intricate detail","layered ornamentation"], 
+                lighting:"Warm ambient palace light", 
+                colors:"Lapis blue, gold leaf, vermillion, emerald", 
+                textures:"Carved stucco, inlaid wood, illuminated manuscript", 
+                composition:"Border frame with central medallion", 
+                promptStyle:"Islamic arabesque ornamentation, vegetal scroll interlace, floral geometric hybrid pattern, lapis and gold color scheme, carved stucco texture, illuminated manuscript aesthetic, ornate border frame with central medallion", 
+                styleStrength:0.85 
+            },
+            { 
+                id:"s20", 
+                name:{ar:"الخط العربي",en:"Arabic Calligraphy"}, 
+                category:{ar:"إسلامي",en:"Islamic"}, 
+                image:"https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"فن الخط بأبعاده الجمالية والروحية في تكوينات بصرية مذهلة",en:"Calligraphic art with visual and spiritual dimensions in stunning compositions"}, 
+                traits:["flowing script forms","ink rhythm","golden lettering","negative space","poetic composition"], 
+                lighting:"Warm parchment glow, candlelight ambience", 
+                colors:"Ink black, gold leaf, parchment beige", 
+                textures:"Ink on parchment, brushed gold surface", 
+                composition:"Vertical flowing composition, dynamic script rhythm", 
+                promptStyle:"Arabic calligraphy art, flowing ink script, golden lettering on dark background, calligraphic composition, ink brush rhythm, parchment texture, spiritual visual poetry, Naskh or Thuluth script style", 
+                styleStrength:0.9 
+            },
+            { 
+                id:"s21", 
+                name:{ar:"المنمنمات الإسلامية",en:"Islamic Miniature"}, 
+                category:{ar:"إسلامي",en:"Islamic"}, 
+                image:"https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"تصوير دقيق جداً بألوان معدنية لامعة وتفاصيل حكائية ثرية",en:"Ultra-precise illustration with metallic pigments and rich narrative detail"}, 
+                traits:["flat perspective","rich color","intricate detail","narrative scene","metallic pigment"], 
+                lighting:"Flat even illumination, no dramatic shadow", 
+                colors:"Lapis, vermillion, gold, malachite green", 
+                textures:"Gouache on vellum, flat color areas", 
+                composition:"Flat narrative scene, stacked spatial depth", 
+                promptStyle:"Islamic miniature painting, flat perspective narrative scene, rich metallic pigment colors, ultra-fine detail brushwork, lapis and vermillion palette, Persian or Mughal miniature style, manuscript illumination aesthetic", 
+                styleStrength:0.85 
+            },
+            { 
+                id:"s22", 
+                name:{ar:"الفن العربي الحديث",en:"Modern Arab Art"}, 
+                category:{ar:"إسلامي",en:"Islamic"}, 
+                image:"https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"مزج الهوية العربية بالأساليب الحديثة في تعبير بصري معاصر",en:"Blends Arab identity with modern styles in contemporary visual expression"}, 
+                traits:["cultural fusion","contemporary expression","heritage motifs","modern technique","identity reflection"], 
+                lighting:"Contemporary studio or natural light", 
+                colors:"Warm desert tones mixed with bold modern accents", 
+                textures:"Mixed media, layered modern surfaces", 
+                composition:"Modern composition with Arabic cultural elements", 
+                promptStyle:"modern Arab contemporary art, cultural identity fusion, Arabic heritage motifs in modern context, warm desert and bold color palette, mixed media technique, contemporary Middle Eastern aesthetic", 
+                styleStrength:0.8 
+            },
+            { 
+                id:"s23", 
+                name:{ar:"الفن الأندلسي",en:"Andalusian Art"}, 
+                category:{ar:"إسلامي",en:"Islamic"}, 
+                image:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"روعة الفن المورسكي بقبابه وأقواسه وزخارفه النحاسية",en:"The splendor of Moorish art with its domes, arches, and bronze ornamentation"}, 
+                traits:["muqarnas vaulting","horseshoe arches","stucco relief","tile mosaic","geometric interlace"], 
+                lighting:"Warm Andalusian afternoon light, filtered arch shadows", 
+                colors:"Warm terracotta, turquoise zellige, gold, deep red", 
+                textures:"Zellige mosaic, carved stucco, bronze filigree", 
+                composition:"Architectural interior grandeur, arched framing", 
+                promptStyle:"Andalusian Moorish architecture art, muqarnas honeycomb vaulting, horseshoe arch grandeur, zellige tilework pattern, carved stucco decoration, warm terracotta and turquoise palette, Alhambra-inspired aesthetic", 
+                styleStrength:0.9 
+            },
+            { 
+                id:"s24", 
+                name:{ar:"الفن الشرقي التقليدي",en:"Oriental Traditional Art"}, 
+                category:{ar:"إسلامي",en:"Islamic"}, 
+                image:"https://images.unsplash.com/photo-1553913861-c0fddf2619ee?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"التصوير الشرقي الكلاسيكي بحكاياته وشخوصه التقليدية الأصيلة",en:"Classical Eastern painting with its authentic traditional narratives"}, 
+                traits:["traditional costume","market scenes","bazaar atmosphere","warm ambient","folk tradition"], 
+                lighting:"Warm natural bazaar light, dappled courtyard sun", 
+                colors:"Warm ochre, rich spice tones, copper and bronze", 
+                textures:"Fabric texture, merchant scene depth", 
+                composition:"Market scene narrative, layered depth", 
+                promptStyle:"traditional Oriental painting, bazaar market scene, folk costume and craft detail, warm ochre spice palette, courtyard dappled light, rich cultural narrative, authentic heritage atmosphere", 
+                styleStrength:0.8 
+            },
+            { 
+                id:"s25", 
+                name:{ar:"الفن الصحراوي",en:"Desert Art"}, 
+                category:{ar:"إسلامي",en:"Islamic"}, 
+                image:"https://images.unsplash.com/photo-1509316785289-025f54846b43?auto=format&fit=crop&w=600&q=80", 
+                description:{ar:"تصوير الصحراء العربية بسمائها الشاسعة وكثبانها الملحمية",en:"Portrayal of the Arabian desert with vast sky and epic dunes"}, 
+                traits:["vast dune scale","golden light","desert palette","epic silence","nomadic subject"], 
+                lighting:"Golden hour desert light, deep shadow dunes", 
+                colors:"Sand gold, burnt sienna, deep blue sky, copper tones", 
+                textures:"Sand grain, worn fabric, sun-bleached surfaces", 
+                composition:"Vast empty horizon, small scale human figure", 
+                promptStyle:"Arabian desert art, vast sand dune scale, golden desert light, nomadic figure in landscape, deep blue sky contrast, warm sand and copper palette, epic silence composition, desert atmospheric haze", 
+                styleStrength:0.85 
+            }
+        ];
+
+        // ============================================================
+        // QUICK MIXES
+        // ============================================================
+        const quickMixes = [
+            { label:{ar:"السريالية + السينمائي",en:"Surrealism + Cinematic"}, prompt:"surrealist dreamscape with cinematic composition, impossible dreamlike atmosphere, film-grade color, dramatic lighting, epic scale visual narrative", icon:"🌀" },
+            { label:{ar:"سايبربنك + أنمي",en:"Cyberpunk + Anime"}, prompt:"cyberpunk anime aesthetic, neon-lit Japanese future city, cel-shaded characters with holographic environment, electric blue and pink neon, hand-painted atmospheric backgrounds", icon:"⚡" },
+            { label:{ar:"الفن الإسلامي + فانتازي",en:"Islamic Art + Fantasy"}, prompt:"Islamic geometric ornamentation merged with fantasy world, golden arabesque in magical environment, emerald and gold mystical palette, ornate symmetrical fantasy architecture", icon:"🕌" },
+            { label:{ar:"الباروك + مظلم",en:"Baroque + Dark"}, prompt:"baroque dramatic chiaroscuro in dark atmospheric setting, golden spotlight from deep shadow, rich oil painting texture, emotional intensity, velvet black and gold", icon:"🕯️" },
+            { label:{ar:"مائي + انطباعي",en:"Watercolor + Impressionist"}, prompt:"watercolor and Impressionist fusion, soft translucent washes with loose atmospheric brushwork, dappled natural light, delicate bleeding color edges, poetic gentle scene", icon:"🎨" },
+            { label:{ar:"الخط العربي + ذهبي",en:"Calligraphy + Gold"}, prompt:"Arabic calligraphy art with opulent gold leaf background, flowing script on gilded surface, ornate border ornamentation, lapis blue and gold palette, luxury manuscript aesthetic", icon:"✒️" },
+            { label:{ar:"فانتازي + ضبابي",en:"Fantasy + Foggy"}, prompt:"fantasy art in misty foggy atmosphere, magical ethereal fog rolling through enchanted landscape, soft diffused mystical light, mysterious depth, rich fantasy color through atmospheric haze", icon:"🌫️" }
+        ];
+
+        // ============================================================
+        // SAFETY ENGINE
+        // ============================================================
+        function analyzeContext(text) {
+            const lowerText = text.toLowerCase();
+            const blocked = ["nude","naked","nsfw","porn","sex","blood","gore","kill","murder","terror","isis","jihad","suicide","self-harm","drugs","cocaine","heroin","weed","marijuana","cannabis","العري","عارية","إباحي","جنس","دماء","قتل","إرهاب","جهاد","انتحار","مخدرات","حشيش"];
+            for (const word of blocked) {
+                if (lowerText.includes(word)) return { level: 'BLOCKED', word: word };
+            }
+            return { level: 'LOW', clean: true };
+        }
+
+        function validateFinalPrompt(prompt) {
+            const result = analyzeContext(prompt);
+            if (result.level === 'BLOCKED') return { valid: false, reason: result };
+            return { valid: true };
+        }
+
+        function comprehensiveCheck(userText, manualVals, artistId, presetIndex) {
+            let fullText = userText || '';
+            if (manualVals) {
+                for (const key in manualVals) {
+                    if (manualVals[key] && manualVals[key] !== 'Unspecified') fullText += ' ' + manualVals[key];
+                }
+            }
+            if (artistId) {
+                const school = artistsDB.find(a => a.id === artistId);
+                if (school) {
+                    const nameStr = typeof school.name === 'object' ? (school.name[currentLang] || school.name.en) : school.name;
+                    fullText += ' ' + nameStr;
+                    fullText += ' ' + school.promptStyle;
+                }
+            }
+            if (presetIndex !== null && presetIndex !== undefined) {
+                const p = presetsDB[presetIndex];
+                if (p) {
+                    const titleStr = typeof p.title === 'object' ? (p.title[currentLang] || p.title.en) : p.title;
+                    fullText += ' ' + titleStr;
+                    const tags = p.tags[currentLang] || p.tags.en || [];
+                    fullText += ' ' + tags.join(' ');
+                }
+            }
+            return analyzeContext(fullText);
+        }
+
+        // ============================================================
+        // PROMPT ENGINE
+        // ============================================================
+        function buildFinalPrompt(baseText, manualVals, artistId, presetIndex) {
+            const parts = [];
+            const scene = baseText || (currentLang === 'ar' ? 'مشهد سينمائي' : 'Cinematic Scene');
+            parts.push(`Cinematic photography of: ${scene}.`);
+
+            if (presetIndex !== null && presetIndex !== undefined) {
+                const p = presetsDB[presetIndex];
+                if (p) {
+                    const d = p.data;
+                    const detailStr = d.detail ? (d.detail[currentLang] || d.detail.en || '') : '';
+                    if (detailStr) parts.push(`Composition & Setting: ${detailStr}.`);
+                }
+            } else if (artistId) {
+                const school = artistsDB.find(a => a.id === artistId);
+                if (school) {
+                    const schoolName = typeof school.name === 'object' ? (school.name[currentLang] || school.name.en) : school.name;
+                    parts.push(`Artistic style — ${schoolName}: ${school.promptStyle}.`);
+                    parts.push(`Lighting: ${school.lighting}. Color palette: ${school.colors}. Textures: ${school.textures}. Composition: ${school.composition}.`);
+                }
+            }
+
+            if (manualVals) {
+                const m = manualVals;
+                const techParts = [];
+                if (m.camera && m.camera !== 'Unspecified') techParts.push(`Camera: ${m.camera}`);
+                if (m.lens && m.lens !== 'Unspecified') techParts.push(`Lens: ${m.lens}`);
+                if (m.angle && m.angle !== 'Unspecified') techParts.push(`Angle: ${m.angle}`);
+                if (techParts.length) parts.push(`Technical: ${techParts.join(', ')}.`);
+                const atmosParts = [];
+                if (m.light && m.light !== 'Unspecified') atmosParts.push(`Lighting: ${m.light}`);
+                if (m.time && m.time !== 'Unspecified') atmosParts.push(`Time: ${m.time}`);
+                if (m.weather && m.weather !== 'Unspecified') atmosParts.push(`Weather: ${m.weather}`);
+                if (m.mood && m.mood !== 'Unspecified') atmosParts.push(`Mood: ${m.mood}`);
+                if (atmosParts.length) parts.push(`Atmosphere: ${atmosParts.join(', ')}.`);
+                const charParts = [];
+                if (m.expression && m.expression !== 'Unspecified') charParts.push(`Expression: ${m.expression}`);
+                if (m.clothing && m.clothing !== 'Unspecified') charParts.push(`Clothing: ${m.clothing}`);
+                if (m.action && m.action !== 'Unspecified') charParts.push(`Action: ${m.action}`);
+                if (charParts.length) parts.push(`Character: ${charParts.join(', ')}.`);
+                if (m.environment && m.environment !== 'Unspecified') parts.push(`Environment: ${m.environment}.`);
+                if (m.advanced && m.advanced !== 'Unspecified') parts.push(`Details: ${m.advanced}.`);
+            }
+            const quality = manualVals && manualVals.quality && manualVals.quality !== 'Unspecified' ? manualVals.quality : 'Ultra realistic';
+            parts.push(`Quality: ${quality}, 8K resolution, cinematic grain, volumetric light, masterwork composition, photorealistic textures, professional color grading.`);
+            return parts.join(' ');
+        }
+
+        // ============================================================
+        // GENERATE PROMPT
+        // ============================================================
+        function generatePrompt() {
+            const baseText = document.getElementById('userMainText').value;
+            const manualVals = {};
+            for (const key in optionsData) {
+                const select = document.getElementById(`sel-${key}`);
+                if (!select) continue;
+                const otherInput = document.getElementById(`other-${key}`);
+                let val = (select.value === 'custom') ? (otherInput ? otherInput.value : '') : select.value;
+                const arList = optionsData[key].ar || [];
+                const enList = optionsData[key].en || [];
+                const idx = arList.indexOf(val);
+                if (idx !== -1) val = enList[idx];
+                manualVals[key] = val || 'Unspecified';
+            }
+            const checkResult = comprehensiveCheck(baseText, manualVals, selectedArtistId, selectedPresetIndex);
+            if (checkResult.level === 'BLOCKED') {
+                showSafetyWarning(checkResult);
+                return;
+            }
+            hideSafetyWarning();
+            const prompt = buildFinalPrompt(baseText, manualVals, selectedArtistId, selectedPresetIndex);
+            const finalValidation = validateFinalPrompt(prompt);
+            if (!finalValidation.valid) {
+                showSafetyWarning(finalValidation.reason);
+                return;
+            }
+            const display = document.getElementById('finalPromptDisplay');
+            display.innerText = prompt;
+            const safetyBadge = document.getElementById('safetyBadgeContainer');
+            safetyBadge.innerHTML = `<span class="safety-badge safe"><i class="fas fa-shield-alt"></i> Safe</span>`;
+            document.getElementById('resultSection').classList.remove('hidden');
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+            localStorage.setItem('lastPrompt', prompt);
+            localStorage.setItem('lastTab', currentTab);
+        }
+
+        // ============================================================
+        // SAFETY
+        // ============================================================
+        function showSafetyWarning(result) {
+            const w = document.getElementById('safetyWarning');
+            const title = document.getElementById('safetyTitle');
+            const desc = document.getElementById('safetyDesc');
+            const s = getUIS();
+            title.textContent = s.safetyTitle;
+            desc.textContent = s.safetyDesc;
+            w.classList.add('show');
+            document.getElementById('safetyDetails').classList.remove('show');
+            document.getElementById('safetyMoreText').textContent = currentLang === 'ar' ? 'المزيد' : 'More';
+        }
+
+        function toggleSafetyDetails() {
+            const details = document.getElementById('safetyDetails');
+            const moreText = document.getElementById('safetyMoreText');
+            const isOpen = details.classList.contains('show');
+            if (isOpen) {
+                details.classList.remove('show');
+                moreText.textContent = currentLang === 'ar' ? 'المزيد' : 'More';
+            } else {
+                details.classList.add('show');
+                moreText.textContent = currentLang === 'ar' ? 'إخفاء' : 'Hide';
+            }
+        }
+
+        function hideSafetyWarning() {
+            document.getElementById('safetyWarning').classList.remove('show');
+            document.getElementById('safetyDetails').classList.remove('show');
+            document.getElementById('safetyMoreText').textContent = currentLang === 'ar' ? 'المزيد' : 'More';
+        }
+
+        let safetyTimer = null;
+        document.addEventListener('DOMContentLoaded', () => {
+            const ta = document.getElementById('userMainText');
+            ta.addEventListener('input', function() {
+                autoResize(this);
+                const count = this.value.length;
+                const countEl = document.getElementById('charCount');
+                countEl.textContent = count;
+                countEl.parentElement.classList.remove('warning', 'danger');
+                if (count > 500) countEl.parentElement.classList.add('danger');
+                else if (count > 450) countEl.parentElement.classList.add('warning');
+                clearTimeout(safetyTimer);
+                safetyTimer = setTimeout(() => {
+                    if (this.value.length > 3) {
+                        const r = analyzeContext(this.value);
+                        if (r.level === 'BLOCKED') showSafetyWarning(r);
+                        else hideSafetyWarning();
+                    } else hideSafetyWarning();
+                }, 500);
+            });
+            ta.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') generatePrompt();
+                if (e.key === 'Escape') clearPromptInput();
+            });
+        });
+
+        // ============================================================
+        // AUTO-RESIZE & CLEAR
+        // ============================================================
+        function autoResize(el) { 
+            el.style.height = 'auto'; 
+            el.style.height = Math.min(el.scrollHeight, 300) + 'px'; 
+        }
+
+        function clearPromptInput() {
+            const ta = document.getElementById('userMainText');
+            ta.value = ''; 
+            ta.style.height = '';
+            document.getElementById('charCount').textContent = '0';
+            hideSafetyWarning();
+        }
+
+        // ============================================================
+        // PRESETS FUNCTIONS
+        // ============================================================
+        function renderPresets() {
+            const grid = document.getElementById('presetsGrid');
+            grid.className = 'presets-grid';
+            if (currentPresetLayout === 'masonry') grid.className = 'presets-grid masonry';
+            if (currentPresetLayout === 'compact') grid.className = 'presets-grid compact';
+            grid.innerHTML = '';
+            const labels = getUIS().labels;
+            const searchVal = (document.getElementById('presetSearch')?.value || '').toLowerCase();
+            const sortVal = document.getElementById('presetSort')?.value || 'default';
+            let filtered = presetsDB.filter(p => {
+                const title = (p.title[currentLang] || p.title.en || '').toLowerCase();
+                const tags = (p.tags[currentLang] || p.tags.en || []).join(' ').toLowerCase();
+                const matchesSearch = !searchVal || title.includes(searchVal) || tags.includes(searchVal);
+                const matchesTag = currentPresetFilter === 'all' || (p.tags[currentLang]||p.tags.en||[]).map(t=>t.toLowerCase()).includes(currentPresetFilter) || p.type === currentPresetFilter;
+                return matchesSearch && matchesTag;
+            });
+            if (sortVal === 'cinematic') filtered = filtered.filter(p => p.type === 'cinematic');
+            if (sortVal === 'realistic') filtered = filtered.filter(p => p.type === 'realistic');
+            if (sortVal === 'artistic') filtered = filtered.filter(p => p.type === 'artistic');
+            filtered.forEach((p, idx) => {
+                const origIdx = presetsDB.indexOf(p);
+                const title = p.title[currentLang] || p.title.en;
+                const tags = (p.tags[currentLang] || p.tags.en || []);
+                const isFav = favoritePresets.includes(p.id);
+                const useCount = presetUseCounts[p.id] || 0;
+                const tagHTML = tags.map(t => `<span class="px-2 py-0.5 rounded text-[8px] font-black uppercase bg-orange-600/20 text-orange-500 border border-orange-500/20">${t}</span>`).join(' ');
+                const card = document.createElement('div');
+                card.className = 'preset-card';
+                card.innerHTML = `
+                    <div class="preset-number">${p.id}</div>
+                    <button class="fav-btn ${isFav?'active':''}" onclick="toggleFav('${p.id}',event)" title="Favorite"><i class="fas fa-heart"></i></button>
+                    <div class="img-container">
+                        <img src="${p.img}?auto=format&fit=crop&w=800&q=80" alt="${title}" loading="lazy" decoding="async" class="lazy" onload="this.classList.add('loaded')" onerror="this.src='https://placehold.co/800x600/0f172a/f97316?text=${encodeURIComponent(title)}'">
+                        <div class="absolute top-3 right-3 flex gap-1 z-10">${tagHTML}</div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4">
+                            <h3 class="text-white font-black text-lg">${title}</h3>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-grow">
+                        <div class="use-count"><i class="fas fa-fire text-orange-400"></i> ${useCount} ${currentLang==='ar'?'استخدام':'uses'} &nbsp;•&nbsp; <span class="text-orange-400">${p.type}</span></div>
+                        <div class="quality-bar" style="width:${p.quality}%"></div>
+                        <div class="space-y-0.5 mb-4">
+                            <div class="detail-row"><label>${labels.time}:</label><span>${p.data.time[currentLang]||p.data.time.en}</span></div>
+                            <div class="detail-row"><label>${labels.light}:</label><span>${p.data.light[currentLang]||p.data.light.en}</span></div>
+                            <div class="detail-row"><label>${labels.mood}:</label><span>${p.data.mood[currentLang]||p.data.mood.en}</span></div>
+                            <div class="detail-row"><label>${labels.lens}:</label><span>${p.data.lens.en}</span></div>
+                            <div class="detail-row"><label>${labels.camera}:</label><span>${p.data.camera.en}</span></div>
+                            <div class="detail-row"><label>${labels.angle}:</label><span>${p.data.angle[currentLang]||p.data.angle.en}</span></div>
+                        </div>
+                        <button onclick="applyPreset(${origIdx})" class="w-full py-3 bg-slate-800 hover:bg-orange-600 text-white rounded-xl text-xs font-black transition-all transform active:scale-95 border border-white/5">
+                            ${getUIS().btnApply}
+                        </button>
+                    </div>`;
+                grid.appendChild(card);
+            });
+            renderPresetTags();
+            renderMobilePresetsList();
+        }
+
+        function renderPresetTags() {
+            const container = document.getElementById('presetTagFilter');
+            const allTags = new Set();
+            presetsDB.forEach(p => (p.tags[currentLang]||p.tags.en||[]).forEach(t => allTags.add(t.toLowerCase())));
+            const allLabel = currentLang==='ar'?'الكل':'All';
+            let html = `<button class="cat-btn all-category ${currentPresetFilter==='all'?'active':''}" onclick="setPresetTag('all')">${allLabel}</button>`;
+            html += [...allTags].map(tag => 
+                `<button class="cat-btn ${currentPresetFilter===tag?'active':''}" onclick="setPresetTag('${tag}')">${tag}</button>`
+            ).join('');
+            container.innerHTML = html;
+        }
+
+        function setPresetTag(tag) { 
+            currentPresetFilter = tag; 
+            renderPresets();
+            renderMobilePresetsList();
+        }
+        
+        function setPresetLayout(layout) {
+            currentPresetLayout = layout;
+            ['grid','masonry','compact'].forEach(l => document.getElementById(`layout-${l}`).classList.toggle('active', l===layout));
+            renderPresets();
+        }
+        
+        function filterPresets() { 
+            renderPresets();
+            renderMobilePresetsList();
+        }
+        
+        function toggleFav(id, e) {
+            e.stopPropagation();
+            const idx = favoritePresets.indexOf(id);
+            if (idx === -1) favoritePresets.push(id); else favoritePresets.splice(idx,1);
+            localStorage.setItem('favPresets', JSON.stringify(favoritePresets));
+            renderPresets();
+            renderMobilePresetsList();
+        }
+
+        // ============================================================
+        // MOBILE PRESETS - VERTICAL LIST
+        // ============================================================
+        function renderMobilePresetsList() {
+            const container = document.getElementById('mobPresetsListContainer');
+            if (!container) return;
+
+            const searchVal = (document.getElementById('presetSearch')?.value || '').toLowerCase();
+            let filtered = presetsDB.filter(p => {
+                const title = (p.title[currentLang] || p.title.en || '').toLowerCase();
+                const tags = (p.tags[currentLang] || p.tags.en || []).join(' ').toLowerCase();
+                const matchesSearch = !searchVal || title.includes(searchVal) || tags.includes(searchVal);
+                const matchesTag = currentPresetFilter === 'all' || (p.tags[currentLang]||p.tags.en||[]).map(t=>t.toLowerCase()).includes(currentPresetFilter) || p.type === currentPresetFilter;
+                return matchesSearch && matchesTag;
+            });
+
+            container.innerHTML = '';
+            filtered.forEach((p) => {
+                const origIdx = presetsDB.indexOf(p);
+                const title = p.title[currentLang] || p.title.en;
+                const isFav = favoritePresets.includes(p.id);
+                const useCount = presetUseCounts[p.id] || 0;
+                const tags = (p.tags[currentLang] || p.tags.en || []);
+                const tagHTML = tags.map(t => `<span class="px-2 py-0.5 rounded text-[8px] font-black uppercase bg-orange-600/20 text-orange-500 border border-orange-500/20">${t}</span>`).join(' ');
+                
+                const card = document.createElement('div');
+                card.className = 'preset-card';
+                card.innerHTML = `
+                    <div class="preset-number">${p.id}</div>
+                    <button class="fav-btn ${isFav?'active':''}" onclick="toggleFav('${p.id}',event)" title="Favorite"><i class="fas fa-heart"></i></button>
+                    <div class="img-container">
+                        <img src="${p.img}?auto=format&fit=crop&w=800&q=80" alt="${title}" loading="lazy" decoding="async" class="lazy" onload="this.classList.add('loaded')" onerror="this.src='https://placehold.co/800x600/0f172a/f97316?text=${encodeURIComponent(title)}'">
+                        <div class="absolute top-3 right-3 flex gap-1 z-10">${tagHTML}</div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4">
+                            <h3 class="text-white font-black text-lg">${title}</h3>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-grow">
+                        <div class="use-count"><i class="fas fa-fire text-orange-400"></i> ${useCount} ${currentLang==='ar'?'استخدام':'uses'} &nbsp;•&nbsp; <span class="text-orange-400">${p.type}</span></div>
+                        <div class="quality-bar" style="width:${p.quality}%"></div>
+                        <div class="space-y-0.5 mb-4">
+                            <div class="detail-row"><label>${getUIS().labels.time}:</label><span>${p.data.time[currentLang]||p.data.time.en}</span></div>
+                            <div class="detail-row"><label>${getUIS().labels.light}:</label><span>${p.data.light[currentLang]||p.data.light.en}</span></div>
+                            <div class="detail-row"><label>${getUIS().labels.mood}:</label><span>${p.data.mood[currentLang]||p.data.mood.en}</span></div>
+                            <div class="detail-row"><label>${getUIS().labels.lens}:</label><span>${p.data.lens.en}</span></div>
+                            <div class="detail-row"><label>${getUIS().labels.camera}:</label><span>${p.data.camera.en}</span></div>
+                            <div class="detail-row"><label>${getUIS().labels.angle}:</label><span>${p.data.angle[currentLang]||p.data.angle.en}</span></div>
+                        </div>
+                        <button onclick="applyPreset(${origIdx})" class="w-full py-3 bg-slate-800 hover:bg-orange-600 text-white rounded-xl text-xs font-black transition-all transform active:scale-95 border border-white/5">
+                            ${getUIS().btnApply}
+                        </button>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        // ============================================================
+        // ARTISTS FUNCTIONS
+        // ============================================================
+        function renderArtists(filter = 'all', search = '') {
+            const grid = document.getElementById('artistsGrid');
+            grid.innerHTML = '';
+            const filtered = artistsDB.filter(a => {
+                const catKey = typeof a.category === 'object' ? (a.category[currentLang] || a.category.en) : a.category;
+                const nameStr = typeof a.name === 'object' ? (a.name[currentLang] || a.name.en) : a.name;
+                const descStr = typeof a.description === 'object' ? (a.description[currentLang] || a.description.en) : (a.description || '');
+                const matchesCat = filter === 'all' || catKey === filter;
+                const matchesSearch = !search || nameStr.toLowerCase().includes(search.toLowerCase()) || descStr.toLowerCase().includes(search.toLowerCase()) || catKey.toLowerCase().includes(search.toLowerCase());
+                return matchesCat && matchesSearch;
+            });
+            filtered.forEach(school => {
+                const isSelected = selectedArtistId === school.id;
+                const nameStr = typeof school.name === 'object' ? (school.name[currentLang] || school.name.en) : school.name;
+                const catStr = typeof school.category === 'object' ? (school.category[currentLang] || school.category.en) : school.category;
+                const descStr = typeof school.description === 'object' ? (school.description[currentLang] || school.description.en) : (school.description || '');
+                const card = document.createElement('div');
+                card.className = `artist-card ${isSelected?'selected':''}`;
+                card.onclick = () => selectArtist(school.id);
+                card.innerHTML = `
+                    <img src="${school.image}" alt="${nameStr}" loading="lazy" decoding="async" class="lazy" onload="this.classList.add('loaded')" onerror="this.style.background='linear-gradient(135deg, #1a1a2e, #16213e)'">
+                    <div class="artist-selected-badge"><i class="fas fa-check"></i></div>
+                    <div class="artist-overlay">
+                        <div class="artist-school">${catStr}</div>
+                        <div class="artist-name">${nameStr}</div>
+                        <div class="text-[10px] mt-1 leading-relaxed" style="opacity:0.95;font-size:10px;color:#fde047;text-shadow:0 2px 8px rgba(0,0,0,0.9)">${descStr}</div>
+                        <div class="artist-traits">
+                            ${school.traits.map(t => `<span class="artist-trait">${t}</span>`).join('')}
+                        </div>
+                        <button class="artist-select-btn" onclick="event.stopPropagation();selectArtistAndGenerate('${school.id}')">
+                            <i class="fas fa-palette"></i> ${currentLang === 'ar' ? 'اختيار المدرسة' : 'Select School'}
+                        </button>
+                    </div>`;
+                grid.appendChild(card);
+            });
+            renderArtistCategories(filter);
+            renderMobileArtistsList();
+        }
+
+        function renderArtistCategories(active = 'all') {
+            const container = document.getElementById('artistCategoryFilter');
+            const cats = [...new Set(artistsDB.map(a => typeof a.category === 'object' ? (a.category[currentLang] || a.category.en) : a.category))];
+            const allLabel = currentLang==='ar'?'الكل':'All';
+            let html = `<button class="cat-btn all-category ${active==='all'?'active':''}" onclick="setArtistCategory('all')">${allLabel}</button>`;
+            html += cats.map(c => `<button class="cat-btn ${c===active?'active':''}" onclick="setArtistCategory('${c}')">${c}</button>`).join('');
+            container.innerHTML = html;
+        }
+
+        function setArtistCategory(cat) { 
+            currentArtistCategory = cat; 
+            renderArtists(cat, document.getElementById('artistSearch')?.value||'');
+            renderMobileArtistsList();
+        }
+        
+        function filterArtists() { 
+            renderArtists(currentArtistCategory, document.getElementById('artistSearch')?.value||'');
+            renderMobileArtistsList();
+        }
+        
+        function selectArtistAndGenerate(id) {
+            selectArtist(id);
+            if (selectedArtistId) {
+                setTimeout(() => { switchTab('manual'); generatePrompt(); }, 100);
+            }
+        }
+
+        function selectArtist(id) {
+            const school = artistsDB.find(a => a.id === id);
+            if (school) {
+                const schoolText = (typeof school.name === 'object' ? (school.name[currentLang] || school.name.en) : school.name);
+                const checkResult = analyzeContext(schoolText);
+                if (checkResult.level === 'BLOCKED') {
+                    showSafetyWarning(checkResult);
+                    return;
+                }
+            }
+            if (selectedArtistId === id) {
+                selectedArtistId = null;
+            } else {
+                selectedArtistId = id;
+                selectedPresetIndex = null;
+                renderPresets();
+                renderMobilePresetsList();
+            }
+            renderArtists(currentArtistCategory, document.getElementById('artistSearch')?.value || '');
+            updateSelectionIndicator();
+            updateTabStates();
+            if (selectedArtistId) {
+                showToast(getUIS().toastArtist);
+                localStorage.setItem('lastArtist', selectedArtistId);
+                localStorage.setItem('lastArtistTime', Date.now().toString());
+                localStorage.removeItem('lastPreset');
+                localStorage.removeItem('lastPresetTime');
+            } else {
+                localStorage.removeItem('lastArtist');
+                localStorage.removeItem('lastArtistTime');
+            }
+        }
+
+        // ============================================================
+        // MOBILE ARTISTS - VERTICAL LIST
+        // ============================================================
+        function renderMobileArtistsList() {
+            const container = document.getElementById('mobArtistsListContainer');
+            if (!container) return;
+
+            const search = document.getElementById('artistSearch')?.value || '';
+            const filter = currentArtistCategory;
+            const filtered = artistsDB.filter(a => {
+                const catKey = typeof a.category === 'object' ? (a.category[currentLang] || a.category.en) : a.category;
+                const nameStr = typeof a.name === 'object' ? (a.name[currentLang] || a.name.en) : a.name;
+                const matchesCat = filter === 'all' || catKey === filter;
+                const matchesSearch = !search || nameStr.toLowerCase().includes(search.toLowerCase());
+                return matchesCat && matchesSearch;
+            });
+
+            container.innerHTML = '';
+            filtered.forEach(school => {
+                const isSelected = selectedArtistId === school.id;
+                const nameStr = typeof school.name === 'object' ? (school.name[currentLang] || school.name.en) : school.name;
+                const catStr = typeof school.category === 'object' ? (school.category[currentLang] || school.category.en) : school.category;
+                const descStr = typeof school.description === 'object' ? (school.description[currentLang] || school.description.en) : (school.description || '');
+                
+                const card = document.createElement('div');
+                card.className = `artist-card ${isSelected?'selected':''}`;
+                card.onclick = () => selectArtist(school.id);
+                card.innerHTML = `
+                    <img src="${school.image}" alt="${nameStr}" loading="lazy" decoding="async" class="lazy" onload="this.classList.add('loaded')" onerror="this.style.background='linear-gradient(135deg, #1a1a2e, #16213e)'">
+                    <div class="artist-selected-badge"><i class="fas fa-check"></i></div>
+                    <div class="artist-overlay">
+                        <div class="artist-school">${catStr}</div>
+                        <div class="artist-name">${nameStr}</div>
+                        <div class="text-[10px] mt-1 leading-relaxed" style="opacity:0.95;font-size:10px;color:#fde047;text-shadow:0 2px 8px rgba(0,0,0,0.9)">${descStr}</div>
+                        <div class="artist-traits">
+                            ${school.traits.map(t => `<span class="artist-trait">${t}</span>`).join('')}
+                        </div>
+                        <button class="artist-select-btn" onclick="event.stopPropagation();selectArtistAndGenerate('${school.id}')">
+                            <i class="fas fa-palette"></i> ${currentLang === 'ar' ? 'اختيار المدرسة' : 'Select School'}
+                        </button>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        // ============================================================
+        // APPLY PRESET
+        // ============================================================
+        function applyPreset(index) {
+            const p = presetsDB[index];
+            const presetText = (p.title[currentLang] || p.title.en) + ' ' + (p.tags[currentLang] || p.tags.en || []).join(' ');
+            const checkResult = analyzeContext(presetText);
+            if (checkResult.level === 'BLOCKED') { showSafetyWarning(checkResult); return; }
+            selectedPresetIndex = index;
+            selectedArtistId = null;
+            renderArtists(currentArtistCategory, document.getElementById('artistSearch')?.value || '');
+            localStorage.setItem('lastPreset', index);
+            localStorage.setItem('lastPresetTime', Date.now().toString());
+            localStorage.removeItem('lastArtist');
+            localStorage.removeItem('lastArtistTime');
+            presetUseCounts[p.id] = (presetUseCounts[p.id] || 0) + 1;
+            localStorage.setItem('presetUse', JSON.stringify(presetUseCounts));
+            const sceneInput = document.getElementById('userMainText');
+            if (!sceneInput.value.trim()) { 
+                sceneInput.value = p.data.base[currentLang] || p.data.base.en; 
+                autoResize(sceneInput); 
+            }
+            for (const key in optionsData) {
+                const select = document.getElementById(`sel-${key}`);
+                if (!select) continue;
+                const otherInput = document.getElementById(`other-${key}`);
+                if (otherInput) { otherInput.value = ""; otherInput.style.display = "none"; }
+                let targetVal = p.data[key];
+                if (!targetVal) { select.value = ""; continue; }
+                let valToSet = targetVal[currentLang] || targetVal.en;
+                if (Array.from(select.options).some(opt => opt.value === valToSet)) {
+                    select.value = valToSet;
+                } else if (otherInput) {
+                    select.value = "custom"; otherInput.value = valToSet; otherInput.style.display = "block";
+                }
+            }
+            updateSelectionIndicator();
+            updateTabStates();
+            showToast(getUIS().toastApply);
+            switchTab('manual');
+            generatePrompt();
+        }
+
+        // ============================================================
+        // QUICK MIXES
+        // ============================================================
+        function renderQuickMixes() {
+            const container = document.getElementById('quickMixContainer');
+            container.innerHTML = quickMixes.map(mix => {
+                const labelStr = typeof mix.label === 'object' ? (mix.label[currentLang] || mix.label.en) : mix.label;
+                const promptStr = mix.prompt || '';
+                return `<div class="quick-mix-chip" onclick="applyQuickMix('${labelStr.replace(/'/g,"\\'")}','${promptStr.replace(/'/g,"\\'")}')">
+                    <span>${mix.icon}</span> ${labelStr}
+                </div>`;
+            }).join('');
+        }
+
+        function applyQuickMix(label, style) {
+            const mixText = label + ' ' + style;
+            const checkResult = analyzeContext(mixText);
+            if (checkResult.level === 'BLOCKED') { showSafetyWarning(checkResult); return; }
+            const ta = document.getElementById('userMainText');
+            if (!ta.value.trim()) ta.value = label;
+            document.getElementById('finalPromptDisplay').innerText = `Cinematic photography: ${ta.value}. Style: ${style}. Quality: Ultra realistic, 8K resolution, cinematic grain, volumetric light, masterwork composition.`;
+            document.getElementById('resultSection').classList.remove('hidden');
+            document.getElementById('safetyBadgeContainer').innerHTML = `<span class="safety-badge safe"><i class="fas fa-shield-alt"></i> Safe</span>`;
+            showToast(getUIS().toastApply);
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ============================================================
+        // SELECTION INDICATOR
+        // ============================================================
+        function updateSelectionIndicator() {
+            const container = document.getElementById('selectionIndicator');
+            container.innerHTML = '';
+            if (selectedPresetIndex !== null) {
+                const p = presetsDB[selectedPresetIndex];
+                const title = p.title[currentLang] || p.title.en;
+                container.innerHTML = `<div class="active-path-indicator"><span class="path-label">${currentLang === 'ar' ? 'المسار: قالب جاهز' : 'Path: Preset'}</span><span class="path-name">— ${title}</span><button class="path-clear" onclick="clearPresetSelection()" title="${currentLang === 'ar' ? 'إلغاء الاختيار' : 'Clear'}">✕</button></div>`;
+                container.style.display = 'flex';
+            } else if (selectedArtistId) {
+                const a = artistsDB.find(x => x.id === selectedArtistId);
+                if (a) {
+                    const nameStr = typeof a.name === 'object' ? (a.name[currentLang] || a.name.en) : a.name;
+                    container.innerHTML = `<div class="active-path-indicator"><span class="path-label">${currentLang === 'ar' ? 'المسار: مدرسة فنية' : 'Path: Art School'}</span><span class="path-name">— ${nameStr}</span><button class="path-clear" onclick="clearArtistSelection()" title="${currentLang === 'ar' ? 'إلغاء الاختيار' : 'Clear'}">✕</button></div>`;
+                    container.style.display = 'flex';
+                }
+            } else {
+                container.innerHTML = `<div class="active-path-indicator free"><span class="path-label">${currentLang === 'ar' ? 'المسار: تخصيص يدوي حر' : 'Path: Free Manual'}</span></div>`;
+                container.style.display = 'flex';
+            }
+        }
+
+        function clearPresetSelection() {
+            selectedPresetIndex = null;
+            renderPresets();
+            renderMobilePresetsList();
+            updateSelectionIndicator();
+            updateTabStates();
+            localStorage.removeItem('lastPreset');
+            localStorage.removeItem('lastPresetTime');
+        }
+
+        function clearArtistSelection() {
+            selectedArtistId = null;
+            renderArtists(currentArtistCategory, document.getElementById('artistSearch')?.value || '');
+            renderMobileArtistsList();
+            updateSelectionIndicator();
+            updateTabStates();
+            localStorage.removeItem('lastArtist');
+            localStorage.removeItem('lastArtistTime');
+        }
+
+        function updateTabStates() {
+            const presetTab = document.getElementById('tab-presets');
+            const artistTab = document.getElementById('tab-artists');
+            const mobPreset = document.getElementById('mobnav-presets');
+            const mobArtist = document.getElementById('mobnav-artists');
+            if (selectedPresetIndex !== null) {
+                artistTab?.classList.add('dimmed');
+                presetTab?.classList.remove('dimmed');
+                mobArtist?.classList.add('dimmed');
+                mobPreset?.classList.remove('dimmed');
+            } else if (selectedArtistId) {
+                presetTab?.classList.add('dimmed');
+                artistTab?.classList.remove('dimmed');
+                mobPreset?.classList.add('dimmed');
+                mobArtist?.classList.remove('dimmed');
+            } else {
+                [presetTab, artistTab, mobPreset, mobArtist].forEach(el => el?.classList.remove('dimmed'));
+            }
+        }
+
+        // ============================================================
+        // BUILDER
+        // ============================================================
+        function initBuilder() {
+            const container = document.getElementById('builderOptions');
+            const labels = getUIS().labels;
+            const cats = getUIS().categories;
+            const categoryKeys = [['time'],['light'],['weather'],['mood'],['camera'],['lens'],['angle'],['expression'],['clothing'],['environment'],['action'],['quality'],['advanced']];
+            container.innerHTML = '';
+            categoryKeys.forEach((keys, i) => {
+                const key = keys[0];
+                const data = optionsData[key]; if (!data) return;
+                const optionsList = data[currentLang] || data['en'];
+                const catTitle = Object.values(cats)[i] || key;
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'select-category-group';
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'select-category-title';
+                titleSpan.innerText = catTitle;
+                groupDiv.appendChild(titleSpan);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'mb-3';
+                wrapper.innerHTML = `<label class="text-[10px] opacity-70 mb-1 block font-bold uppercase tracking-wider">${labels[key]||key}</label><select id="sel-${key}" class="custom-select" onchange="toggleOther('${key}')"><option value="">-- ${currentLang==='ar'?'اختر':'Select'} --</option>${optionsList.map(opt=>`<option value="${opt}">${opt}</option>`).join('')}<option value="custom">${getUIS().other}</option></select><input type="text" id="other-${key}" class="mt-2 bg-white/5 border border-orange-500/30 text-inherit p-2 rounded-xl w-full text-sm hidden" placeholder="...">`;
+                groupDiv.appendChild(wrapper);
+                container.appendChild(groupDiv);
+            });
+        }
+
+        function toggleOther(key) { const s=document.getElementById(`sel-${key}`); const i=document.getElementById(`other-${key}`); if(i) i.style.display=(s.value==='custom')?'block':'none'; }
+
+        // ============================================================
+        // RESULT ACTIONS
+        // ============================================================
+        function copyResult() { 
+            const display = document.getElementById('finalPromptDisplay');
+            const text = display.innerText; 
+            const btn = document.getElementById('ui-btn-copy');
+            const btnText = document.getElementById('ui-btn-copy-text');
+            const btnIcon = btn.querySelector('i');
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(()=>{
+                    const originalText = btnText.innerText;
+                    const originalIcon = btnIcon.className;
+                    
+                    btnText.innerText = getUIS().copied;
+                    btnIcon.className = 'fas fa-check';
+                    btn.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        btnText.innerText = originalText;
+                        btnIcon.className = originalIcon;
+                        btn.classList.remove('copied');
+                    }, 2500);
+                    
+                    showToast(getUIS().toastCopy);
+                });
+            } else {
+                const d=document.createElement("textarea"); 
+                document.body.appendChild(d); 
+                d.value=text; 
+                d.select(); 
+                document.execCommand("copy"); 
+                document.body.removeChild(d); 
+                
+                const originalText = btnText.innerText;
+                const originalIcon = btnIcon.className;
+                
+                btnText.innerText = getUIS().copied;
+                btnIcon.className = 'fas fa-check';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btnText.innerText = originalText;
+                    btnIcon.className = originalIcon;
+                    btn.classList.remove('copied');
+                }, 2500);
+                
+                showToast(getUIS().toastCopy); 
+            }
+        }
+
+        function downloadTXT() { const text = document.getElementById('finalPromptDisplay').innerText; const a = document.createElement('a'); a.href = 'data:text/plain;charset=utf-8,'+encodeURIComponent(text); a.download = 'prompt.txt'; a.click(); }
+        function downloadJSON() { const text = document.getElementById('finalPromptDisplay').innerText; const obj = { prompt: text, generated: new Date().toISOString(), lang: currentLang }; const a = document.createElement('a'); a.href = 'data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(obj,null,2)); a.download = 'prompt.json'; a.click(); }
+
+        // ============================================================
+        // RESET
+        // ============================================================
+        function resetAll() { 
+            document.getElementById('userMainText').value=''; 
+            document.querySelectorAll('select').forEach(s=>s.value=''); 
+            document.querySelectorAll('input[type="text"]').forEach(i=>{i.value='';i.style.display='none';}); 
+            document.getElementById('resultSection').classList.add('hidden'); 
+            selectedArtistId=null; 
+            selectedPresetIndex=null; 
+            updateSelectionIndicator(); 
+            updateTabStates();
+            renderArtists(currentArtistCategory); 
+            renderPresets();
+            renderMobilePresetsList();
+            renderMobileArtistsList();
+            hideSafetyWarning(); 
+            localStorage.removeItem('lastPreset');
+            localStorage.removeItem('lastPresetTime');
+            localStorage.removeItem('lastArtist');
+            localStorage.removeItem('lastArtistTime');
+        }
+
+        function showToast(msg) { 
+            const t = document.getElementById('toast'); 
+            document.getElementById('toastMsg').innerText = msg; 
+            t.style.display = 'block'; 
+            setTimeout(() => t.style.display = 'none', 3500); 
+        }
+
+        // ============================================================
+        // UPDATE UI TEXT
+        // ============================================================
+        function updateUIText() {
+            const s = getUIS();
+            document.getElementById('ui-title').innerHTML = s.title;
+            document.getElementById('ui-title').style.fontStyle = 'normal';
+            document.getElementById('ui-desc').innerText = s.desc;
+            document.getElementById('ui-desc').style.color = 'var(--text-main)';
+            document.getElementById('userMainText').placeholder = s.placeholder;
+            document.getElementById('ui-builder-title').innerText = s.builderTitle;
+            document.getElementById('ui-builder-desc').innerText = s.builderDesc;
+            document.getElementById('ui-btn-gen-text').innerText = s.btnGen;
+            document.getElementById('ui-btn-gen-label').innerText = s.btnGen;
+            document.getElementById('ui-btn-reset').innerText = s.btnReset;
+            document.getElementById('ui-btn-copy-text').innerText = s.btnCopy;
+            document.getElementById('ui-result-label').innerText = s.resultLabel;
+            document.getElementById('ui-quick-mix-label').innerText = s.quickMixLabel;
+            document.getElementById('tab-label-presets').innerText = s.tabPresets;
+            document.getElementById('tab-label-artists').innerText = s.tabArtists;
+            document.getElementById('tab-label-manual').innerText = s.tabManual;
+            document.getElementById('presetSearch').placeholder = s.searchPresets;
+            document.getElementById('artistSearch').placeholder = s.searchArtists;
+            document.getElementById('sort-default').innerText = s.sortDefault;
+            document.getElementById('sort-cinematic').innerText = s.sortCinematic;
+            document.getElementById('sort-realistic').innerText = s.sortRealistic;
+            document.getElementById('sort-artistic').innerText = s.sortArtistic;
+            const chipsContainer = document.getElementById('suggestionChips');
+            chipsContainer.innerHTML = s.suggestions.map(sug => `<span class="chip" onclick="insertSuggestion('${sug}')">${sug}</span>`).join('');
+            const tooltip = document.querySelector('#scrollTopBtn .tooltip');
+            if (tooltip) tooltip.textContent = s.scrollTop;
+        }
+
+        // ============================================================
+        // SUGGESTION INSERT
+        // ============================================================
+        function insertSuggestion(text) {
+            const ta = document.getElementById('userMainText');
+            const prompts = {
+                ar: {
+                    "مدينة عربية مستقبلية": `لقطة سينمائية واسعة من نقطة مرتفعة تكشف عن مدينة عربية مستقبلية مدهشة ممتدة تحت سماء صافية على ساحل البحر. تتميز المدينة بخرسانة ذكية متداخلة مع ألواح شمسية مرنة على أسطح ناطحات سحاب زجاجية منحنية ومتموجة مستوحاة من أشكال الكثبان الرملية والمشربيات العربية التقليدية المعاد تصميمها بشكل عصري.`,
+                    "مشهد فرعوني سينمائي": `لقطة سينمائية واسعة من نقطة مرتفعة تكشف عن قلب الإمبراطورية المصرية القديمة، حيث تتمازج العظمة المعمارية مع الحياة اليومية الصاخبة على ضفاف نهر النيل الخالد. يهيمن على المشهد مجمع معابد ضخم يمتد على مساحة شاسعة، مبني من حجر جيري أبيض متلألئ يعكس ضوء النهار بقوة.`,
+                    "أنمي بأسلوب جيبلي": `لقطة بانورامية واسعة مرسومة يدوياً بأسلوب أنمي جيبلي الساحر، تكشف عن قرية جبلية هادئة تحتفي بانسجام الطبيعة والبشر في يوم ربيعي دافئ. تستند قرية صغيرة آمنة إلى سفوح تلال خضراء متدرجة ومغطاة بمراعي واسعة وغابات كثيفة من أشجار البلوط والكرز المزهرة باللون الوردي والأبيض.`,
+                    "جبل وقت الغروب": `مشهد بانورامي مهيب يجسد قمة جبلية شاهقة وشديدة الانحدار تخترق عنان السماء، حيث تتلون بالكامل بألوان الغروب الدافئة والنارية. تتداخل درجات البرتقالي الذهبي، والأحمر القرمزي، والأرجواني العميق فوق الصخور الوعرة والمتآكلة للقمة.`
+                },
+                en: {
+                    "Futuristic Arab City": `Cinematic wide shot from an elevated vantage point revealing a stunning futuristic Arab city stretching under a clear sky along the sea coast. The city features smart concrete interwoven with flexible solar panels on curved, undulating glass skyscrapers inspired by sand dune shapes.`,
+                    "Cinematic Pharaonic Scene": `Cinematic wide shot from an elevated vantage point revealing the heart of the ancient Egyptian Empire, where architectural grandeur blends with bustling daily life along the banks of the eternal Nile. A massive temple complex dominates the scene.`,
+                    "Anime in Ghibli Style": `Hand-drawn panoramic wide shot in the magical style of Ghibli anime, revealing a peaceful mountain village celebrating the harmony between humans and nature on a warm spring day. A small safe village nestles against slopes of green rolling hills.`,
+                    "Golden Sunset": `A majestic panoramic scene d    </script>
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+</body>orage.getItem('lastTab');
+            if (lastTab) switchTab(lastTab);
+            const lastPreset = localStorage.getItem('lastPreset');
+            const lastArtist = localStorage.getItem('lastArtist');
+            const presetTime = parseInt(localStorage.getItem('lastPresetTime') || '0');
+            const artistTime = parseInt(localStorage.getItem('lastArtistTime') || '0');
+            if (lastPreset && lastArtist) {
+                if (presetTime > artistTime) {
+                    selectedPresetIndex = parseInt(lastPreset);
+                    selectedArtistId = null;
+                    localStorage.removeItem('lastArtist');
+                    localStorage.removeItem('lastArtistTime');
+                } else if (artistTime > presetTime) {
+                    selectedArtistId = lastArtist;
+                    selectedPresetIndex = null;
+                    localStorage.removeItem('lastPreset');
+                    localStorage.removeItem('lastPresetTime');
+                } else {
+                    selectedPresetIndex = null;
+                    selectedArtistId = null;
+                    localStorage.removeItem('lastPreset');
+                    localStorage.removeItem('lastPresetTime');
+                    localStorage.removeItem('lastArtist');
+                    localStorage.removeItem('lastArtistTime');
+                }
+            } else if (lastPreset) {
+                selectedPresetIndex = parseInt(lastPreset);
+            } else if (lastArtist) {
+                selectedArtistId = lastArtist;
+            }
+            updateSelectionIndicator();
+            updateTabStates();
+        }
+
+        // ============================================================
+        // TAB SWITCHING
+        // ============================================================
+        function switchTab(tab) {
+            currentTab = tab;
+            ['presets','artists','manual'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                const panel = document.getElementById(`panel-${t}`);
+                if(btn) btn.classList.toggle('active', t === tab);
+                if(panel) panel.classList.toggle('active', t === tab);
+            });
+            localStorage.setItem('lastTab', tab);
+            if (isMobile() || isTablet()) {
+                ['presets','artists','manual'].forEach(t => {
+                    const el = document.getElementById(`mobnav-${t}`);
+                    if (el) el.classList.toggle('active', t === tab);
+                });
+            }
+        }
+
+        function mobileSwitchTab(tab) {
+            switchTab(tab);
+        }
+
+        function updateMobileNavLabels() {
+            const labels = {
+                ar: { presets:'القوالب', artists:'المدارس', manual:'تخصيص' },
+                en: { presets:'Presets', artists:'Schools', manual:'Custom' }
+            };
+            const l = labels[currentLang];
+            ['presets','artists','manual'].forEach(t => {
+                const el = document.getElementById(`mobnav-label-${t}`);
+                if (el) el.textContent = l[t];
+            });
+        }
+
+        // ============================================================
+        // GLOBAL EXPOSURE
+        // ============================================================
+        window.switchTab = switchTab;
+        window.mobileSwitchTab = mobileSwitchTab;
+        window.generatePrompt = generatePrompt;
+        window.resetAll = resetAll;
+        window.copyResult = copyResult;
+        window.applyPreset = applyPreset;
+        window.toggleOther = toggleOther;
+        window.filterPresets = filterPresets;
+        window.setPresetLayout = setPresetLayout;
+        window.setPresetTag = setPresetTag;
+        window.filterArtists = filterArtists;
+        window.setArtistCategory = setArtistCategory;
+        window.selectArtist = selectArtist;
+        window.selectArtistAndGenerate = selectArtistAndGenerate;
+        window.applyQuickMix = applyQuickMix;
+        window.downloadTXT = downloadTXT;
+        window.downloadJSON = downloadJSON;
+        window.clearPromptInput = clearPromptInput;
+        window.insertSuggestion = insertSuggestion;
+        window.toggleFav = toggleFav;
+        window.hideSafetyWarning = hideSafetyWarning;
+        window.toggleSafetyDetails = toggleSafetyDetails;
+        window.clearPresetSelection = clearPresetSelection;
+        window.clearArtistSelection = clearArtistSelection;
+
+        // ============================================================
+        // WRAPPER FUNCTIONS
+        // ============================================================
+        const _origRenderPresets = renderPresets;
+        renderPresets = function() {
+            _origRenderPresets();
+            renderMobilePresetsList();
+        };
+
+        const _origRenderArtists = renderArtists;
+        renderArtists = function(filter, search) {
+            _origRenderArtists(filter, search);
+            renderMobileArtistsList();
+        };
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        window.onload = async () => {
+            const savedLang = localStorage.getItem('preferredLanguage') || 'ar';
+            currentLang = savedLang;
+            updateDirection();
+            updateUIText();
+            initBuilder();
+            renderPresets();
+            renderArtists('all', '');
+            renderQuickMixes();
+            restoreSession();
+            updateMobileNavLabels();
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            document.body.classList.remove('light-mode', 'dark-mode');
+            document.body.classList.add(darkMode ? 'dark-mode' : 'light-mode');
+            setTimeout(waitForLogoLink, 200);
+            document.body.classList.add('loaded');
+            hideSafetyWarning();
+            
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    const active = document.activeElement;
+                    if (active && active.id === 'userMainText') {
+                        e.preventDefault();
+                        generatePrompt();
+                    }
+                }
+            });
+        };
+
+        function waitForLogoLink() {
+            const logoLink = document.getElementById('logoHomeLink');
+            if (logoLink) {
+                const lang = document.documentElement.lang || 'ar';
+                logoLink.href = lang === 'ar' ? '/?lang=ar' : '/?lang=en';
+            }
+        }
+
+        document.addEventListener('headerLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2fd1462cef2c66b',t:'MTc4NzUxOTE3MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"457d7ebe5e3f45da85d840b0394f2a42","r":1}' crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد مقاييس التقدير والروبرك (Rubric Generator AI) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        select option { background-color: #0f172a !important; color: #ffffff !important; }
+        .btn-3d { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); transition: all 0.2s ease; }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-emerald-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-table-cells"></i>
+                </div>
+                <span class="font-bold text-white">مولد مقاييس التقدير ومصفوفات التقييم (Rubric Generator AI)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Form Section -->
+        <div class="lg:col-span-5 glass-card p-6 rounded-3xl border border-white/10 flex flex-col space-y-5">
+            <h2 class="text-xl font-bold text-white border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-emerald-400"></i> إعدادات مصفوفة التقييم (الروبرك)
+            </h2>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">عنوان المشروع / المهمة الأدائية</label>
+                <input type="text" id="taskTitle" placeholder="مثال: مشروع تصميم مجسم خلية، عرض تقديمي، مقال علمي..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">الصف / المرحلة الدراسية</label>
+                <select id="gradeLevel" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400">
+                    <option>المرحلة الابتدائية (الصفوف الأولى)</option>
+                    <option selected>المرحلة الابتدائية (الصفوف العليا)</option>
+                    <option>المرحلة المتوسطة</option>
+                    <option>المرحلة الثانوية</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">مستويات الأداء والتقييم</label>
+                <select id="levelsCount" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400">
+                    <option value="4">4 مستويات (ممتاز، جيد جداً، جيد، بحاجة لدعم)</option>
+                    <option value="3">3 مستويات (متمكن، متمكن جزئياً، غير متمكن)</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">معايير التقييم المطلوبة</label>
+                <textarea id="criteriaList" rows="3" placeholder="مثال: دقة المعلومات، جودة التصميم والترتيب، الإلقاء والعرض، الالتزام بالوقت..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400 leading-relaxed"></textarea>
+            </div>
+
+            <button onclick="generateRubricTable(this)" class="btn-3d w-full py-3.5 rounded-2xl text-white font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>إنشاء مصفوفة التقييم فوراً 📊</span>
+            </button>
+        </div>
+
+        <!-- Result Section -->
+        <div class="lg:col-span-7 glass-card p-6 rounded-3xl border border-white/10 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-table text-emerald-400"></i> مصفوفة التقييم المعتمدة
+                    </h2>
+                    <button onclick="copyToClipboard('rubricOutput')" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 text-xs font-bold transition flex items-center gap-2">
+                        <i class="fa-solid fa-copy"></i>
+                        <span>نسخ جدول التقييم</span>
+                    </button>
+                </div>
+
+                <div id="rubricOutput" class="overflow-x-auto">
+                    <div class="text-center py-12 text-slate-500">
+                        <i class="fa-solid fa-table-cells text-5xl mb-3 block text-slate-600"></i>
+                        <p class="text-xs">أدخلي بيانات المهمة واضغطي على زر التوليد لعرض جدول الروبرك المتكامل.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function generateRubricTable(btn) {
+            const title = document.getElementById('taskTitle').value.trim() || 'المهمة الأدائية المستهدفة';
+            const grade = document.getElementById('gradeLevel').value;
+            const levels = parseInt(document.getElementById('levelsCount').value) || 4;
+            const rawCriteria = document.getElementById('criteriaList').value.trim() || 'دقة المحتوى، الترتيب والإخراج، الالتزام بالتسليم';
+
+            const criteriaArr = rawCriteria.split(/[,،\n]/).map(c => c.trim()).filter(c => c.length > 0);
+
+            generateAIResponse(btn, 'rubricOutput', () => {
+                let headersHtml = '';
+                let rowsHtml = '';
+                let titleBlock = '';
+
+                if (currentLang === 'en') {
+                    headersHtml = `<th class="p-3 border border-slate-700 bg-slate-900 text-emerald-400 font-bold text-left">Criterion</th>`;
+                    if (levels === 4) {
+                        headersHtml += `
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-emerald-300 font-bold text-left">Excellent (4)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-cyan-300 font-bold text-left">Very Good (3)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-amber-300 font-bold text-left">Good (2)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-rose-300 font-bold text-left">Needs Support (1)</th>
+                        `;
+                    } else {
+                        headersHtml += `
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-emerald-300 font-bold text-left">Proficient (3)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-amber-300 font-bold text-left">Developing (2)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-rose-300 font-bold text-left">Emerging (1)</th>
+                        `;
+                    }
+
+                    criteriaArr.forEach((crit) => {
+                        if (levels === 4) {
+                            rowsHtml += `
+                                <tr class="hover:bg-slate-900/50 transition">
+                                    <td class="p-3 border border-slate-800 font-bold text-white text-xs bg-slate-900/80 text-left">${crit}</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Exceptional and comprehensive mastery in ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">High quality and accurate demonstration of ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Acceptable work with minor points for growth.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Requires further guidance and support in ${crit}.</td>
+                                </tr>
+                            `;
+                        } else {
+                            rowsHtml += `
+                                <tr class="hover:bg-slate-900/50 transition">
+                                    <td class="p-3 border border-slate-800 font-bold text-white text-xs bg-slate-900/80 text-left">${crit}</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Full mastery and excellent application of ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Partial understanding requiring light review in ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Standard not yet met; intensive support needed.</td>
+                                </tr>
+                            `;
+                        }
+                    });
+
+                    titleBlock = `
+                        <div class="border-b border-slate-800 pb-3 text-left">
+                            <h3 class="font-extrabold text-sm text-emerald-400">📊 Assessment Rubric: ${title}</h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Grade Level: ${grade} | Evaluation: ${levels} Levels</p>
+                        </div>
+                    `;
+                } else if (currentLang === 'fr') {
+                    headersHtml = `<th class="p-3 border border-slate-700 bg-slate-900 text-emerald-400 font-bold text-left">Critère</th>`;
+                    if (levels === 4) {
+                        headersHtml += `
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-emerald-300 font-bold text-left">Excellent (4)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-cyan-300 font-bold text-left">Très Bien (3)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-amber-300 font-bold text-left">Bien (2)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-rose-300 font-bold text-left">À Soutenir (1)</th>
+                        `;
+                    } else {
+                        headersHtml += `
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-emerald-300 font-bold text-left">Maîtrisé (3)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-amber-300 font-bold text-left">En Cours (2)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-rose-300 font-bold text-left">Non Maîtrisé (1)</th>
+                        `;
+                    }
+
+                    criteriaArr.forEach((crit) => {
+                        if (levels === 4) {
+                            rowsHtml += `
+                                <tr class="hover:bg-slate-900/50 transition">
+                                    <td class="p-3 border border-slate-800 font-bold text-white text-xs bg-slate-900/80 text-left">${crit}</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Maîtrise exceptionnelle et complète pour ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Travail soigné et précis sur le critère ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Acceptable avec quelques ajustements nécessaires.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Nécessite un accompagnement renforcé en ${crit}.</td>
+                                </tr>
+                            `;
+                        } else {
+                            rowsHtml += `
+                                <tr class="hover:bg-slate-900/50 transition">
+                                    <td class="p-3 border border-slate-800 font-bold text-white text-xs bg-slate-900/80 text-left">${crit}</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Maîtrise totale et excellente application de ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Maîtrise partielle nécessitant un suivi en ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px] text-left">Critère non atteint; besoin d'un soutien ciblé.</td>
+                                </tr>
+                            `;
+                        }
+                    });
+
+                    titleBlock = `
+                        <div class="border-b border-slate-800 pb-3 text-left">
+                            <h3 class="font-extrabold text-sm text-emerald-400">📊 Grille d'Évaluation : ${title}</h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Niveau : ${grade} | Système : ${levels} Niveaux</p>
+                        </div>
+                    `;
+                } else {
+                    headersHtml = `<th class="p-3 border border-slate-700 bg-slate-900 text-emerald-400 font-bold">المعيار</th>`;
+                    if (levels === 4) {
+                        headersHtml += `
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-emerald-300 font-bold">ممتاز (4)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-cyan-300 font-bold">جيد جداً (3)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-amber-300 font-bold">جيد (2)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-rose-300 font-bold">بحاجة لدعم (1)</th>
+                        `;
+                    } else {
+                        headersHtml += `
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-emerald-300 font-bold">متمكن (3)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-amber-300 font-bold">متمكن جزئياً (2)</th>
+                            <th class="p-3 border border-slate-700 bg-slate-900 text-rose-300 font-bold">غير متمكن (1)</th>
+                        `;
+                    }
+
+                    criteriaArr.forEach((crit) => {
+                        if (levels === 4) {
+                            rowsHtml += `
+                                <tr class="hover:bg-slate-900/50 transition">
+                                    <td class="p-3 border border-slate-800 font-bold text-white text-xs bg-slate-900/80">${crit}</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px]">أداء استثنائي متكامل في ${crit} بدون أي أخطاء.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px]">أداء جيد جداً مع دقة عالية في ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px]">أداء مقبول مع وجود بعض الملاحظات البسيطة.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px]">يحتاج إلى توجيه وإعادة تطبيق معيار ${crit}.</td>
+                                </tr>
+                            `;
+                        } else {
+                            rowsHtml += `
+                                <tr class="hover:bg-slate-900/50 transition">
+                                    <td class="p-3 border border-slate-800 font-bold text-white text-xs bg-slate-900/80">${crit}</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px]">إتقان كامل وتطبيق ممتاز لمعيار ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px]">إتقان جزئي يحتاج لمتابعة طفيفة في ${crit}.</td>
+                                    <td class="p-3 border border-slate-800 text-slate-300 text-[11px]">لم يتم تحقيق المعيار وبحاجة لدعم مكثف.</td>
+                                </tr>
+                            `;
+                        }
+                    });
+
+                    titleBlock = `
+                        <div class="border-b border-slate-800 pb-3">
+                            <h3 class="font-extrabold text-sm text-emerald-400">📊 مصفوفة روبرك: ${title}</h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">المرحلة: ${grade} | نظام التقييم: ${levels} مستويات</p>
+                        </div>
+                    `;
+                }
+
+                document.getElementById('rubricOutput').innerHTML = `
+                    <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-4">
+                        ${titleBlock}
+                        <table class="w-full ${currentLang === 'ar' ? 'text-right' : 'text-left'} border-collapse text-xs">
+                            <thead>
+                                <tr>${headersHtml}</tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800">
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('rubricOutput').innerHTML = html;
+        }
+
+        function copyRubricText() {
+            const container = document.getElementById('rubricOutput');
+            navigator.clipboard.writeText(container.innerText);
+            const btn = document.getElementById('copyBtnTxt');
+            btn.innerText = 'تم النسخ بنجاح! ✓';
+            setTimeout(() => btn.innerText = 'نسخ جدول التقييم', 2000);
+        }
+    </script>
+</body>
+</html>

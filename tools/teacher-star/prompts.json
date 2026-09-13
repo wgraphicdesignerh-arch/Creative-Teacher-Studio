@@ -1,0 +1,163 @@
+[
+  {
+    "id": "arabic",
+    "titleAr": "اللغة العربية",
+    "titleEn": "Arabic Language",
+    "descAr": "أوامر وأنشطة إبداعية",
+    "descEn": "Creative prompts and activities",
+    "icon": "🖋️",
+    "colorClass": "card-arabic",
+    "prompts": [
+      {
+        "id": 1,
+        "titleAr": "توليد قصة قصيرة لغوية",
+        "titleEn": "Generate short grammar story",
+        "textAr": "اكتب قصة قصيرة ممتعة للأطفال تركز على استخدام الأفعال الخمسة مع أسئلة استخراج تفاعلية.",
+        "textEn": "Write an engaging short story for children focusing on the use of five verbs (الأفعال الخمسة) with interactive extraction questions.",
+        "image": "images/arabic/1.png"
+      },
+      {
+        "id": 2,
+        "titleAr": "نشاط إملائي تفاعلي",
+        "titleEn": "Interactive Spelling Activity",
+        "textAr": "صمم لعبة تعليمية أو نشاطاً تفاعلياً لتعليم همزة الوصل والقطع لطلاب المرحلة الابتدائية.",
+        "textEn": "Design an educational game or interactive activity to teach Hamzat Al-Wasl and Al-Qat' for primary school students.",
+        "image": "images/arabic/2.png"
+      }
+    ]
+  },
+  {
+    "id": "english",
+    "titleAr": "اللغة الإنجليزية",
+    "titleEn": "English Language",
+    "descAr": "أوامر تفاعلية لتطوير المهارات اللغوية",
+    "descEn": "Interactive prompts to develop language skills",
+    "icon": "🇬🇧",
+    "colorClass": "card-english",
+    "prompts": [
+      {
+        "id": 1,
+        "titleAr": "محادثات تفاعلية للمبتدئين",
+        "titleEn": "Interactive role-play for beginners",
+        "textAr": "اكتب سيناريو محادثة قصيرة في المطعم لتعليم الطلاب التعبير عن الطلبات بأسلوب مؤدب باستخدام Can/Could.",
+        "textEn": "Write a short restaurant conversation script to teach students how to make polite requests using Can/Could.",
+        "image": "images/english/1.png"
+      },
+      {
+        "id": 2,
+        "titleAr": "لعبة الكلمات والقوافي",
+        "titleEn": "Rhyming Word Game",
+        "textAr": "اقترح 5 ألعاب صفية سريعة لتعليم القوافي والكلمات المتشابهة في النطق للأطفال.",
+        "textEn": "Suggest 5 quick classroom games to teach rhyming words and phonics to children.",
+        "image": "images/english/2.png"
+      }
+    ]
+  },
+  {
+    "id": "math",
+    "titleAr": "الرياضيات",
+    "titleEn": "Mathematics",
+    "descAr": "أوامر مبسطة لشرح المفاهيم وحل المسائل",
+    "descEn": "Simplified prompts to explain concepts and solve problems",
+    "icon": "📐",
+    "colorClass": "card-math",
+    "prompts": [
+      {
+        "id": 1,
+        "titleAr": "تبسيط شرح الكسور",
+        "titleEn": "Simplifying Fractions Concept",
+        "textAr": "اشرح مفهوم الكسور الاعتيادية لطلاب الصف الثالث باستخدام أمثلة واقعية مثل البيتزا أو قطع الحلوى.",
+        "textEn": "Explain the concept of common fractions to third-grade students using real-world examples like pizza or candy bars.",
+        "image": "images/math/1.png"
+      },
+      {
+        "id": 2,
+        "titleAr": "أوراق عمل الضرب التفاعلية",
+        "titleEn": "Interactive Multiplication Worksheets",
+        "textAr": "صمم ورقة عمل تفاعلية لحفظ جدول الضرب من خلال حل لغز أو قصة قصيرة مسلية.",
+        "textEn": "Design an interactive worksheet for memorizing multiplication tables through solving a puzzle or a fun story.",
+        "image": "images/math/2.png"
+      }
+    ]
+  },
+  {
+    "id": "science",
+    "titleAr": "العلوم",
+    "titleEn": "Science",
+    "descAr": "أوامر لتجارب وأنشطة علمية ممتعة",
+    "descEn": "Prompts for fun scientific experiments and activities",
+    "icon": "🔬",
+    "colorClass": "card-science",
+    "prompts": [
+      {
+        "id": 1,
+        "titleAr": "تجربة دورة المياه في الطبيعة",
+        "titleEn": "Water Cycle Experiment",
+        "textAr": "صمم تجربة علمية بسيطة وآمنة يمكن تنفيذها داخل الصف لشرح دورة الماء باستخدام أدوات متوفرة.",
+        "textEn": "Design a simple, safe classroom science experiment to explain the water cycle using easily available household materials.",
+        "image": "images/science/1.png"
+      },
+      {
+        "id": 2,
+        "titleAr": "رحلة افتراضية في الجهاز الهضمي",
+        "titleEn": "Virtual Tour of Digestive System",
+        "textAr": "اكتب نصاً لقصة إرشادية تأخذ الطلاب في رحلة تخيلية داخل الجهاز الهضمي البشري لشرح وظيفة كل عضو.",
+        "textEn": "Write an instructional narrative taking students on a virtual journey inside the human digestive system to explain the function of each organ.",
+        "image": "images/science/2.png"
+      }
+    ]
+  },
+  {
+    "id": "quran",
+    "titleAr": "القرآن الكريم",
+    "titleEn": "Holy Quran",
+    "descAr": "أوامر لتفسير وحفظ وتدبر القرآن الكريم بأساليب ملهمة",
+    "descEn": "Prompts for interpreting, memorizing, and contemplating the Quran with inspiring methods",
+    "icon": "📖",
+    "colorClass": "card-quran",
+    "prompts": [
+      {
+        "id": 1,
+        "titleAr": "تيسير فهم وتدبر سورة قصيرة",
+        "titleEn": "Simplifying understanding of a short Surah",
+        "textAr": "اقترح طريقة إبداعية ووسائل بصرية لتدبر سورة الفيل واستخلاص القيم والدروس المستفادة للأطفال.",
+        "textEn": "Suggest a creative method and visual aids to contemplate Surah Al-Fil and extract values and lessons learned for children.",
+        "image": "images/quran/1.png"
+      },
+      {
+        "id": 2,
+        "titleAr": "خطة حفظ أسبوعية للأطفال",
+        "titleEn": "Weekly Memorization Plan for Kids",
+        "textAr": "صمم خطة تشجيعية وتفاعلية لتحفيز الأطفال على حفظ جزء عمّ باستخدام أساليب الثواب والمكافأة الصفية.",
+        "textEn": "Design an encouraging and interactive plan to motivate kids to memorize Juz Amma using classroom reward systems.",
+        "image": "images/quran/2.png"
+      }
+    ]
+  },
+  {
+    "id": "stickers",
+    "titleAr": "ملصقات وتصاميم",
+    "titleEn": "Labels & Stickers",
+    "descAr": "أوامر لتصميم ملصقات مدرسية ووسائل تعليمية مبتكرة",
+    "descEn": "Prompts to design school labels and creative teaching aids",
+    "icon": "🏷️",
+    "colorClass": "card-english",
+    "prompts": [
+      {
+        "id": 1,
+        "titleAr": "مصمم ملصقات الأميرات المدرسية",
+        "titleEn": "Fairytale Princess Labels Designer",
+        "textAr": "SYSTEM ROLE: Premium personalized children’s sticker designer. Output ONE final printable sticker sheet only.\n\nCANVAS:\nA4 portrait, 300 DPI, bright cream background, ten individually cuttable stickers with generous spacing and thick white die-cut borders.\n\nTOPIC:\nPersonalized fairytale-princess school labels.\n\nPHOTO ENGINE:\nUse the uploaded child photo as the only identity reference.\nTransform her into an original cinematic 3D animated young princess.\nPreserve her recognizable face, skin tone, hairstyle, eye color, glasses and age.\nCreate a modest original royal dress designed specifically for this image.\nDo not imitate any existing movie princess, costume, castle, crown or franchise character.\n\nSTYLE:\nOriginal premium 3D family-animation style + Morphic Glass.\nCandy Pastel palette: pink #FF8FAB, mint #9EE6CF, butter yellow #FFE08A and lavender #C8B6FF.\nLight mode, soft sunrise, global illumination, gentle subsurface scattering, rounded tactile forms and delicate sparkling highlights.\n\nLAYOUT:\nOne central royal crest sticker with the child’s portrait.\nNine surrounding labels shaped as:\nroyal ribbon,\nflower crown,\nstorybook,\nheart shield,\nmagic key,\ncastle-window frame,\nbutterfly badge,\ncloud capsule,\nlong notebook label.\n\nEXACT TEXT:\nPrincess {{CHILD_NAME}}\nGrade: {{GRADE}}\nSchool: {{SCHOOL_NAME}}\nSubject: {{SUBJECT}}\n\nTYPOGRAPHY:\nName in huge beveled Fredoka or Baloo 2 lettering.\nDetails in clean Poppins.\nArabic option: Baloo Bhaijaan 2 + Cairo, correct RTL and right alignment.\n\nDECORATION:\nOriginal flowers, stars, butterflies and tiny crystal details.\nKeep all decorative elements away from the text.\n\nSTRICT COPYRIGHT-SAFE RULES:\nCreate a completely original princess.\nNo resemblance to Disney, Pixar, Barbie or any named franchise.\nNo recognizable costumes, castles, logos, sidekicks or copyrighted symbols.\nNo random text.\nNo watermark.\nNo dark background. No distorted face. No decorations covering the name.\n\nFINAL QUALITY:\nSweet, premium, magical, child-friendly and suitable for notebooks, folders, lunch boxes and school supplies.",
+        "textEn": "SYSTEM ROLE: Premium personalized children’s sticker designer. Output ONE final printable sticker sheet only.\n\nCANVAS:\nA4 portrait, 300 DPI, bright cream background, ten individually cuttable stickers with generous spacing and thick white die-cut borders.\n\nTOPIC:\nPersonalized fairytale-princess school labels.\n\nPHOTO ENGINE:\nUse the uploaded child photo as the only identity reference.\nTransform her into an original cinematic 3D animated young princess.\nPreserve her recognizable face, skin tone, hairstyle, eye color, glasses and age.\nCreate a modest original royal dress designed specifically for this image.\nDo not imitate any existing movie princess, costume, castle, crown or franchise character.\n\nSTYLE:\nOriginal premium 3D family-animation style + Morphic Glass.\nCandy Pastel palette: pink #FF8FAB, mint #9EE6CF, butter yellow #FFE08A and lavender #C8B6FF.\nLight mode, soft sunrise, global illumination, gentle subsurface scattering, rounded tactile forms and delicate sparkling highlights.\n\nLAYOUT:\nOne central royal crest sticker with the child’s portrait.\nNine surrounding labels shaped as:\nroyal ribbon,\nflower crown,\nstorybook,\nheart shield,\nmagic key,\ncastle-window frame,\nbutterfly badge,\ncloud capsule,\nlong notebook label.\n\nEXACT TEXT:\nPrincess {{CHILD_NAME}}\nGrade: {{GRADE}}\nSchool: {{SCHOOL_NAME}}\nSubject: {{SUBJECT}}\n\nTYPOGRAPHY:\nName in huge beveled Fredoka or Baloo 2 lettering.\nDetails in clean Poppins.\nArabic option: Baloo Bhaijaan 2 + Cairo, correct RTL and right alignment.\n\nDECORATION:\nOriginal flowers, stars, butterflies and tiny crystal details.\nKeep all decorative elements away from the text.\n\nSTRICT COPYRIGHT-SAFE RULES:\nCreate a completely original princess.\nNo resemblance to Disney, Pixar, Barbie or any named franchise.\nNo recognizable costumes, castles, logos, sidekicks or copyrighted symbols.\nNo random text.\nNo watermark.\nNo dark background. No distorted face. No decorations covering the name.\n\nFINAL QUALITY:\nSweet, premium, magical, child-friendly and suitable for notebooks, folders, lunch boxes and school supplies.",
+        "image": "images/stickers/1.png",
+        "requiresPhoto": true,
+        "variables": [
+          {"name": "CHILD_NAME", "labelAr": "اسم الطفلة", "labelEn": "Princess Name", "placeholderAr": "مثال: سارة", "placeholderEn": "e.g. Sarah"},
+          {"name": "GRADE", "labelAr": "الصف الدراسي", "labelEn": "Grade", "placeholderAr": "مثال: الصف الثاني", "placeholderEn": "e.g. Grade 2"},
+          {"name": "SCHOOL_NAME", "labelAr": "اسم المدرسة", "labelEn": "School Name", "placeholderAr": "مثال: مدرسة الابداع", "placeholderEn": "e.g. Innovation School"},
+          {"name": "SUBJECT", "labelAr": "المادة الدراسية", "labelEn": "Subject", "placeholderAr": "مثال: اللغة العربية", "placeholderEn": "e.g. Arabic"}
+        ]
+      }
+    ]
+  }
+]

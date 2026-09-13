@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="mainHtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Textboard | الأداة</title>
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7703658712870663"
+    crossorigin="anonymous"></script>    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 py-4 px-6 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-700 hover:text-emerald-600 transition font-bold">
+                <i class="fa-solid fa-arrow-right text-lg"></i>
+                <span>العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-tower-broadcast"></i>
+                </div>
+                <span class="font-bold text-slate-900">مختبر البث المباشر والربط الحفري التفاعلي (EduLive Lab)</span>
+            </div>
+        </div>
+    </header>firebase-firestore-compat.js"></script>
+    <script defer src="/assets/js/auth.js"></script>
+
+    <!-- ===== 2. CSS الهيدر الموحد ===== -->
+    <link rel="stylesheet" href="/assets/css/shared-header.css">
+
+    <!-- ===== 3. الهيدر الموحد: تحميل + تفعيل =====
+         ملاحظة: هذان السكربتان يبقيان بدون defer عمداً، لأنهما
+         صغيران جداً (ملفات محلية) وتنفيذهما الفوري هو ما يجعل
+         header-loader.js يبدأ طلب header.html في أبكر وقت ممكن.
+         إن أضفنا defer لهما أيضاً، سيتأخر بدء الجلب حتى قبيل
+         DOMContentLoaded، فنعيد المشكلة من جديد. -->
+    <script src="/assets/js/header-loader.js"></script>
+    <script src="/assets/js/header-behavior.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&family=Cairo:wght@400;700;900&family=Amiri:wght@400;700&family=Almarai:wght@300;400;700;800&family=Tajawal:wght@200;400;700;900&family=Reem+Kufi:wght@400;700&family=Lalezar&family=Changa:wght@200;400;700&family=Lateef&family=Scheherazade+New&family=Markazi+Text&family=Kufam:wght@400;700&family=Aref+Ruqaa&family=Harmattan&family=Lemonada&family=Mada&family=Qahiri&family=Rakkas&family=Vibes&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== أنماط الأداة الأصلية ===== */
+        body { font-family: 'Noto Sans Arabic', sans-serif; scroll-behavior: smooth; background: #f8fafc; margin:0; }
+        #app-interface { display: flex; flex-direction: column; height: 100vh; }
+        .recording-pulse {
+            animation: pulse 1.5s infinite;
+            background-color: #ef4444 !important;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        #outputArea {
+            min-height: 100%;
+            outline: none;
+            white-space: pre-wrap;
+            display: block;
+            line-height: 1.5;
+            font-weight: normal;
+        }
+        .focus-lens-active {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            color: rgba(255, 255, 255, 0.1) !important;
+        }
+        .focus-highlight {
+            background-color: #fef08a !important;
+            color: #1e293b !important;
+            padding: 2px 4px;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(254, 240, 138, 0.5);
+            position: relative;
+            z-index: 50;
+        }
+        .placeholder-text {
+            color: rgba(100, 116, 139, 0.4);
+            font-size: 20px !important;
+            font-weight: normal !important;
+            user-select: none;
+            pointer-events: none;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .board-container {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f8fafc;
+        }
+        .board-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .board-container::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+        .board-container::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+            border: 2px solid #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #e2e8f0;
+            border-radius: 10px;
+        }
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #f8fafc;
+            box-shadow: 0 0 0 1px #e2e8f0;
+        }
+        .color-dot:hover { transform: scale(1.2); }
+        .color-dot.active { box-shadow: 0 0 0 2px #3b82f6; }
+        .main-content-container {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            flex: 1;
+        }
+        .text-section {
+            width: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .gems-live-active .text-section { width: 50%; }
+        #liveGemsPanel {
+            display: none;
+            flex: 1;
+            background: #f8fafc;
+            border-right: 1px solid #e2e8f0;
+            position: relative;
+            width: 50%;
+        }
+        .gems-live-active #liveGemsPanel { display: block; }
+        .gems-controls-container {
+            position: absolute;
+            top: 110px;
+            left: 20px;
+            padding-right: 10px;
+            flex-direction: column;
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+        }
+        #micBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ===== توافق الجوال ===== */
+        @media (max-width: 768px) {
+            .gems-controls-container { top: 80px; left: 10px; gap: 8px; }
+            .gems-controls-container button { width: 36px; height: 36px; font-size: 12px; }
+            .gems-controls-container .flex-col button { width: 36px; height: 36px; }
+            #boardContainer { padding: 1rem !important; margin: 0.5rem !important; }
+            #gems-toolbar { margin: 0.5rem 0.5rem 0 !important; flex-wrap: wrap; gap: 0.5rem; }
+            #gems-toolbar .flex { flex-wrap: wrap; gap: 0.5rem; }
+            .mx-4 { margin-left: 0.5rem; margin-right: 0.5rem; }
+        }
+        @media (max-width: 480px) {
+            .gems-controls-container { top: 70px; left: 6px; gap: 6px; }
+            .gems-controls-container button { width: 32px; height: 32px; font-size: 10px; }
+            .gems-controls-container .flex-col button { width: 32px; height: 32px; }
+        }
+
+        /* ===== أنماط RTL/LTR ===== */
+        [dir="rtl"] .gems-controls-container { left: auto; right: 20px; padding-right: 0; padding-left: 10px; }
+        [dir="ltr"] .gems-controls-container { left: 20px; right: auto; padding-right: 10px; padding-left: 0; }
+        [dir="rtl"] #liveGemsPanel { border-right: none; border-left: 1px solid #e2e8f0; }
+        [dir="ltr"] #liveGemsPanel { border-right: 1px solid #e2e8f0; border-left: none; }
+
+        /* ===== الفوتر البسيط الموحد للأدوات ===== */
+        .footer-tools {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        body.dark-mode .footer-tools {
+            background: rgba(15, 23, 42, 0.85);
+            border-top-color: #1e293b;
+            color: #94a3b8;
+        }
+
+        /* ===== تعديلات للهيدر الموحد ===== */
+        #header-placeholder {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        /* ===== Dark Mode Overrides ===== */
+        body.dark-mode {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        body.dark-mode .board-container {
+            background: #1e293b;
+        }
+        body.dark-mode #boardContainer {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        body.dark-mode #outputArea {
+            color: #e2e8f0;
+        }
+        body.dark-mode .placeholder-text {
+            color: rgba(148, 163, 184, 0.4);
+        }
+        body.dark-mode #gems-toolbar {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        body.dark-mode #gems-toolbar button {
+            color: #e2e8f0;
+        }
+        body.dark-mode .gems-controls-container button {
+            background: #1e293b;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        body.dark-mode .gems-controls-container button:hover {
+            background: #2d3748;
+        }
+        body.dark-mode .gems-controls-container .flex-col {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        body.dark-mode #liveGemsPanel {
+            background: #0f172a;
+            border-color: #334155;
+        }
+        body.dark-mode #liveGemsPanel .bg-white {
+            background: #1e293b !important;
+        }
+        body.dark-mode #liveGemsPanel .text-slate-800 {
+            color: #e2e8f0;
+        }
+        body.dark-mode #liveGemsPanel .text-slate-500 {
+            color: #94a3b8;
+        }
+        body.dark-mode .focus-highlight {
+            background-color: #fbbf24 !important;
+            color: #1e293b !important;
+        }
+        body.dark-mode .color-dot {
+            border-color: #1e293b;
+        }
+        body.dark-mode #instructionPanel {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        body.dark-mode #instructionPanel .bg-slate-50 {
+            background: #0f172a;
+        }
+        body.dark-mode #instructionPanel .text-slate-800 {
+            color: #e2e8f0;
+        }
+        body.dark-mode #instructionPanel .text-slate-600 {
+            color: #94a3b8;
+        }
+        body.dark-mode #instructionPanel .bg-yellow-50 {
+            background: #1a1a0a;
+            border-color: #4a4a1a;
+        }
+        body.dark-mode #instructionPanel .text-yellow-800 {
+            color: #fbbf24;
+        }
+        body.dark-mode #instructionPanel .bg-blue-50 {
+            background: #1a2a4a;
+            border-color: #2a4a7a;
+        }
+        body.dark-mode #instructionPanel .text-blue-700 {
+            color: #60a5fa;
+        }
+
+        /* إصلاح مشكلة الارتفاع */
+        #app-interface {
+            height: calc(100vh - 60px);
+        }
+        @media (max-width: 768px) {
+            #app-interface {
+                height: calc(100vh - 56px);
+            }
+        }
+    </style>
+</head>
+<body><a href="https://edufiresoft.com/cdn-cgi/content?id=EH0SHuHRv8C3Mv4XyGLmod.B0hYMt9nnU8fCyqQukCw-1787519250.4726217-1.2.1.1-USRAgfFMzkq8ejXOa2tlPaiMkxzQV3dZIJkNtpTj0ON_onia85dNKv9wORHdbPvu" aria-hidden="true" rel="nofollow noopener" style="display: none !important; visibility: hidden !important"></a>
+
+    <!-- ===== الهيدر الموحد ===== -->
+    <div id="header-placeholder"></div>
+
+    <!-- ====== واجهة الأداة ====== -->
+    <div id="app-interface" class="flex flex-col bg-slate-100 overflow-hidden">
+
+        <!-- شريط الأدوات العلوي -->
+        <header class="h-auto min-h-[3.5rem] py-2 bg-white border-b border-slate-200 flex flex-wrap items-center justify-between px-4 sm:px-6 shrink-0 z-20 gap-3">
+            <div class="flex items-center gap-3 flex-wrap">
+                <button onclick="toggleRecording()" id="micBtn" class="bg-blue-600 text-white w-10 h-10 rounded-full font-bold hover:bg-blue-700 transition flex items-center justify-center shadow-md opacity-50 cursor-not-allowed" disabled title="يجب تسجيل الدخول أولاً">
+                    <i class="fas fa-microphone text-lg" id="micIcon"></i>
+                </button>
+                <div class="flex flex-col">
+                    <span id="micStatus" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="status_ready">الحالة: جاهز</span>
+                    <span id="timerBadge" class="text-xs font-mono font-bold text-blue-600">00:00</span>
+                </div>
+                <button onclick="toggleInstructions()" id="shareAudioBtn" class="bg-indigo-50 text-indigo-700 px-4 py-1.5 rounded-full font-bold border border-indigo-100 hover:bg-indigo-100 transition text-xs flex items-center gap-2">
+                    <i class="fas fa-headset"></i> <span data-i18n="share_audio">مشاركة الصوت في الاجتماع</span>
+                </button>
+                <button onclick="toggleFullscreen()" id="fullscreenBtn" class="bg-slate-100 text-slate-900 px-4 py-1.5 rounded-full font-bold border border-slate-200 hover:bg-slate-200 transition text-xs flex items-center gap-2">
+                    <i class="fas fa-expand"></i> <span data-i18n="fullscreen">ملء الشاشة</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 hidden sm:flex">
+                    <i class="fas fa-chalkboard text-blue-600"></i>
+                    <span class="font-black text-slate-800 text-sm" data-i18n="live_textboard">Live Textboard</span>
+                </div>
+                <!-- تم حذف زر المنزل -->
+            </div>
+        </header>
+
+        <div class="flex-1 flex overflow-hidden">
+            <!-- لوحة التعليمات -->
+            <div id="instructionPanel" class="w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 translate-x-full absolute right-0 top-0 bottom-0 z-30 shadow-2xl md:relative md:translate-x-0 hidden">
+                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                    <h3 class="font-black text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-600"></i> <span data-i18n="instructions_title">تعليمات مشاركة الصوت</span>
+                    </h3>
+                    <button onclick="toggleInstructions()" class="text-slate-400 hover:text-red-500"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar text-right">
+                    <div class="space-y-4">
+                        <div class="flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">1</span>
+                            <div class="text-xs text-slate-600 leading-relaxed font-bold">
+                                <span data-i18n="inst_1">قم بتحميل برنامج</span> <span class="text-blue-600 font-black">VB-Cable</span> <span data-i18n="inst_1b">من الرابط الرسمي:</span>
+                                <a href="https://vb-audio.com/Cable/" target="_blank" class="block mt-2 w-full text-center bg-blue-50 text-blue-700 py-2 rounded-lg text-xs font-black border border-blue-100 hover:bg-blue-100 transition">
+                                    <i class="fas fa-download mr-1"></i> <span data-i18n="download_vb">تحميل VB-Cable</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex gap-3"><span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">2</span><p class="text-xs text-slate-600 leading-relaxed font-bold" data-i18n="inst_2">ثبّت البرنامج على جهازك واتركه يعمل في الخلفية.</p></div>
+                        <div class="flex gap-3"><span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">3</span><p class="text-xs text-slate-600 leading-relaxed font-bold"><span data-i18n="inst_3a">في</span> <span class="text-blue-600">Zoom</span> <span data-i18n="inst_3b">أو</span> <span class="text-blue-600">Meet</span><span data-i18n="inst_3c">، اختر الميكروفون الافتراضي</span> <span class="font-black">(VB-Cable)</span> <span data-i18n="inst_3d">كمصدر للصوت.</span></p></div>
+                        <div class="flex gap-3"><span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">4</span><p class="text-xs text-slate-600 leading-relaxed font-bold" data-i18n="inst_4">قم بمشاركة الشاشة لاختيار نافذة الموقع، ليتمكن الطلاب من رؤية السبورة.</p></div>
+                        <div class="flex gap-3"><span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">5</span><p class="text-xs text-slate-600 leading-relaxed font-bold" data-i18n="inst_5">استمر بالتحدث في الموقع، وسيتم سماع صوتك في الاجتماع عبر الميكروفون الافتراضي.</p></div>
+                        <div class="p-3 bg-yellow-50 border border-yellow-100 rounded-lg"><p class="text-[10px] text-yellow-800 leading-relaxed font-bold italic" data-i18n="inst_note">ملاحظة: ستستمر بسماع أصوات الطلاب إذا لم تغيّر إعدادات السماعة الخاصة بهم في الاجتماع.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- المحرر الرئيسي -->
+            <main id="main-container" class="flex-1 main-content-container relative">
+                <div class="text-section relative overflow-hidden flex flex-col">
+                    <div id="gems-toolbar" class="mx-6 mt-4 p-2 bg-white border border-blue-100 rounded-xl shadow-sm flex items-center justify-between shrink-0 overflow-x-auto no-scrollbar">
+                        <div class="flex items-center gap-2">
+                            <button id="copyAllBtn" onclick="copyAllText()" class="whitespace-nowrap bg-emerald-600 text-white px-5 py-2 rounded-lg text-xs font-bold hover:bg-emerald-700 transition flex items-center gap-2">
+                                <i class="fas fa-copy text-[10px]"></i> <span data-i18n="select_copy">تحديد ونسخ</span>
+                            </button>
+                            <button onclick="openLiveGems()" class="whitespace-nowrap bg-blue-600 text-white px-5 py-2 rounded-lg text-xs font-bold hover:bg-blue-700 transition flex items-center gap-2">
+                                <i class="fas fa-robot text-[10px]"></i> <span data-i18n="live_ai">Live AI</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-2"></div>
+                    </div>
+
+                    <div class="gems-controls-container">
+                        <button onmousedown="event.preventDefault(); clearBoard();" class="w-11 h-11 bg-white border border-red-100 text-red-500 rounded-xl shadow-md hover:bg-red-50 transition" title="مسح"><i class="fas fa-trash-can"></i></button>
+                        <div class="flex flex-col bg-white rounded-xl shadow-md border border-slate-100">
+                            <button onmousedown="event.preventDefault(); zoomText(1);" class="w-11 h-11 text-slate-600 hover:bg-slate-50 transition border-b border-slate-50" title="تكبير"><i class="fas fa-plus text-xs"></i></button>
+                            <button onmousedown="event.preventDefault(); zoomText(-1);" class="w-11 h-11 text-slate-600 hover:bg-slate-50 transition border-b border-slate-50" title="تصغير"><i class="fas fa-minus text-xs"></i></button>
+                            <button onmousedown="event.preventDefault(); toggleFocusLens();" id="lensBtn" class="w-11 h-11 text-amber-600 hover:bg-amber-50 transition border-b border-slate-50" title="عدسة التركيز"><i class="fas fa-search text-xs"></i></button>
+                            <button onmousedown="event.preventDefault(); undoLastRecording();" class="w-11 h-11 text-indigo-600 hover:bg-indigo-50 transition border-b border-slate-50" title="تراجع"><i class="fas fa-undo text-xs"></i></button>
+                            <button onmousedown="event.preventDefault(); redoLastAction();" class="w-11 h-11 text-blue-600 hover:bg-blue-50 transition border-b border-slate-50" title="إعادة"><i class="fas fa-redo text-xs"></i></button>
+                        </div>
+                    </div>
+
+                    <div id="boardContainer" class="flex-1 m-4 md:m-6 bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12 overflow-y-auto board-container relative">
+                        <div id="outputArea" contenteditable="true" spellcheck="false" class="text-4xl font-normal text-slate-800" onpaste="handlePaste(event)" oninput="handleInput(event)">
+                            <span id="placeholderSpan" class="placeholder-text" data-i18n="placeholder">اضغط زر المايك للتحدث وسوف يتحول صوتك إلى نص مكتوب تلقائياً</span>
+                        </div>
+                    </div>
+
+                    <div class="mx-4 sm:mx-6 mb-4 bg-white/95 backdrop-blur-sm p-3 rounded-xl border border-slate-200 shadow-xl flex flex-wrap items-center justify-between gap-4 shrink-0">
+                        <div class="flex items-center gap-4 sm:gap-6 flex-wrap">
+                            <div class="flex items-center gap-2">
+                                <label class="text-[9px] font-black text-slate-400 uppercase" data-i18n="font">الخط</label>
+                                <select id="fontFamilySelector" onchange="changeFont(this.value)" class="bg-slate-50 border-none rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 outline-none cursor-pointer w-24 sm:w-32">
+                                    <option value="'Noto Sans Arabic'"><span data-i18n="default_font">افتراضي</span></option>
+                                    <option value="'Cairo'">Cairo</option>
+                                    <option value="'Lalezar'">Lalezar</option>
+                                    <option value="'Amiri'">Amiri</option>
+                                    <option value="'Tajawal'">Tajawal</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <label class="text-[9px] font-black text-slate-400 uppercase" data-i18n="color">اللون</label>
+                                <div class="flex items-center gap-1.5 bg-slate-50 p-1.5 rounded-lg border border-slate-100 flex-wrap" id="colorPalette"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onmousedown="event.preventDefault(); exportToWord();" class="bg-green-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 hover:bg-green-700 transition">
+                                <i class="fas fa-save"></i> <span data-i18n="save_word">حفظ Word</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="liveGemsPanel">
+                    <div class="absolute inset-0 flex items-center justify-center flex-col gap-4 text-center p-8 bg-white border-l border-slate-200 h-full">
+                        <div class="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-3xl mb-2 shadow-inner">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-slate-800" data-i18n="ai_assistant_title">Live AI Assistant</h3>
+                        <p class="text-sm text-slate-500 max-w-xs leading-relaxed" data-i18n="ai_assistant_desc">تم فتح نافذة الذكاء الاصطناعي بشكل منبثق لسهولة التحرك. يمكنك متابعة العمل هنا والدردشة هناك.</p>
+                        <div class="h-1 w-16 bg-blue-100 rounded-full my-2"></div>
+                        <button onclick="closeLiveGems()" class="text-xs font-bold text-slate-400 hover:text-red-500 transition uppercase tracking-tighter" data-i18n="close_panel">
+                            إغلاق النافذة وتوسيع اللوحة <i class="fas fa-expand-alt ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- ===== الفوتر البسيط الموحد للأدوات ===== -->
+        <footer class="footer-tools">
+            <span data-i18n="footerRights">© 2026 Edufiresoft — جميع الحقوق محفوظة</span>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-2 rounded-full text-xs font-bold opacity-0 transition-all z-[1000] pointer-events-none"></div>
+
+    <script>
+        // ============================================================
+        //  0. دالة تحديث رابط الشعار ديناميكياً حسب اللغة
+        // ============================================================
+        function updateLogoLink() {
+            // البحث عن عنصر الشعار في الهيدر (يتم تحميله ديناميكياً)
+            const logoElement = document.querySelector('#header-placeholder .logo-area, #header-placeholder [class*="logo"]');
+            
+            if (logoElement) {
+                // تحديث الرابط بناءً على اللغة الحالية
+                const langParam = currentLang === 'ar' ? 'ar' : 'en';
+                logoElement.style.cursor = 'pointer';
+                logoElement.onclick = function(e) {
+                    e.preventDefault();
+                    window.location.href = `/?lang=${langParam}`;
+                };
+            }
+        }
+
+        function waitForLogoLink() {
+            // إذا كان العنصر موجوداً بالفعل، قم بتحديث الرابط فوراً
+            const existingLogo = document.querySelector('#header-placeholder .logo-area, #header-placeholder [class*="logo"]');
+            if (existingLogo) {
+                updateLogoLink();
+                return;
+            }
+            
+            // استخدام MutationObserver لمراقبة إضافة عنصر الشعار
+            const observer = new MutationObserver(function(mutations) {
+                const logo = document.querySelector('#header-placeholder .logo-area, #header-placeholder [class*="logo"]');
+                if (logo) {
+                    updateLogoLink();
+                    observer.disconnect();
+                }
+            });
+            
+            // بدء المراقبة على الـ header-placeholder
+            const headerPlaceholder = document.getElementById('header-placeholder');
+            if (headerPlaceholder) {
+                observer.observe(headerPlaceholder, {
+                    childList: true,
+                    subtree: true,
+                    attributes: false
+                });
+                
+                // مهلة 5 ثواني للتوقف عن المراقبة إذا لم يتم العثور على الشعار
+                setTimeout(() => {
+                    observer.disconnect();
+                    // محاولة أخيرة للعثور على الشعار
+                    const finalLogo = document.querySelector('#header-placeholder .logo-area, #header-placeholder [class*="logo"]');
+                    if (finalLogo) {
+                        updateLogoLink();
+                    }
+                }, 5000);
+            }
+        }
+
+        // ============================================================
+        //  1. نظام الترجمة
+        // ============================================================
+        const translations = {
+            ar: {
+                status_ready: 'الحالة: جاهز',
+                share_audio: 'مشاركة الصوت في الاجتماع',
+                fullscreen: 'ملء الشاشة',
+                live_textboard: 'Live Textboard',
+                instructions_title: 'تعليمات مشاركة الصوت',
+                inst_1: 'قم بتحميل برنامج',
+                inst_1b: 'من الرابط الرسمي:',
+                download_vb: 'تحميل VB-Cable',
+                inst_2: 'ثبّت البرنامج على جهازك واتركه يعمل في الخلفية.',
+                inst_3a: 'في',
+                inst_3b: 'أو',
+                inst_3c: '، اختر الميكروفون الافتراضي',
+                inst_3d: 'كمصدر للصوت.',
+                inst_4: 'قم بمشاركة الشاشة لاختيار نافذة الموقع، ليتمكن الطلاب من رؤية السبورة.',
+                inst_5: 'استمر بالتحدث في الموقع، وسيتم سماع صوتك في الاجتماع عبر الميكروفون الافتراضي.',
+                inst_note: 'ملاحظة: ستستمر بسماع أصوات الطلاب إذا لم تغيّر إعدادات السماعة الخاصة بهم في الاجتماع.',
+                select_copy: 'تحديد ونسخ',
+                live_ai: 'Live AI',
+                placeholder: 'اضغط زر المايك للتحدث وسوف يتحول صوتك إلى نص مكتوب تلقائياً',
+                font: 'الخط',
+                default_font: 'افتراضي',
+                color: 'اللون',
+                save_word: 'حفظ Word',
+                ai_assistant_title: 'Live AI Assistant',
+                ai_assistant_desc: 'تم فتح نافذة الذكاء الاصطناعي بشكل منبثق لسهولة التحرك. يمكنك متابعة العمل هنا والدردشة هناك.',
+                close_panel: 'إغلاق النافذة وتوسيع اللوحة',
+                login_required: 'يجب تسجيل الدخول أولاً',
+                login: 'تسجيل الدخول',
+                logging_in: 'جاري...',
+                login_failed: 'فشل تسجيل الدخول: ',
+                welcome: 'مرحباً، ',
+                home: 'الرئيسية',
+                logout: 'تسجيل الخروج',
+                copy_success: 'تم نسخ النص إلى الحافظة',
+                no_text: 'لا يوجد نص لنسخه',
+                confirm_clear: 'هل أنت متأكد من مسح السبورة؟',
+                clear_board: 'مسح',
+                zoom_in: 'تكبير',
+                zoom_out: 'تصغير',
+                focus_lens: 'عدسة التركيز',
+                undo: 'تراجع',
+                redo: 'إعادة',
+                mic_ready: 'الحالة: جاهز',
+                mic_recording: 'الحالة: تسجيل...',
+                browser_not_supported: 'متصفحك لا يدعم خاصية التعرف على الصوت. يرجى استخدام Chrome أو Edge الحديث.',
+                allow_microphone: 'الرجاء السماح بالوصول إلى الميكروفون من إعدادات المتصفح.',
+                no_speech: 'لم يتم التقاط أي صوت. تأكد من أن الميكروفون يعمل.',
+                error_occurred: 'حدث خطأ: ',
+                start_failed: 'تعذر بدء التسجيل. حاول مرة أخرى أو تحقق من صلاحيات الميكروفون.',
+                select_text_first: 'يرجى تحديد نص أولاً',
+                copied: 'تم النسخ',
+                auth_unavailable: 'نظام المصادقة غير متاح. سيتم تحويلك للصفحة الرئيسية.',
+                footerRights: '© 2026 Edufiresoft — جميع الحقوق محفوظة'
+            },
+            en: {
+                status_ready: 'Status: Ready',
+                share_audio: 'Share Audio in Meeting',
+                fullscreen: 'Fullscreen',
+                live_textboard: 'Live Textboard',
+                instructions_title: 'Audio Sharing Instructions',
+                inst_1: 'Download',
+                inst_1b: 'from the official link:',
+                download_vb: 'Download VB-Cable',
+                inst_2: 'Install the software and let it run in the background.',
+                inst_3a: 'In',
+                inst_3b: 'or',
+                inst_3c: ', select the virtual microphone',
+                inst_3d: 'as the audio source.',
+                inst_4: 'Share your screen to select the browser window so students can see the board.',
+                inst_5: 'Keep speaking in the app, and your voice will be heard in the meeting through the virtual microphone.',
+                inst_note: 'Note: You will still hear students if you haven\'t changed your speaker settings in the meeting.',
+                select_copy: 'Select & Copy',
+                live_ai: 'Live AI',
+                placeholder: 'Press the microphone button to start speaking, and your voice will be transcribed automatically',
+                font: 'Font',
+                default_font: 'Default',
+                color: 'Color',
+                save_word: 'Save Word',
+                ai_assistant_title: 'Live AI Assistant',
+                ai_assistant_desc: 'AI window opened as a popup for easy navigation. You can continue working here and chat there.',
+                close_panel: 'Close Panel & Expand Board',
+                login_required: 'Please login first',
+                login: 'Login',
+                logging_in: 'Logging in...',
+                login_failed: 'Login failed: ',
+                welcome: 'Welcome, ',
+                home: 'Home',
+                logout: 'Logout',
+                copy_success: 'Text copied to clipboard',
+                no_text: 'No text to copy',
+                confirm_clear: 'Are you sure you want to clear the board?',
+                clear_board: 'Clear',
+                zoom_in: 'Zoom In',
+                zoom_out: 'Zoom Out',
+                focus_lens: 'Focus Lens',
+                undo: 'Undo',
+                redo: 'Redo',
+                mic_ready: 'Status: Ready',
+                mic_recording: 'Status: Recording...',
+                browser_not_supported: 'Your browser does not support speech recognition. Please use Chrome or Edge.',
+                allow_microphone: 'Please allow microphone access in your browser settings.',
+                no_speech: 'No speech detected. Make sure your microphone is working.',
+                error_occurred: 'Error occurred: ',
+                start_failed: 'Failed to start recording. Try again or check microphone permissions.',
+                select_text_first: 'Please select text first',
+                copied: 'Copied',
+                auth_unavailable: 'Authentication system unavailable. Redirecting to home page.',
+                footerRights: '© 2026 Edufiresoft — All Rights Reserved'
+            }
+        };
+
+        let currentLang = localStorage.getItem('preferredLanguage') || 'ar';
+
+        // ====== دوال الترجمة ======
+        function translatePage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('mainHtml').dir = lang === 'ar' ? 'rtl' : 'ltr';
+            
+            // تحديث زر اللغة في الهيدر الموحد
+            document.querySelectorAll('#langSwitcherBtn, #langToggleBtn, .lang-toggle-btn').forEach(el => {
+                if (el) el.textContent = lang === 'ar' ? '🇬🇧 EN' : '🇸🇦 AR';
+            });
+            
+            // ترجمة جميع العناصر التي تحمل data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    const textNodes = [];
+                    el.childNodes.forEach(node => {
+                        if (node.nodeType === 3 && node.textContent.trim()) {
+                            textNodes.push(node);
+                        }
+                    });
+                    if (textNodes.length === 1) {
+                        const textNode = textNodes[0];
+                        const parent = textNode.parentNode;
+                        const newTextNode = document.createTextNode(translations[lang][key]);
+                        parent.replaceChild(newTextNode, textNode);
+                    } else {
+                        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+                            acceptNode: function(node) {
+                                if (node.parentNode === el && node.textContent.trim()) {
+                                    return NodeFilter.FILTER_ACCEPT;
+                                }
+                                return NodeFilter.FILTER_REJECT;
+                            }
+                        }, false);
+                        let firstTextNode = walker.nextNode();
+                        if (firstTextNode) {
+                            firstTextNode.textContent = translations[lang][key];
+                        } else {
+                            const children = el.children;
+                            if (children.length > 0) {
+                                const textNode = document.createTextNode(translations[lang][key]);
+                                el.insertBefore(textNode, children[0]);
+                            } else {
+                                el.textContent = translations[lang][key];
+                            }
+                        }
+                    }
+                }
+            });
+
+            // تحديث الفوتر
+            const footer = document.querySelector('.footer-tools span');
+            if (footer) {
+                footer.textContent = translations[lang].footerRights;
+            }
+
+            // تحديث recognition language
+            if (recognition) {
+                recognition.lang = lang === 'ar' ? 'ar-SA' : 'en-US';
+            }
+
+            // تحديث رابط الشعار
+            waitForLogoLink();
+        }
+
+        // ====== مزامنة اللغة مع الهيدر الموحد ======
+        document.addEventListener('header:languageChanged', (e) => {
+            currentLang = e.detail.lang;
+            localStorage.setItem('preferredLanguage', currentLang);
+            translatePage(currentLang);
+            // تحديث رابط الشعار
+            waitForLogoLink();
+        });
+
+        // ====== مزامنة الوضع الداكن مع الهيدر الموحد ======
+        document.addEventListener('header:darkModeChanged', (e) => {
+            if (e.detail.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        });
+
+        // ============================================================
+        // مستمع window.load مع تأخير 200ms لتحديث رابط الشعار
+        // ============================================================
+        window.addEventListener('load', function() {
+            // تأخير 200ms للسماح بتحميل الهيدر بالكامل
+            setTimeout(function() {
+                waitForLogoLink();
+            }, 200);
+        });
+
+        // ====== الكود الأساسي (لم يتغير) ======
+        let isRecording = false;
+        let recognition;
+        let isPlaceholderVisible = true;
+        let recordingHistory = [];
+        let redoHistory = [];
+        let gemsPopupWindow = null;
+        let isFocusActive = false;
+
+        const blockedTerms = ["سكس", "بورن", "منيوك", "قحبة", "شرموطة", "عرص", "خنيث", "نيج", "كس"];
+
+        function sanitizeContent(text) {
+            let sanitized = text;
+            blockedTerms.forEach(term => {
+                const regex = new RegExp(`\\b${term}\\b`, 'gi');
+                sanitized = sanitized.replace(regex, '***');
+            });
+            return sanitized.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, "");
+        }
+
+        const colors = ['#1e293b', '#2563eb', '#dc2626', '#16a34a', '#d97706', '#9333ea'];
+
+        // ===== دوال واجهة المستخدم =====
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.textContent = m;
+            t.style.opacity = 1;
+            setTimeout(() => t.style.opacity = 0, 3000);
+        }
+
+        // ===== دوال الأداة =====
+        window.addEventListener('load', () => {
+            initPalette();
+            initSpeechRecognition();
+
+            // استعادة اللغة المحفوظة
+            const savedLang = localStorage.getItem('preferredLanguage') || 'ar';
+            currentLang = savedLang;
+            translatePage(savedLang);
+
+            // تطبيق الوضع الداكن من localStorage
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+            }
+
+            // ====== التحقق من حالة المستخدم وتمكين زر المايك ======
+            if (window.Auth) {
+                window.Auth.onAuthStateChanged(function(user) {
+                    const micBtn = document.getElementById('micBtn');
+                    if (user) {
+                        micBtn.disabled = false;
+                        micBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        micBtn.title = '';
+                        const status = document.getElementById('micStatus');
+                        if (status) {
+                            status.textContent = currentLang === 'ar' ? 'الحالة: جاهز' : 'Status: Ready';
+                        }
+                    } else {
+                        micBtn.disabled = true;
+                        micBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        micBtn.title = currentLang === 'ar' ? 'يجب تسجيل الدخول أولاً' : 'Please login first';
+                        const status = document.getElementById('micStatus');
+                        if (status) {
+                            status.textContent = currentLang === 'ar' ? 'الحالة: غير مسجل' : 'Status: Not Logged In';
+                        }
+                    }
+                });
+            } else {
+                // في حال عدم توفر نظام المصادقة، تعطيل الزر
+                const micBtn = document.getElementById('micBtn');
+                micBtn.disabled = true;
+                micBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                micBtn.title = currentLang === 'ar' ? 'نظام المصادقة غير متاح' : 'Auth unavailable';
+                console.warn('⚠️ Auth system not available');
+            }
+
+            // تحديث رابط الشعار
+            setTimeout(waitForLogoLink, 200);
+        });
+
+        function initPalette() {
+            const palette = document.getElementById('colorPalette');
+            colors.forEach(color => {
+                const dot = document.createElement('div');
+                dot.className = 'color-dot';
+                dot.style.backgroundColor = color;
+                dot.onmousedown = (e) => { e.preventDefault(); changeColor(color); };
+                palette.appendChild(dot);
+            });
+        }
+
+        const area = document.getElementById('outputArea');
+        const boardContainer = document.getElementById('boardContainer');
+        const lensBtn = document.getElementById('lensBtn');
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                const msg = currentLang === 'ar' ? 'متصفحك لا يدعم خاصية التعرف على الصوت. يرجى استخدام Chrome أو Edge الحديث.' : 'Your browser does not support speech recognition. Please use Chrome or Edge.';
+                alert(msg);
+                document.getElementById('micBtn').disabled = true;
+                return;
+            }
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+
+            recognition.onerror = (event) => {
+                console.error("خطأ في التعرف:", event.error);
+                if (event.error === 'not-allowed') {
+                    const msg = currentLang === 'ar' ? 'الرجاء السماح بالوصول إلى الميكروفون من إعدادات المتصفح.' : 'Please allow microphone access in your browser settings.';
+                    showToast(msg);
+                } else if (event.error === 'no-speech') {
+                    const msg = currentLang === 'ar' ? 'لم يتم التقاط أي صوت. تأكد من أن الميكروفون يعمل.' : 'No speech detected. Make sure your microphone is working.';
+                    showToast(msg);
+                } else {
+                    const msg = currentLang === 'ar' ? 'حدث خطأ: ' : 'Error occurred: ';
+                    showToast(msg + event.error);
+                }
+                if (isRecording) {
+                    isRecording = false;
+                    document.getElementById('micBtn').classList.remove('recording-pulse');
+                    document.getElementById('micIcon').className = 'fas fa-microphone';
+                    const status = document.getElementById('micStatus');
+                    if (status) status.textContent = currentLang === 'ar' ? 'الحالة: جاهز' : 'Status: Ready';
+                }
+            };
+
+            recognition.onresult = (e) => {
+                checkFirstInput();
+                let finalTranscript = '';
+                for (let i = e.resultIndex; i < e.results.length; ++i) {
+                    if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript + ' ';
+                }
+                if (finalTranscript) {
+                    const safeText = sanitizeContent(finalTranscript);
+                    insertTextAtCursor(safeText);
+                    recordingHistory.push(safeText);
+                }
+                boardContainer.scrollTop = boardContainer.scrollHeight;
+            };
+        }
+
+        function checkFirstInput() {
+            if (isPlaceholderVisible) {
+                area.innerHTML = '';
+                isPlaceholderVisible = false;
+            }
+        }
+
+        function handlePaste(e) {
+            e.preventDefault();
+            const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+            const cleanText = sanitizeContent(text);
+            checkFirstInput();
+            document.execCommand('insertText', false, cleanText);
+        }
+
+        function handleInput(e) {
+            const currentContent = area.innerText;
+            if (currentContent.trim().length > 0 && isPlaceholderVisible) {
+                isPlaceholderVisible = false;
+            } else if (currentContent.trim().length === 0) {
+                isPlaceholderVisible = true;
+                const placeholderText = currentLang === 'ar' ? 'اضغط زر المايك للتحدث وسوف يتحول صوتك إلى نص مكتوب تلقائياً' : 'Press the microphone button to start speaking, and your voice will be transcribed automatically';
+                area.innerHTML = `<span id="placeholderSpan" class="placeholder-text" data-i18n="placeholder">${placeholderText}</span>`;
+            }
+        }
+
+        function toggleRecording() {
+            if (!recognition) {
+                const msg = currentLang === 'ar' ? 'التعرف على الصوت غير مدعوم في هذا المتصفح.' : 'Speech recognition is not supported in this browser.';
+                showToast(msg);
+                return;
+            }
+            const micBtn = document.getElementById('micBtn');
+            if (micBtn.disabled) {
+                const msg = currentLang === 'ar' ? 'يجب تسجيل الدخول أولاً' : 'Please login first';
+                showToast(msg);
+                return;
+            }
+
+            if (!isRecording) {
+                try {
+                    checkFirstInput();
+                    recognition.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+                    recognition.start();
+                    isRecording = true;
+                    document.getElementById('micBtn').classList.add('recording-pulse');
+                    document.getElementById('micIcon').className = 'fas fa-stop';
+                    const status = document.getElementById('micStatus');
+                    if (status) status.textContent = currentLang === 'ar' ? 'الحالة: تسجيل...' : 'Status: Recording...';
+                } catch (error) {
+                    console.error("فشل بدء التسجيل:", error);
+                    const msg = currentLang === 'ar' ? 'تعذر بدء التسجيل. حاول مرة أخرى أو تحقق من صلاحيات الميكروفون.' : 'Failed to start recording. Try again or check microphone permissions.';
+                    showToast(msg);
+                }
+            } else {
+                try {
+                    recognition.stop();
+                } catch (e) { /* تجاهل */ }
+                isRecording = false;
+                document.getElementById('micBtn').classList.remove('recording-pulse');
+                document.getElementById('micIcon').className = 'fas fa-microphone';
+                const status = document.getElementById('micStatus');
+                if (status) status.textContent = currentLang === 'ar' ? 'الحالة: جاهز' : 'Status: Ready';
+            }
+        }
+
+        function insertTextAtCursor(text) {
+            area.focus();
+            document.execCommand('insertHTML', false, text);
+        }
+
+        function changeFont(font) { area.focus(); document.execCommand('fontName', false, font); }
+        function changeColor(color) { area.focus(); document.execCommand('foreColor', false, color); }
+        function zoomText(dir) { 
+            let cur = parseInt(window.getComputedStyle(area).fontSize);
+            area.style.fontSize = (cur + (dir * 4)) + 'px';
+        }
+
+        function toggleFocusLens() {
+            const selection = window.getSelection();
+            const selectedText = selection.toString().trim();
+
+            if (!isFocusActive) {
+                if (!selectedText) {
+                    const msg = currentLang === 'ar' ? 'يرجى تحديد نص أولاً' : 'Please select text first';
+                    showToast(msg);
+                    return;
+                }
+                const range = selection.getRangeAt(0);
+                const span = document.createElement("span");
+                span.className = "focus-highlight";
+                range.surroundContents(span);
+                area.classList.add('focus-lens-active');
+                isFocusActive = true;
+                lensBtn.classList.add('bg-amber-100');
+                selection.removeAllRanges();
+            } else {
+                const highlights = area.querySelectorAll('.focus-highlight');
+                highlights.forEach(h => {
+                    const parent = h.parentNode;
+                    while(h.firstChild) parent.insertBefore(h.firstChild, h);
+                    parent.removeChild(h);
+                });
+                area.classList.remove('focus-lens-active');
+                isFocusActive = false;
+                lensBtn.classList.remove('bg-amber-100');
+            }
+        }
+
+        function clearBoard() { 
+            const msg = currentLang === 'ar' ? 'هل أنت متأكد من مسح السبورة؟' : 'Are you sure you want to clear the board?';
+            if(confirm(msg)) {
+                const placeholderText = currentLang === 'ar' ? 'اضغط زر المايك للتحدث وسوف يتحول صوتك إلى نص مكتوب تلقائياً' : 'Press the microphone button to start speaking, and your voice will be transcribed automatically';
+                area.innerHTML = `<span id="placeholderSpan" class="placeholder-text" data-i18n="placeholder">${placeholderText}</span>`;
+                isPlaceholderVisible = true;
+            } 
+        }
+
+        function openLiveGems() {
+            const mainContainer = document.getElementById('main-container');
+            mainContainer.classList.add('gems-live-active');
+            const width = window.innerWidth * 0.45;
+            const height = window.innerHeight * 0.85; 
+            const left = window.screenX + (window.innerWidth * 0.05); 
+            const top = window.screenY + 100;
+            const popupUrl = "https://gemini.google.com/gem/1KhTXSYz5Bdk1UxlkGeVVGXljOwG-wNC9?usp=sharing";
+            if (gemsPopupWindow && !gemsPopupWindow.closed) {
+                gemsPopupWindow.focus();
+            } else {
+                gemsPopupWindow = window.open(popupUrl, "GemsLivePopup", `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,menubar=no,toolbar=no,location=no,status=no`);
+            }
+        }
+
+        function closeLiveGems() {
+            document.getElementById('main-container').classList.remove('gems-live-active');
+            if (gemsPopupWindow && !gemsPopupWindow.closed) gemsPopupWindow.close();
+        }
+
+        function undoLastRecording() {
+            if (recordingHistory.length > 0) {
+                const last = recordingHistory.pop();
+                redoHistory.push(last);
+                const currentText = area.innerText;
+                area.innerText = currentText.substring(0, currentText.lastIndexOf(last));
+                if(area.innerText.trim() === "") {
+                    isPlaceholderVisible = true;
+                    const placeholderText = currentLang === 'ar' ? 'اضغط زر المايك للتحدث وسوف يتحول صوتك إلى نص مكتوب تلقائياً' : 'Press the microphone button to start speaking, and your voice will be transcribed automatically';
+                    area.innerHTML = `<span id="placeholderSpan" class="placeholder-text" data-i18n="placeholder">${placeholderText}</span>`;
+                }
+            }
+        }
+
+        function redoLastAction() {
+            if (redoHistory.length > 0) {
+                const next = redoHistory.pop();
+                recordingHistory.push(next);
+                checkFirstInput();
+                insertTextAtCursor(next);
+            }
+        }
+
+        function exportToWord() {
+            const content = area.innerHTML;
+            const sourceHTML = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40' lang='${currentLang}' dir='${currentLang === 'ar' ? 'rtl' : 'ltr'}'><head><meta charset='utf-8'></head><body>${content}</body></html>`;
+            const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+            const link = document.createElement("a");
+            link.href = source;
+            link.download = 'Textboard.doc';
+            link.click();
+        }
+
+        function toggleInstructions() {
+            const panel = document.getElementById('instructionPanel');
+            panel.classList.toggle('hidden');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else if (document.exitFullscreen) document.exitFullscreen();
+        }
+
+        function copyAllText() {
+            const btn = document.getElementById('copyAllBtn');
+            const originalHTML = btn.innerHTML;
+            const textToCopy = isPlaceholderVisible ? "" : area.innerText;
+            if (!textToCopy) { 
+                const msg = currentLang === 'ar' ? 'لا يوجد نص لنسخه' : 'No text to copy';
+                showToast(msg); 
+                return; 
+            }
+            const el = document.createElement('textarea');
+            el.value = textToCopy;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            const copiedText = currentLang === 'ar' ? 'تم النسخ' : 'Copied';
+            btn.innerHTML = `<i class="fas fa-check text-[10px]"></i> ${copiedText}`;
+            btn.classList.replace('bg-emerald-600', 'bg-slate-700');
+            const successMsg = currentLang === 'ar' ? 'تم نسخ النص إلى الحافظة' : 'Text copied to clipboard';
+            showToast(successMsg);
+            setTimeout(() => {
+                const selectCopyText = currentLang === 'ar' ? 'تحديد ونسخ' : 'Select & Copy';
+                btn.innerHTML = `<i class="fas fa-copy text-[10px]"></i> ${selectCopyText}`;
+                btn.classList.replace('bg-slate-700', 'bg-emerald-600');
+            }, 2000);
+        }
+    </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"457d7ebe5e3f45da85d840b0394f2a42","r":1}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2fd1653791c8ada',t:'MTc4NzUxOTI1MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

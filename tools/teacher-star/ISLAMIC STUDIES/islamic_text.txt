@@ -1,0 +1,436 @@
+Times New Roman;Arial;
+MS Gothic;Cambria Math;
+Calibri;Segoe UI Emoji;Segoe UI Symbol;
+@MS Gothic;Times New Roman;
+Times New Roman;Calibri Light;
+Times New Roman;Times New Roman;
+Times New Roman;Calibri;
+Arial;Times New Roman CE;Times New Roman Cyr;
+Times New Roman Greek;Times New Roman Tur;Times New Roman (Hebrew);Times New Roman (Arabic);
+Times New Roman Baltic;Times New Roman (Vietnamese);Arial CE;Arial Cyr;
+Arial Greek;Arial Tur;Arial (Hebrew);Arial (Arabic);
+Arial Baltic;Arial (Vietnamese);MS Gothic Western;
+MS Gothic CE;MS Gothic Cyr;
+MS Gothic Greek;MS Gothic Tur;
+MS Gothic Baltic;Calibri CE;Calibri Cyr;
+Calibri Greek;Calibri Tur;Calibri (Hebrew);Calibri (Arabic);
+Calibri Baltic;Calibri (Vietnamese);@MS Gothic Western;@MS Gothic CE;
+@MS Gothic Cyr;@MS Gothic Greek;@MS Gothic Tur;@MS Gothic Baltic;
+Times New Roman CE;Times New Roman Cyr;Times New Roman Greek;
+Times New Roman Tur;Times New Roman (Hebrew);Times New Roman (Arabic);
+Times New Roman Baltic;Times New Roman (Vietnamese);Times New Roman CE;
+Times New Roman Cyr;Times New Roman Greek;Times New Roman Tur;
+Times New Roman (Hebrew);Times New Roman (Arabic);Times New Roman Baltic;
+Times New Roman (Vietnamese);Calibri Light CE;Calibri Light Cyr;
+Calibri Light Greek;Calibri Light Tur;Calibri Light (Hebrew);
+Calibri Light (Arabic);Calibri Light Baltic;Calibri Light (Vietnamese);
+Times New Roman CE;Times New Roman Cyr;Times New Roman Greek;
+Times New Roman Tur;Times New Roman (Hebrew);Times New Roman (Arabic);
+Times New Roman Baltic;Times New Roman (Vietnamese);Times New Roman CE;
+Times New Roman Cyr;Times New Roman Greek;Times New Roman Tur;
+Times New Roman (Hebrew);Times New Roman (Arabic);Times New Roman Baltic;
+Times New Roman (Vietnamese);Times New Roman CE;Times New Roman Cyr;
+Times New Roman Greek;Times New Roman Tur;Times New Roman (Hebrew);
+Times New Roman (Arabic);Times New Roman Baltic;Times New Roman (Vietnamese);
+Calibri CE;Calibri Cyr;Calibri Greek;Calibri Tur;
+Calibri (Hebrew);Calibri (Arabic);Calibri Baltic;
+Calibri (Vietnamese);Arial CE;Arial Cyr;
+Arial Greek;Arial Tur;Arial (Hebrew);
+Arial (Arabic);Arial Baltic;Arial (Vietnamese);;;;
+;;;;;;;;;;;
+;;;;;
+Normal;
+walaa hassan
+
+
+
+1-
+
+
+Use imgGenTool to create a premium Islamic studies educational infographic.
+2-
+3-
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟
+4-FILL THESE FIELDS ONLY  
+اؾتب ملا ؼؽط
+5-
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟
+6-TOPIC:    ANY ISLAMIC TOPIC 
+ e.g. شرنط افصفاة نأرؾالما / افطمارة نألناعما / أرؾال افإ
+ٍكال افستة / افزؾاة نأحؾاكما / افصٍاك نشرنطم / افحج نكلاسؾم / أحؾاك افبٍع ناف
+شراء / صؼات اففم افحسلٌ / أحؾاك افجلازة
+7-BRANCH:   
+ؼؽم (Fiqh) / عؽٍدة
+ (Aqeedah) / سٍرة
+ (Seerah) / تؼسٍر (Tafseer) / 
+حدٍث (Hadith)
+8-LEVEL:    
+ابتدائٍ / كتنسط / ثالنٍ / جاكعٍ / تعفٍك عاك
+9-
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟
+10-
+11-FULL ARABIC RTL LAYOUT 
+ ISLAMIC AESTHETIC
+12-
+13-CONTENT BLOCKS:
+14-
+15-?
+? افتعرٍؼ افشرعٍ
+:
+16- 
+افتعرٍؼ فغةِ ناصطفاحاِ
+17- 
+افدفٍف افشرعٍ: آٍة ؽرآلٍة أن حدٍث صحٍح (كٕسلٓد)
+
+18- 
+افحؾك افؼؽمٍ: ناجب / كستحب / كباح / كؾرنم / كحرك
+19-
+20-?
+? افأرؾال نافشرنط (ففعبا
+دات):
+21- 
+افأرؾال: كرت٘بة نكرؽ٘كة كع شرح كبسط فؾف رؾل
+22- 
+افشرنط: ؽائكة كؾتكفة
+23- 
+افسلل نافكستحبات: ككٍ٘زة بفنل كختفؼ
+24- 
+افكبطفات: ؽائكة ناضحة باففنل افأحكر
+25-
+26-?
+? كخطط افعكفٍة (ففعبادات 
+افإجرائٍة):
+27- 
+خطنات افعبادة تسفسفٍاِ (ؾافصفاة نافنضنء نافحج)
+
+28- 
+ؾف خطنة: افاسك + افؼعف + افدفٍف
+29- 
+رسك تنضٍحٍ غٍر بشرٍ (ركنز نأشؾاف ؼؽط، فا نجنم)
+
+30-
+31-?
+ افأحؾاك افؼرعٍة نافكسائف
+:
+32- 5 
+كسائف ؼؽمٍة شائعة ؼٍ مذا افكنضنع
+33- 
+ؾف كسأفة: افسؤاف ? افحؾك ? افدفٍف
+34-
+35-?
+? كصطفحات افكادة
+:
+36- 10 
+كصطفحات ؼؽمٍة/عؽدٍة كع تعرٍؼما
+37- 
+كٕرت٘بة أبجدٍاِ
+38-
+39-?
+? افكراجع افعفكٍة
+:
+40- 
+كصادر كنثنؽة ؼؽط (افؽرآل افؾرٍك، صحٍح افبخارٍ، صحٍح كسفك، افكذ
+امب افأربعة)
+41-
+42-?
+? 
+ؽناعد صاركة:
+43- 
+فا تصنٍر ففألبٍاء نافصحابة  ركنز نأشؾاف ملدسٍة ؼؽط
+
+44- 
+فا ؼتانٌ غٍر كنثؽة  افكصادر كذؾنرة دائكاِ
+45- 
+حٍاد افكذامب  ذؾر افخفاؼ افؼؽمٍ حٍثكا نٕجد
+
+46-
+47-
+افأسفنب: أخضر إسفاكٍ عكٍؽ + ذمبٍ
+ + عاجٍ، خط عربٍ أؾادٍكٍ، لؽنش ملدسٍة إسفاكٍة خؼٍؼة
+. A4 عكندٍ 300 DPI. --ar 2:3
+
+
+2- 
+Use imgGenTool to create a premium Islamic history and Seerah educational infographic.
+
+„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+FILL THESE FIELDS ONLY  اؾتب ملا ؼؽط
+
+„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+TOPIC:    ANY TOPIC  e.g. غزنة بدر / غزنة 
+أحد / ؼتح كؾة / افمجرة افلبنٍة / حٍاة أبٍ بؾر افصدٍؽ / افدنفة افعباسٍة / افحضار
+ة افألدفسٍة / ؼتح افؽسطلطٍلٍة / سٍرة صحابٍ جفٍف
+ERA:      افعمد افلبنٍ / افخفاؼة افراشدة / افأكنٍ / ا
+فعباسٍ / افعثكالٍ / افكعاصر
+LEVEL:    ابتدائٍ / كتنسط / ثالنٍ / جاكعٍ
+
+„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+„؟„؟„؟„؟„؟„؟„؟„؟„؟„؟
+
+FULL ARABIC RTL LAYOUT
+
+AUTO-ADAPTIVE ERA AESTHETIC:
+ افعمد افلبنٍ ? أفنال صحرانٍة داؼئة، خرٍ
+طة افجزٍرة افعربٍة، مفاف نؽكر
+ افخفاؼة افراشدة/افأكنٍة ? رؽ كعتؽ، أسفن
+ب كخطنطة عربٍة
+ افعباسٍ/افألدفسٍ ? أرابٍسؾ غلٍ، ذمبٍ نأ
+زرؽ لٍفٍ، عكارة إسفاكٍة
+ افعثكالٍ ? أحكر نذمبٍ، عكارة جاكع، طغرا
+ء
+
+CONTENT BLOCKS:
+
+???
+ افسٍاؽ افتارٍخٍ
+:
+ افنضع ؽبف افحدث (سٍاسٍاِ، اجتكاعٍاِ، دٍلٍ
+اِ)
+ افتارٍخ افمجرٍ نافكٍفادٍ
+
+ افكنؽع افجغراؼٍ (خرٍطة كرسنكة بأسفنب تارٍ
+خٍ)
+
+?? 
+افجدنف افزكلٍ:
+ 8-10 أحداث رئٍسٍة كرتبة تارٍخٍاِ
+
+ ؾف حدث: افتارٍخ + افحدث + افدفافة
+
+ لؽاط تحنف ككٍزة بػ
+ ?
+
+?? 
+افشخصٍات افرئٍسٍة:
+ 4-6 شخصٍات
+ ؾف شخصٍة: افاسك + فؽبم + دنرم + أبرز كنؽؼ
+
+ فا صنر أن نجنم  ركنز ملدسٍة ككٍزة فؾف شخص
+ٍة
+
+?? 
+افدرنس افكستؼادة:
+ 5 درنس تربنٍة نحضارٍة كل مذا افحدث
+
+ صٍاغة إٍجابٍة، تربنٍة، كعاصرة افصفة
+
+
+?? 
+افحدٍث / افآٍة افكتعفؽة:
+ لص شرعٍ ناحد كرتبط بافكنضنع
+
+ كصدرم كنثؽ (اسك افؾتاب / رؽك افآٍة)
+
+
+?? 
+افأثر افحضارٍ:
+ ؾٍؼ أث٘ر مذا افحدث عفٌ افحضارة افإسفاكٍة
+
+ صفتم بافناؽع افكعاصر
+
+افكراجع: افسٍرة افلبنٍة فابل مشاك، تارٍخ افطبرٍ، افبدا
+ٍة نافلماٍة، Encyclopaedia of Islam.
+??
+ ؽناعد صاركة: فا تصنٍر ففألبٍاء نافص
+حابة كطفؽاِ  ركنز ؼؽط. فا أحداث كخترعة.
+افأسفنب: 
+حؽبة-تؾٍؼٍ (ؾكا كحدد أعفام)، RTL 
+ؾاكف. A4 عكندٍ 300
+ DPI. --ar 2:3
+
+3 -
+Use imgGenTool to create a premium Islamic studies educational poster.
+
+Topic: TOPIC  The Five Pillars of Islam / The Six Articles of Faith / The 99 Names of Allah / Seerah Timeline / Fiqh Basics
+Level: Primary / Middle school / Any age
+Language: Arabic / English / Bilingual
+
+Design  premium Islamic aesthetic, deep green and gold:
+
+For Five Pillars:
+ Each pillar as an architectural column (marble/stone aesthetic)
+ Pillar 1: Shahadah  declaration of faith
+ Pillar 2: Salah  5 daily prayers with times
+ Pillar 3: Zakat  charity, who pays, who receives
+ Pillar 4: Sawm  Ramadan fasting rules
+ Pillar 5: Hajj  pilgrimage steps overview
+ Foundation stone: Tawheed
+ Roof: Jannah (paradise) above all pillars
+
+For each pillar:
+ Arabic name + transliteration + English meaning
+ Core obligation
+ Spiritual benefit
+ Quranic reference
+
+Decorative: Islamic geometric border, arabesque patterns, crescent and star motif.
+Style: Museum-quality Islamic educational poster, A3 portrait 300 DPI. --ar 2:3
+
+4- 
+Use imgGenTool to create an Islamic months calendar infographic.
+
+Year: HIJRI YEAR  e.g. 1447 AH
+Language: Arabic / English
+Focus: Full year / Ramadan only / Key occasions only
+
+Include all 12 Hijri months with:
+ Month name (Arabic + transliteration)
+ Key Islamic occasions and their dates
+ Recommended worship highlights (fasting, prayer, dhikr)
+ Gregorian date equivalents
+ Moon phase icons
+ Special nights (Layl
+at al-Qadr, Laylat al-Isra, etc.)
+
+Style: Deep green and gold Islamic aesthetic, elegant Arabic typography, geometric patterns border. A3 portrait, print-ready. --ar 2:3
+
+
+5- 
+Use imgGenTool to create an Islamic civilization history timeline infographic.
+
+
+Era/Period: ERA  e.g. The Rightly Guided Caliphs / Umayyad / Abbasid / Ottoman / Andalusia
+Language: Arabic / English
+
+Timeline sections:
+1. ERA NAME + dates (Hijri and Gregorian)
+2. KEY RULERS  names, major achievements
+3. TERRITORIAL MAP  geographic 
+extent at peak
+4. GOLDEN AGE CONTRIBUTIONS 
+ science, art, architecture, trade
+5. NOTABLE SCHOLARS born in this era
+6. MAJOR EVENTS  battles, treaties, cultural milestones
+
+7. LEGACY  impact on world civilization
+
+Sources: Ibn Khaldun, Tabari, Britannica, UNESCO.
+Style: Warm parchment tones, Islamic geometric borders, A4 portrait 300 DPI. --ar 2:3
+
+
+
+6- "
+project_type":"Islamic Quranic Infographic Artwork","content_inputs":"verse":"EXACT_ARABIC_VERSE","surah_name":"SURAH","ayah_number":"NUM
+","color_code":"HEX_COLOR","visual_composition":"center":"Ornate Cartouche  Thuluth or Naskh script ONLY","left":"Minaret 3D architectural 
+ no animate beings","background":"Islamic geometric patterns","depth":"Multi-layered: calligraphy + architecture + atmosphere","constraints":
+"no_animate_beings":true,"no_humans_animals":true,"no_flat_2d":true,"perfect_arabic_script_only":true,"mood_map":"#002F4B":"Majestic Night  Deep Blue + Gold","#1A4D2E":"Serene Garden 
+ Emerald + Floral","#D4AF37":"Regal Dawn  Gold + Morning Light"
+
+
+
+7- "
+prompt_type":"3D Cultural Infographic","language":"Arabic","title":"عادات نتؽافٍد افشعن
+ب ؼٍ ركضال","country_input":"COUNTRY_NAME","design_style":"visual_type":"Professional 3D Infographic
+","relief":"3D Relief Islamic pattern","localization_rule":"ALL visual elements must match COUNTRY_NAME specifically  no generic stereotyping","content_structure
+":"section_1
+":"لبذة عاكة  Ramadan atmosphere in COUNTRY
+","section_2":"عادات افصٍاك  
+country-specific iftar/suhoor customs","section_3":"افتؽافٍد ا
+فاجتكاعٍة  family and community","section_4
+":"افأطعكة افكشمنرة  
+AUTO-GENERATE per country","section_5":"افعادات افدٍلٍة  
+Taraweeh + local religious events","section_6":"كظامر افاحتؼاف 
+ decorations + local festivals
+","sources":["Ministry of Awqaf COUNTRY","UNESCO Intangible Heritage"]
+
+
+
+8- "
+prompt_type":"Quranic_Readings_Infographic","output_format":"Infographic_Image","page_size":"A4","orientation":"Vertical","language":"Arabic","reading_d
+irection":"RTL","design_style":"
+theme":"Islamic_Educational","color_palette":["أخضر داؾل","ذمبٍ","عاجٍ"],"
+ornaments":"زخارؼ إسفاكٍة ملدسٍة لاعك
+ة","font_style":"
+titles":"خط عربٍ تراثٍ ناضح","
+body":"خط عربٍ كؽرنء أؾادٍكٍ","
+target_audience":"طفاب عفنك افؽ
+رآل، كعفكن افتربٍة افإسفاكٍة، نافباحثنل","
+input_field":"
+qiraah_name":"اسك افؽراءة افؽرآلٍة (كثف: ؽراءة لاؼع، ؽراءة اب
+ل ؾثٍر، ؽراءة عاصك...)","content_generation_rules":
+"accuracy_level":"High","error_tolerance":"Zero","verification_required":true,"scholarly_tone":true,"infographic_sections":["
+section_title":"اسك افؽراءة","
+content":"عرض اسك افؽراءة 
+بخط بارز كع فكسة زخرؼٍة","section_title
+":"افؽارئ","content
+":"اسك افإكاك افؽارئ افؾاكف كع لبذة كنجزة كنثنؽة","
+section_title":"افرانٍال","
+content":"ذؾر افرانٍٍل افكعتكدٍل كع 
+تنضٍح كختصر","section_title
+":"افسلد نافتفؽٍ","content
+":"بٍال أل افؽراءة كتناترة كع كلمج افتفؽٍ نافكشاؼمة","
+section_title":"أمك افخصائص","
+content":"أبرز افسكات اففغنٍة نافأد
+ائٍة افككٍزة","section_title
+":"أكاؾل افالتشار","content
+":"افدنف نافكلاطؽ افتٍ اشتمرت بما تارٍخٍاِ نكعاصراِ","
+section_title":"كؾالتما ؼٍ اف
+ؽراءات افعشر","content":"ت
+صلٍؼ افؽراءة ضكل افؽراءات افعشر افكتناترة","
+section_title":"أكثفة تنضٍحٍة","
+content":"أكثفة كختارة ففؾفكات أن اف
+آٍات كع اختفاؼ افؽراءة","section_title
+":"افكراجع نافكصادر","
+content":["افلشر ؼٍ افؽراءات افعشر  افإكاك اب
+ل افجزرٍ","غاٍة افلماٍة ؼٍ طبؽات افؽراء  ابل افجزرٍ","افؽراءات افعشر افكت
+ناترة  أٍكل سنٍد","كصحؼ افكدٍلة افلبنٍة","كجكع افكفؾ ؼمد فطباعة افكصحؼ اف
+شرٍؼ"]],"output_requirements":"ima
+ge_only":true,"no_text_analysis":true,"print_ready":true,"high_resolution":true
+
+
+9- "
+meta":"version":"5.0","generator":"NanoBanana Pro","mode":"GENERATION","rag_template_id":"scholar_bio_vertical_ar_full_001","design_spec
+":"theme_style":"Islamic Golden Ag
+e (Cinematic Heritage)","layout_template":"Epoch Flow (Vertical Scroll Biography)","aspect_ratio":"9:16","orientation":"portrait","target_audience":"طفاب اف
+عفك نكحبن افتارٍخ افإسفاكٍ","content_structure
+":"header_section
+":"main_title
+":"text":"SCHOLAR_NAME
+","font":"Diwan Thuluth (خط افثفث)","
+style":"Gold Embossed on Deep Teal (ذمبٍ بارز عفٌ ترؾناز غاكؽ)","
+honorific_title":"LAQAB | TITLE","visual_element":"بنرترٍم تخ
+ٍفٍ نؽنر ففعافك ٍحكف أداة عفكم","identity_card
+":"full_name":"FULL_NAME_AR
+","birth_data":"نفد ؼٍ BIRTHPLACE
+ عاك HIJRI_YEAR
+ مػ / GREGORIAN_YEAR
+ ك","professions":["FIELD_1","FIELD_2","FIELD_3"]
+,"scientific_achievements":["category":"FIELD_1
+","icon":"ICON","detail":"ACHIEVEMENT_1","innovation":"INNOVATION_1","category":"FIELD_2","icon":"ICON","detail":"ACHIEVEMENT_2","innovation":"INNOVATION_2"
+],"legacy_footer":"magnum_opus":"MAIN_BOOK_TITLE
+","quote":"FAMOUS_QUOTE","visual_motif":"زخارؼ إسفاكٍة عباسٍة كذمبة","
+visual_prompts":"
+dalle_prompt":"تصكٍك بنستر طنفٍ (
+ستنرٍ) عل افعافك افكسفك SCHOLAR_NAME
+. ٍظمر ؼٍ افكلتصؼ بكفابس تراثٍة ألٍؽة نمن ٍؾتب ؼٍ كخطنطة. ا
+فخفؼٍة تحتنٍ عفٌ أدنات عفكم نزخارؼ إسفاكٍة ملدسٍة بفنل ذمبٍ نترؾناز. افإ
+ضاءة سٍلكائٍة. افتصكٍك ؼخك نكلاسب ففكحتنٌ افتعفٍكٍ افتارٍخٍ.","
+
+midjourney_style":"Central figure: dignified scholar in Abbasid robes (deep teal and gold). Background: Bimaristan/library interior, Arabic manuscripts floating, scientific apparatus. Cinematic Rembrandt lighting. 8k photorealis
+tic --ar 9:16 --no text","
+css_suggestions":"color_palette":"bg_primary":"#003B3B (Deep Islamic Teal)","text_gold":"#D4AF37 (Antique Gold)","text_body":"#F0F0F0 (Off-White)","typography":
+"headline_font":"Amiri (Google Fonts) - Weight: 700","body_font":"Cairo (Google Fonts) - Weight: 400" /* 
+EXAMPLE  Al-Razi pre-filled: Scholar: أ
+بن بؾر افرازٍ | LAQAB: ج
+افٍلنس افعرب | FIELD: طب
+، ؾٍكٍاء، ؼفسؼة Birth: 
+افرٍ (إٍرال) 251مػ/865ك | Magnum Opus
+: افحانٍ ؼٍ افطب (30 كجفداِ) 
+Achievement 1: أنف كل ؼرؽ بٍل افجدرٍ نافحصبة 
+Achievement 2: اؾتشؼ حكض افؾبرٍتٍؾ نأنف 
+كل استؽطر افؾحنف فتطمٍر افجرنح Quote
+: عافج كرضاؾ بافغذاء فا بافدناء كا استطعت */
+
+
+

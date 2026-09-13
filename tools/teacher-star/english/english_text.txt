@@ -1,0 +1,434 @@
+﻿الصورة رقم 1
+L19 — Grammar Detective | Pixar Storybook Dynamic Detective System v2.0. Canvas: portrait A4 educational poster. Style: Pixar Storybook 3D illustration with rich saturated colors, soft volumetric lighting. Include ONE main detective character (girl, boy, or teacher) actively investigating a sentence. Environment: Classroom, library, or futuristic lab (zero readable text on surfaces). Layout: Upper area features the character and rule title. Central area shows the 'Problem Sentence' with the 'Highlight Target' glowing red. Lower area features corrected sentence and explanation in clean blocks. DATA BLOCK: Style Variant: Pixar Storybook; Main Title: Grammar Detective; Subject Name: English; Grammar Rule Title: {{RULE_TITLE}}; Problem Sentence: {{PROBLEM_SENTENCE}}; Correct Sentence: {{CORRECT_SENTENCE}}; Rule Explanation: {{EXPLANATION}}; Highlight Target: {{ERROR_WORD}}; Language Direction: Left-to-right.
+الصورة رقم 
+2
+Generate a 9:16 vertical Pixar 3D educational comic strip poster. Style: Photorealistic Pixar render, expressive faces. Layout: 2x3 grid (2 columns x 3 rows). Title bar at the top. Two consistent characters throughout all 6 panels. Each panel features ONE speech bubble with the provided dialogue. Environment: Consistent setting (e.g., airport, restaurant, doctor's office). SITUATION: {{SITUATION_TITLE}}. CHARACTER 1 (Staff): {{CHAR1_DESC}}. CHARACTER 2 (Student): {{CHAR2_DESC}}. DIALOGUE: Panel 1: {{P1_TEXT}}; Panel 2: {{P2_TEXT}}; Panel 3: {{P3_TEXT}}; Panel 4: {{P4_TEXT}}; Panel 5: {{P5_TEXT}}; Panel 6: {{P6_TEXT}}. Use only the exact phrases provided.
+الصورة رقم 
+3
+Idiom Cinema. Format: 9:16 vertical portrait, 8K resolution. Visual Structure: Split-screen composition. Top Panel: Depict the 'Literal Meaning' of the idiom [{{IDIOM}}] in a funny, exaggerated 3D way. Bottom Panel: Depict the 'Real Meaning' in a practical context. Character: A 3D expressive cartoon kid with Pixar-like emotions. Style: Candy Pop, bright lighting, bold outlines, vivid rainbow colors, high-energy.
+الصورة رقم 4
+{"
+prompt_type":"ESL_Visual_Infographic","topic":"Speaking
+ Framework for {{CEFR_LEVEL}} — {{SKILL_FOCUS}}","visual_design":"3D 
+Glassmorphism
+ frames, warm classroom palette","
+content_structure
+":{"
+header":"Lesson
+ title + CEFR 
+badge","fluency_vs_accuracy":"Visual
+ comparison with examples","interaction_strategies":"5 key phrases for discussion","question_formation":"
+Wh
+- questions, Yes/No, Tag questions with 
+examples","self_correction":"Natural
+ repair strategies","classroom_phrases":"15 must-know expressions"},"references":["Cambridge 
+English","Oxford
+ 
+ELT","British
+ Council"],"ratio":"A4"}
+الصورة رقم 
+5
+SYSTEM ROLE: Elite AI educational infographic engine. MISSION: Generate ONE final 9:16 vertical ultra-HD classroom infographic. TOPIC: {{LESSON_TOPIC}}. SUBJECT: {{SUBJECT}}. STYLE: Nano Banana PRO, Morphic Glass Plus, Pixar-style 3D educational city, bright blended colors, premium readability. MAIN CONCEPT: Turn the lesson into a 'Mini Learning City' where each building teaches one part. LAYOUT: Top: title banner like a city sign. Middle: city view with 5–6 labeled buildings (Rule Tower, Formula Building, Example Café, Use Center, Mistake Clinic, Practice Station). Bottom: city square summary area. VISUAL RULES: Distinct buildings clearly labeled, roads, signs, crosswalks, glass panels integrated into architecture. One small Pixar-style student or teacher walking through. STRICT RULES: No cluttered skyline, no dark urban background, no tiny street labels, keep each building educational and easy to scan.
+الصورة رقم 6
+Create a classroom reading strategies poster for EFL students at {{CEFR_LEVEL}} level. Include 5 strategies: Skimming (finding gist), Scanning (finding specifics), Intensive Reading (detailed analysis), Extensive Reading (pleasure/fluency), SQ3R (Survey, Question, Read, Recite, Review). Each strategy: clear icon, one-line definition, when to use, step-by-step technique. Style: A4 vertical, teal/warm orange palette, clean educational design, Cambridge/Oxford aesthetic. Arabic and English labels.
+الصورة رقم 7
+Create a comprehensive English tenses visual reference chart showing all 12 tenses on a timeline. For each tense: tense name (English + Arabic), formula structure, (+) positive / (-) negative / (?) question forms, time expressions (always/usually/now/since/for/by), natural example sentence. Color-code by family: Simple (blue), Continuous (orange), Perfect (green), Perfect Continuous (purple). A4 landscape, bilingual English/Arabic, clean grid layout, classroom reference quality. Cambridge grammar references.
+الصورة رقم 8
+Use 
+imgGenTool
+ to create an IELTS/TOEFL skills preparation poster.
+Exam: {{EXAM — IELTS Academic / IELTS General / TOEFL 
+iBT
+}}
+Skill: {{SKILL — Writing Task 1 / Writing Task 2 / Speaking Part 2 / Reading Strategies / Listening Tips}}
+Level: {{Band 6-7 target / Band 7-8 target / Band 8+ target}}
+Poster sections:
+1. TASK OVERVIEW — what the examiner is looking for
+2. STRUCTURE TEMPLATE — exact format to follow
+3. BAND SCORE CRITERIA — what separates Band 6 / 7 / 8
+4. SAMPLE ANSWER BREAKDOWN — annotated model answer
+5. COMMON MISTAKES — top 5 errors to avoid
+6. TIME MANAGEMENT — how to allocate minutes
+7. VOCABULARY BOOST — 10 high-scoring phrases
+References: IELTS.org, ETS official guides, Cambridge IELTS books.
+Style: Academic clean, IELTS-appropriate professional design, A4 portrait 300 DPI. --
+ar
+ 2:3
+الصورة رقم 9
+Generate ONE 9:16 educational infographic titled 'Present Simple'. Create an aurora morphic glass classroom board with aqua, mint, soft yellow glow, and deep teal background. Use a large transparent glass board in the center with glowing handwritten-style typography. Support English and Arabic content clearly, either as English lines with Arabic explanation underneath or as balanced bilingual sections. Include: meaning, usage, affirmative form, examples, negative form, question form, and keywords. Add arrows, circles, underlines, and soft glow highlights. Place a small friendly teacher character in one top corner only. The board should look like a teacher is writing live on glass. Keep the layout readable, premium, and mobile-friendly.
+الصورة رقم 10
+Generate ONE 9:16 educational infographic titled 'Present Simple'. Use an ice silver morphic glass board style with frosted glass, pale blue, silver, white highlights, and a clean modern classroom-tech mood. Divide the central board into four clear zones: Rule, Examples, Negative, and Questions. Add a small keyword strip at the bottom. Support Arabic and English typography with strong readability. Use thin glowing dividers, clean arrows, checkmarks, and subtle reflections. Make the grammar formulas large and easy to understand.
+الصورة رقم 11
+Generate ONE 9:16 infographic titled 'Present Simple'. Create a lavender cyber morphic glass classroom board using lavender, neon pink, soft purple, and dark violet tones. The mood should be playful, futuristic, and student-friendly. Use one central glowing glass board with colorful handwritten notes. Include English grammar rules with Arabic support text. Add sections for usage, examples, negative, questions, and keywords. Surround the board with small neon 
+keyword labels such as always, usually, often, sometimes, never, and every day. Add a small Pixar-style student or teacher mascot, but keep the lesson board dominant.
+الصورة رقم 12
+Generate ONE 9:16 premium educational infographic titled 'Present Simple'. Use a royal blue and gold morphic glass style with elegant translucent panels and luxury classroom lighting. Create one large central glass board with gold-highlighted grammar formulas. Include bilingual English and Arabic explanation sections: meaning, use, affirmative, negative, questions, examples, and keywords. Use elegant dividers, glowing gold underlines, and refined handwritten typography. Keep the design high-end, clean, and suitable for a paid English course.
+الصورة رقم 13
+Generate ONE 9:16 educational infographic titled 'Present Simple'. Use a nature-inspired liquid morphic glass style with green, aqua, mist white, and deep blue tones. The central board should look like translucent liquid glass. Explain the lesson calmly and clearly with bilingual English and Arabic support. Include: when we use Present Simple, affirmative form, negative form, question form, examples, and keywords. Use organic arrows, soft highlights, gentle curved lines, and small nature-inspired educational icons. Add a tiny teacher character only if it does not reduce readability.
+الصورة رقم 14
+Generate ONE 9:16 educational infographic titled 'Present Simple'. Use a soft watercolor classroom background with a painted board texture. The style should feel handmade, calm, and teacher-created. Place one large board in the center. Write the lesson progressively from top to bottom. Include English explanation with Arabic translation or Arabic support notes. Add sections for rule, examples, negative, questions, and keywords. Use watercolor arrows, pastel highlights, brush circles, and a small hand-painted teacher illustration beside the board. Make all Arabic text clean, readable, and right-to-left correct.
+الصورة رقم 15
+Generate ONE 9:16 infographic titled 'Present Simple'. Create a watercolor notebook-style lesson board with torn edges, hand-drawn diagrams, and soft pastel colors. Include bilingual English/Arabic explanation for the Present Simple tense: meaning, rules, examples, and keywords. Add small watercolor stationery icons around the board.
+الصورة رقم 16
+Use 
+imgGenTool
+ to create a premium English language educational infographic.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FILL THESE FIELDS ONLY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOPIC:    {{ANY ENGLISH TOPIC — e.g. Present Perfect Tense / Reported Speech / Passive Voice / Modal Verbs / Conditionals / Collocations / Phrasal Verbs / Punctuation / Parts of Speech}}
+LEVEL:    {{A1 / A2 / B1 / B2 / C1 / C2 — CEFR}}
+SKILL:    {{Grammar / Vocabulary / Reading / Writing / Speaking / Listening}}
+GRADE:    {{Primary / Middle / High school / University / Adult learners}}
+LANGUAGE: {{English only / Bilingual EN+AR}}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AUTO-ADAPTIVE DESIGN ENGINE:
+Based on LEVEL, auto-apply visual density and complexity:
+• A1–A2 → Large icons, simple sentences, color-coded, lots of visuals, minimal text
+• B1–B2 → Balanced text/visuals, example tables, comparison boxes
+• C1–C2 → Academic density, nuanced examples, corpus-based usage notes
+Based on SKILL, auto-select layout:
+• Grammar → Rule box + form table + timeline/diagram + examples + error correction
+• Vocabulary → Word cards grid + IPA + collocations + register indicators
+• Writing → Structure diagram + model text annotated + transition words bank
+• Speaking → Conversation flowchart + useful phrases + pronunciation tips
+CONTENT BLOCKS:
+📌
+ RULE / CONCEPT BOX (top — always):
+• Clear rule statement in simple English
+• When to use it / when NOT to use it
+• Level badge (CEFR A1–C2)
+📊
+ FORM TABLE:
+• Positive / Negative / Question forms
+• Short answers if applicable
+• Any irregular forms highlighted in red
+🔤
+ STRUCTURE FORMULA:
+• Visual formula: Subject + Verb (past participle) + Object
+• Color-coded: green=subject, blue=verb, orange=object/complement
+✍
+️ EXAMPLE BANK (10 examples minimum):
+• Graded from simple → complex
+• Authentic, natural-sounding sentences
+• Arabic translation if bilingual selected
+• Common errors crossed out with correction shown
+🎯
+ USAGE NOTES:
+• British vs American English differences (if any)
+• Formal vs informal register
+• Common native speaker collocations
+❌
+ ERROR CLINIC:
+• 5 typical learner mistakes at this level
+• Wrong sentence → 
+✗
+ 
+→
+ Correction 
+→
+ 
+✓
+ 
+→
+ Explanation
+🧠
+ MEMORY DEVICE:
+• Mnemonic, pattern, or visual memory aid
+• Rhyme or acronym if applicable
+📚
+ EXAM TIPS (if B1+):
+• How this topic appears in IELTS / Cambridge exams
+• Common exam task types involving this grammar point
+References: Cambridge English Grammar in Use, Oxford English Grammar, British National Corpus.
+Style: Cambridge/Oxford textbook aesthetic — clean white, teal accents, authoritative typography. A4 portrait 300 DPI. --
+ar
+ 2:3
+الصورة رقم 17
+Use 
+imgGenTool
+ to create a premium English reading and literature educational infographic.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FILL THESE FIELDS ONLY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOPIC:    {{TEXT TYPE / WORK — e.g. How to 
+analyse
+ a poem / Short story elements / Novel study: Animal Farm / Non-fiction reading strategies / Newspaper article analysis / Shakespearean language}}
+LEVEL:    {{B1 / B2 / C1 / C2}}
+GRADE:    {{Middle school / High school / University}}
+LANGUAGE: {{English only / Bilingual EN+AR}}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTENT BLOCKS:
+📖
+ TEXT OVERVIEW:
+• Genre identification + characteristics
+• Purpose: to inform / entertain / persuade / describe
+• Audience and register indicators
+🔍
+ ANALYSIS FRAMEWORK (PETAL/PETER/WOVEN):
+• Point → Evidence → Technique → Analysis → Link
+• Visual step-by-step annotation process
+• How to quote effectively
+🎭
+ LITERARY DEVICES SPOTLIGHT:
+• 10 devices relevant to this text type
+• Each: name + definition + example + effect on reader
+📝
+ ANNOTATION GUIDE:
+• What to underline / circle / box
+• What questions to ask about any paragraph
+• 
+Colour
+-coding system for annotation
+✍
+️ RESPONSE WRITING:
+• Model paragraph structure (annotated)
+• Academic vocabulary for literary analysis
+• Sentence starters bank: "The writer suggests...", "This implies..."
+🔤
+ KEY VOCABULARY:
+• 15 high-frequency literary analysis terms
+• Each: word + definition + example in sentence
+References: Cambridge IGCSE Literature, Oxford School Shakespeare, AQA/Edexcel frameworks.
+Style: Premium literary magazine meets academic textbook. A4 portrait 300 DPI. --
+ar
+ 2:3
+الصورة رقم 18
+Use 
+imgGenTool
+ to create a premium English academic writing educational poster.
+Focus: {{FOCUS — Essay Structure / Paragraph Writing / Argumentative Writing / Report Writing / all combined}}
+Level: {{High school / IELTS prep / University}}
+Language: {{English (with Arabic annotations optional)}}
+Design — clean academic white with editorial typography:
+SECTION 1 — ESSAY ARCHITECTURE:
+• Visual building/pyramid metaphor for essay structure
+• Introduction → Body (3 paragraphs) → Conclusion
+• Each part: what goes inside (annotated diagram)
+SECTION 2 — PERFECT PARAGRAPH (TEEL):
+• Topic sentence → Evidence → Explanation → Link
+• Color-coded paragraph example with each element highlighted
+SECTION 3 — TRANSITION WORDS COLLECTION:
+• Adding: Furthermore, Moreover, In addition...
+• Contrasting: However, Nevertheless, On the other hand...
+• Concluding: In conclusion, Therefore, Consequently...
+• Giving examples: For instance, Such as, To illustrate...
+SECTION 4 — ACADEMIC VOCABULARY UPGRADE:
+• 10 common words → academic alternatives
+• (said → argued, big → substantial, etc.)
+SECTION 5 — COMMON ERRORS:
+• 5 most common academic writing mistakes with corrections
+Style: Premium Cambridge/Oxford academic aesthetic, A3 portrait 300 DPI. --
+ar
+ 2:3
+الصورة رقم 19
+Generate ONE 9:16 vertical infographic. STYLE: Pixar 3D + morphic glass hybrid, bright classroom lighting. LAYOUT: Top title, Middle: 3–4 glass panels as 'story steps', Bottom: summary strip. CONTENT: Step-by-step logic (When / Structure / Examples / Questions). CHARACTER: Pixar student interacting across panels (confused to understanding). TYPOGRAPHY: Bold, friendly, rounded, highly readable. TOPIC: {{TOPIC}}. Character must support learning, panels stay dominant.
+الصورة رقم 20
+{"prompt_type":"Vocabulary_Visual_Infographic","topic":"{{VOCABULARY_THEME — e.g. Business English, Travel, Academic Word List}}","level":"{{CEFR_LEVEL}}","card_structure":{"english_word":"bold, 
+large","ipa_pronunciation":"phonemic
+ script below 
+word","arabic_translation":"contextual
+ — not 
+literal","part_of_speech":"noun
+/verb/adj 
+badge","example_sentence":"natural
+ authentic usage","collocation":"2-3 common word partnerships"},"
+layout":"Grid
+ of 12 word cards, A4 
+vertical","style":"Clean
+ academic, teal/white, Oxford dictionary 
+aesthetic","references
+":["Oxford Advanced Learner's 
+Dictionary","Cambridge
+ 
+Dictionary","British
+ National Corpus"]}
+الصورة رقم 21
+SYSTEM ROLE: Elite AI educational infographic engine. MISSION: Generate ONE final 9:16 vertical ultra-HD educational poster. TOPIC: {{GRAMMAR_RULE}}. STYLE: Nano Banana PRO, futuristic classroom escape-room design, Pixar-style 3D character, glowing 
+glassmorphism
+, vivid cinematic lighting. MAIN CONCEPT: Students move through 4 connected 'grammar chambers' teaching parts of the rule (Rule Discovery, Formula Room, Meaning/Use Room, Mistake Trap Room). LAYOUT: Top: big glowing title 'ESCAPE THE {{GRAMMAR_RULE}}', adventure atmosphere. Center: 4 stacked/connected chambers with numbers, themed scenes, short explanations, and examples. Bottom: 'Mission Complete' revision zone (summary, triggers, challenge). CHARACTER: Friendly Pixar-style grammar explorer/mascot guiding the learner with a flashlight/key. STRICT RULES: No dense paragraphs, each chamber visually distinct, clear color coding for chambers, mobile readability first, no watermark.
+الصورة رقم 22
+SYSTEM ROLE: Elite AI educational infographic engine. MISSION: Generate ONE final 9:16 vertical ultra-HD poster. TOPIC: {{GRAMMAR_TOPIC}}. STYLE: Nano Banana PRO, Pixar-style 3D educational world, futuristic classroom adventure, glowing 
+glassmorphism
+, layered depth. MAIN CONCEPT: 'Time Tunnel Map' where students travel through 5 time portals (What it is, Structure Code, When we use it, Signal Words Lab, Error Repair Station). LAYOUT: Top Header: big glowing title, subtitle, mascot teacher/explorer pointing to first portal. Center: central glowing tunnel/timeline running vertically connecting all 5 portals. Each portal has distinct color, icon, mini scene, and text block. Bottom: 'Quick Win Review' summary strip, exit-ticket question, confidence badge. CHARACTER: Friendly Pixar grammar guide appearing in 2–3 small positions guiding the learner. STRICT RULES: No clutter, each portal must have a distinct color family, tunnel must visually connect all portals, no distorted letters.
+الصورة رقم 23
+SENTENCE PROMPT SYSTEM ROLE: High-end AI educational visual engine. Output ONE final image only.
+CANVAS: 9:16 vertical, ultra-HD, mobile-first, bright light mode.
+TOPIC: Parts of a Sentence — how words work together.
+AUDIENCE: Primary or middle-school English learners, English LTR.
+CORE VISUAL IDEA:
+Transform a sentence into a cheerful miniature “Sentence City.” Each grammar role is represented by a connected transit station. A glowing sentence train travels through the stations, showing how the words combine to create meaning.
+STYLE:
+Premium Pixar-inspired 3D + Morphic Glass.
+Fresh Daylight palette:
+sky blue #60A5FA,
+grass green #65C18C,
+sunshine yellow #FFD93D,
+clean white,
+soft gray-blue shadows.
+Use soft global illumination, subtle subsurface scattering, bright daylight, warm key light, cool rim light, shallow depth of field, rounded tactile buildings, polished miniature objects, frosted glass labels with thin bright edges, soft contact shadows, and slight isometric perspective.
+LAYOUT:
+Network / transit-map skeleton, NOT stacked cards.
+Reading direction: left-to-right along one curved railway line.
+Place one large sentence train across the middle:
+“The clever fox runs quickly.”
+Create five connected stations:
+1. SUBJECT STATION
+“The fox”
+Label: WHO?
+2. ADJECTIVE GARDEN
+“clever”
+Label: DESCRIBES
+3. VERB POWER HOUSE
+“runs”
+Label: ACTION
+4. ADVERB SPEED TUNNEL
+“quickly”
+Label: HOW?
+5. MEANING CENTRAL
+Show the completed sentence:
+“The clever fox runs quickly.”
+CONTENT BLOCKS:
+Use no more than five short text zones:
+• Main title
+• Subject
+• Adjective
+• Verb
+• Adverb
+• Completed sentence may appear inside the final destination rather than as an extra card
+CHARACTER/ICON:
+One friendly Pixar-style fox conductor wearing a tiny blue cap, pointing toward the train route. The mascot supports the lesson and never covers text.
+TYPOGRAPHY:
+Title: 
+Fredoka
+, chunky beveled 3D letters, light-top to saturated-bottom gradient, thin outline, soft shadow.
+Labels: Poppins, large bold uppercase.
+Sentence words: extra-large, clean, highly readable.
+VISUAL CLARITY:
+Give each grammar role one consistent icon:
+subject = person silhouette,
+adjective = sparkle,
+verb = lightning bolt,
+adverb = speed lines.
+STRICT RULES:
+Huge readable text.
+Very few words.
+One idea per station.
+No paragraphs.
+No stacked numbered panels.
+No random signs or background writing.
+No distorted letters.
+No repeated labels.
+No watermark.
+No clutter.
+No hidden quiz answers.
+The railway route must remain visually clear at phone-screen size.
+FINAL QUALITY:
+Premium educational infographic, imaginative but academically accurate, strong visual hierarchy, classroom-ready, social-media-ready, polished Pixar-quality 3D rendering with elegant morphic-glass educational labels.
+الصورة رقم 24
+Create ONE premium 9:16 vertical educational infographic.
+TOPIC:
+English Idiom
+IDIOM:
+{{IDIOM}}
+STYLE:
+Pixar-quality 3D + Morphic Glass + pop-up classroom lab.
+Bright light mode, candy pastel palette, soft global illumination, warm key light, cool rim light, rounded tactile forms, shallow depth of field.
+LAYOUT:
+Split-screen “Guess vs Truth” infographic.
+TOP SECTION:
+Big 3D title:
+IDIOM LAB
+Under it, write the idiom in huge clear text:
+“{{IDIOM}}”
+LEFT SIDE:
+Label:
+WHAT IT SOUNDS LIKE
+Create a funny exaggerated literal scene showing the idiom as a visual hypothesis.
+Short text:
+Maybe it means: {{LITERAL_GUESS}}
+RIGHT SIDE:
+Label:
+REAL MEANING
+Create a clear real-life scene showing the true meaning.
+Short text:
+It really means: {{REAL_MEANING}}
+BOTTOM CARD:
+USE IT:
+{{EXAMPLE_SENTENCE}}
+CHARACTER:
+One cute Pixar-style student detective holding a magnifying glass, standing between the two sides, discovering the real meaning.
+TYPOGRAPHY:
+Huge rounded 3D title font like 
+Fredoka
+ or Baloo.
+Clean readable body font like Poppins.
+Very few words.
+Big readable labels.
+STRICT RULES:
+No clutter.
+No tiny text.
+No watermark.
+No random text.
+No answer confusion.
+Literal side must be funny.
+Real meaning side must be clear.
+Use only the exact idiom provided.
+Premium classroom poster quality.
+الصورة رقم 25
+TOPIC:
+{{TOPIC}}
+LESSON TYPE:
+{{Vocabulary / Grammar / Science / Math / History / Phonics / Revision}}
+AUDIENCE:
+{{kids / teens / beginners / grade level}}
+LANGUAGE:
+{{English LTR / Arabic RTL / bilingual separated zones}}
+VISUAL STYLE:
+Pixar-quality 3D pop-up picture book infographic, bright light mode, soft global illumination, subsurface scattering, warm key light + cool rim light, shallow depth of field, rounded tactile forms, premium toy-like materials, soft paper texture, cinematic classroom lighting.
+MAIN CONCEPT:
+Design the poster as an open magical pop-up book on a desk. The topic comes alive as 3D pop-up pictures rising from the pages. Each word or idea appears as a separate raised picture-card with a big readable label.
+LAYOUT:
+Pop-up book spread, 3D picture cards, playful stickers, arrows, tabs, paper cutouts, and soft shadows.
+Reading direction: top title → picture grid → remember card.
+Use 6 to 10 main picture cards only.
+TITLE:
+Big 3D chunky title:
+{{TITLE}}
+CONTENT CARDS:
+Create clear labeled pop-up cards for:
+{{ITEM_1}}
+{{ITEM_2}}
+{{ITEM_3}}
+{{ITEM_4}}
+{{ITEM_5}}
+{{ITEM_6}}
+{{ITEM_7}}
+{{ITEM_8}}
+OPTIONAL REMEMBER CARD:
+{{ONE_SHORT_TAKEAWAY}}
+CHARACTER:
+One cute Pixar-style student/teacher mascot in the bottom corner, pointing happily at the book. Do not cover text.
+TYPOGRAPHY:
+Huge rounded 3D title font like 
+Fredoka
+ / Baloo.
+Clean readable body font like Poppins / Inter.
+Very large labels.
+No tiny text.
+COLOR PALETTE:
+Fresh Daylight palette: sky blue, grass green, sunshine yellow, clean white, soft gray-blue shadows.
+Add warm accent colors only for labels and stickers.
+STRICT RULES:
+One topic only.
+Few words.
+Huge readable text.
+No paragraphs.
+No clutter.
+No random background text.
+No watermark.
+No distorted letters.
+All labels must be spelled correctly.
+Every picture must clearly match its label.
+Premium classroom poster quality.
+Social-media ready.

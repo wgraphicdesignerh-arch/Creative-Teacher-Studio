@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مساعد تحضير الدروس | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #be185d 0%, #8b5cf6 50%, #4f46e5 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        select option { background-color: #0f172a !important; color: #ffffff !important; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-pink-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                </div>
+                <span class="font-bold text-white">مساعد تحضير الدروس الذكي</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Form Section -->
+        <div class="lg:col-span-5 glass-card p-6 rounded-3xl border border-white/10 flex flex-col space-y-5">
+            <h2 class="text-xl font-bold text-white border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-pink-400"></i> بيانات الدرس
+            </h2>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">المادة الدراسية</label>
+                <input type="text" id="subject" placeholder="مثال: لغتي الخالدة، العلوم، الرياضيات..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-400">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">عنوان الدرس</label>
+                <input type="text" id="lessonTitle" placeholder="مثال: الضوء وخصائصه، الفعل المضارع..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-400">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2">الصف الدراسي</label>
+                    <select id="grade" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-400">
+                        <option>الصف الأول الابتدائي</option>
+                        <option>الصف الثاني الابتدائي</option>
+                        <option>الصف الثالث الابتدائي</option>
+                        <option>الصف الرابع الابتدائي</option>
+                        <option>الصف الخامس الابتدائي</option>
+                        <option>الصف السادس الابتدائي</option>
+                        <option>الصف الأول المتوسط</option>
+                        <option>الصف الثاني المتوسط</option>
+                        <option>الصف الثالث المتوسط</option>
+                        <option>المرحلة الثانوية</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2">زمن الدرس</label>
+                    <select id="duration" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-400">
+                        <option>45 دقيقة (حصة واحدة)</option>
+                        <option>90 دقيقة (حصتان)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">ملاحظات أو تركيز خاص (اختياري)</label>
+                <textarea id="notes" rows="3" placeholder="مثال: التركيز على استراتيجية التفكير الناقد، دمج الوسائل الرقمية..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-400 leading-relaxed"></textarea>
+            </div>
+
+            <button onclick="generatePlan(this)" class="w-full py-3.5 rounded-xl text-white font-bold gradient-bg shadow-md hover:shadow-lg transition">
+                توليد تحضير الدرس بالذكاء الاصطناعي ✨
+            </button>
+        </div>
+
+        <!-- Output Result Section -->
+        <div class="lg:col-span-7 glass-card p-6 rounded-3xl border border-white/10 flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-3 mb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice text-purple-400"></i> نموذج التحضير المولد
+                    </h2>
+                    <button onclick="copyToClipboard('resultContent')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-pink-500/20 text-pink-300 border border-pink-500/30 hover:bg-pink-500/30 transition">
+                        <i class="fa-solid fa-copy mr-1"></i> نسخ التحضير
+                    </button>
+                </div>
+
+                <div id="resultContent" class="prose max-w-none text-slate-300 text-sm leading-relaxed space-y-4">
+                    <div class="text-center py-16 text-slate-500">
+                        <i class="fa-solid fa-wand-magic-sparkles text-4xl mb-3 text-slate-600"></i>
+                        <p>قومي بتعبئة بيانات الدرس على اليمين ثم اضغطي على "توليد تحضير الدرس".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function generatePlan(btn) {
+            const subject = document.getElementById('subject').value.trim() || (currentLang === 'en' ? 'General Science' : (currentLang === 'fr' ? 'Sciences Générales' : 'العلوم العامة'));
+            const title = document.getElementById('lessonTitle').value.trim() || (currentLang === 'en' ? 'Core Lesson Concept' : (currentLang === 'fr' ? 'Concept Fondamental' : 'المفهوم الأساسي في الدرس'));
+            const grade = document.getElementById('grade').value;
+            const duration = document.getElementById('duration').value;
+            const notes = document.getElementById('notes').value.trim();
+
+            generateAIResponse(btn, 'resultContent', () => {
+                if (currentLang === 'en') {
+                    const extraNoteHtml = notes ? `<div class="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300">📌 **Special Focus:** ${notes}</div>` : '';
+                    document.getElementById('resultContent').innerHTML = `
+                        <div class="bg-pink-500/10 p-4 rounded-2xl border border-pink-500/20 mb-4 text-left">
+                            <div class="font-bold text-white text-sm">📌 Lesson Plan: ${title}</div>
+                            <div class="text-xs text-slate-400 mt-1">Subject: ${subject} | Grade: ${grade} | Duration: ${duration}</div>
+                        </div>
+
+                        ${extraNoteHtml}
+
+                        <h4 class="font-bold text-pink-400 text-xs flex items-center gap-2 text-left">🎯 Learning Objectives (Students will be able to):</h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs leading-relaxed text-left">
+                            <li>Clearly define and explain the core concept of (${title}).</li>
+                            <li>Deduce key practical applications related to (${subject}).</li>
+                            <li>Actively participate in collaborative classroom activities.</li>
+                        </ul>
+
+                        <h4 class="font-bold text-purple-400 text-xs flex items-center gap-2 text-left">🚀 Warm-up & Introduction (5-7 mins):</h4>
+                        <p class="bg-slate-900 p-3 rounded-xl border border-white/10 text-xs text-slate-300 leading-relaxed text-left">
+                            Present a short brainstorm question or hook relating to (${title}) to engage students and connect with prior knowledge.
+                        </p>
+
+                        <h4 class="font-bold text-indigo-400 text-xs flex items-center gap-2 text-left">💡 Teaching Strategies & Tools:</h4>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-slate-300 text-left">
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ Cooperative Learning</span>
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ Brainstorming & Dialogue</span>
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ Direct Multimedia Presentation</span>
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ Interactive Activity Cards</span>
+                        </div>
+
+                        <h4 class="font-bold text-emerald-400 text-xs flex items-center gap-2 text-left">📝 Formative Assessment & Closure:</h4>
+                        <p class="bg-slate-900 p-3 rounded-xl border border-white/10 text-xs text-slate-300 leading-relaxed text-left">
+                            Conduct a 'One-Minute Check: What did you learn today?' and summarize key takeaways of (${title}) before concluding the lesson.
+                        </p>
+                    `;
+                } else if (currentLang === 'fr') {
+                    const extraNoteHtml = notes ? `<div class="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300">📌 **Focus Spécial :** ${notes}</div>` : '';
+                    document.getElementById('resultContent').innerHTML = `
+                        <div class="bg-pink-500/10 p-4 rounded-2xl border border-pink-500/20 mb-4 text-left">
+                            <div class="font-bold text-white text-sm">📌 Plan de Cours : ${title}</div>
+                            <div class="text-xs text-slate-400 mt-1">Matière : ${subject} | Niveau : ${grade} | Durée : ${duration}</div>
+                        </div>
+
+                        ${extraNoteHtml}
+
+                        <h4 class="font-bold text-pink-400 text-xs flex items-center gap-2 text-left">🎯 Objectifs Pédagogiques (L'élève sera capable de) :</h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs leading-relaxed text-left">
+                            <li>Définir clairement le concept fondamental de (${title}).</li>
+                            <li>Déduire les applications pratiques liées à (${subject}).</li>
+                            <li>Participer activement aux activités d'apprentissage collaboratif.</li>
+                        </ul>
+
+                        <h4 class="font-bold text-purple-400 text-xs flex items-center gap-2 text-left">🚀 Introduction et Mise en Train (5-7 min) :</h4>
+                        <p class="bg-slate-900 p-3 rounded-xl border border-white/10 text-xs text-slate-300 leading-relaxed text-left">
+                            Poser une question de remue-méninges captivante sur (${title}) pour susciter la curiosité des élèves et réactiver les prérequis.
+                        </p>
+
+                        <h4 class="font-bold text-indigo-400 text-xs flex items-center gap-2 text-left">💡 Stratégies et Outils Pédagogiques :</h4>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-slate-300 text-left">
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ Apprentissage Coopératif</span>
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ Remue-méninges et Dialogue</span>
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ Présentation Multimédia</span>
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ Fiches d'Activités Interactives</span>
+                        </div>
+
+                        <h4 class="font-bold text-emerald-400 text-xs flex items-center gap-2 text-left">📝 Évaluation Formative et Clôture :</h4>
+                        <p class="bg-slate-900 p-3 rounded-xl border border-white/10 text-xs text-slate-300 leading-relaxed text-left">
+                            Distribuer le billet de sortie "Qu'avez-vous retenu aujourd'hui ?" et synthétiser les points clés de (${title}).
+                        </p>
+                    `;
+                } else {
+                    const extraNoteHtml = notes ? `<div class="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300">📌 **تركيز خاص:** ${notes}</div>` : '';
+                    document.getElementById('resultContent').innerHTML = `
+                        <div class="bg-pink-500/10 p-4 rounded-2xl border border-pink-500/20 mb-4">
+                            <div class="font-bold text-white text-sm">📌 خطة تحضير درس: ${title}</div>
+                            <div class="text-xs text-slate-400 mt-1">المادة: ${subject} | الصف: ${grade} | الزمن: ${duration}</div>
+                        </div>
+
+                        ${extraNoteHtml}
+
+                        <h4 class="font-bold text-pink-400 text-xs flex items-center gap-2">🎯 الأهداف السلوكية (أن تكون الطالبة قادرة على):</h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs leading-relaxed">
+                            <li>أن تُعرّف المفهوم الأساسي لـ (${title}) بدقة ودون تردد.</li>
+                            <li>أن تستنتج أهم الخصائص والتطبيقات العملية لـ (${subject}) المباشرة.</li>
+                            <li>أن تشارك بفعالية في الأنشطة الجماعية والتفاعلية داخل الصف.</li>
+                        </ul>
+
+                        <h4 class="font-bold text-purple-400 text-xs flex items-center gap-2">🚀 التمهيد والتهيئة (5-7 دقائق):</h4>
+                        <p class="bg-slate-900 p-3 rounded-xl border border-white/10 text-xs text-slate-300 leading-relaxed">
+                            عرض سؤال عصف ذهني قصير أو موقف مشوّق حول موضوع (${title}) لجذب انتباه الطالبات وربطه بخبراتهن السابقة.
+                        </p>
+
+                        <h4 class="font-bold text-indigo-400 text-xs flex items-center gap-2">💡 استراتيجيات التدريس والوسائل:</h4>
+                        <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ التعلم التعاوني</span>
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ العصف الذهني والحوار</span>
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ العرض التقديمي المباشر</span>
+                            <span class="bg-slate-900 p-2 rounded-lg border border-white/10 font-semibold">✔ بطاقات الأنشطة التفاعلية</span>
+                        </div>
+
+                        <h4 class="font-bold text-emerald-400 text-xs flex items-center gap-2">📝 التقويم المرحلي والإغلاق:</h4>
+                        <p class="bg-slate-900 p-3 rounded-xl border border-white/10 text-xs text-slate-300 leading-relaxed">
+                            توزيع بطاقة "دقيقة واحدة: ماذا تعلمتِ اليوم؟"، وتلخيص أهم نقاط (${title}) بمشاركة الطالبات قبل ختام الحصة.
+                        </p>
+                    `;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

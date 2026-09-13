@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>السبورة التفاعلية الاحترافية (EduWhiteboard) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        .gradient-bg { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-3d {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 0 #1d4ed8, 0 8px 20px rgba(59, 130, 246, 0.4);
+            transition: all 0.15s ease-in-out;
+        }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #1d4ed8, 0 12px 25px rgba(59, 130, 246, 0.6); }
+        .btn-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 #1d4ed8; }
+        .canvas-container { flex: 1; position: relative; cursor: crosshair; background: #0f172a; }
+        .bg-dots { background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px); background-size: 30px 30px; }
+        .bg-grid { background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 40px 40px; }
+        .bg-lines { background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 100% 40px; }
+        .tool-active { background: #3b82f6 !important; color: white !important; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-slate-950/90 backdrop-blur-xl border-b border-white/10 py-3 px-6 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-blue-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-xl gradient-bg flex items-center justify-center text-white text-sm shadow-lg">
+                    <i class="fa-solid fa-chalkboard"></i>
+                </div>
+                <span class="font-extrabold text-white text-sm">السبورة التفاعلية الذكية (EduWhiteboard)</span>
+            </div>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <button onclick="downloadBoardPNG()" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition flex items-center gap-1">
+                    <i class="fa-solid fa-camera"></i>
+                    <span>حفظ صورة</span>
+                </button>
+                <button onclick="clearEduCanvas()" class="px-3 py-1.5 rounded-xl bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 font-bold text-xs transition flex items-center gap-1">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span>مسح اللوحة</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Canvas Area -->
+    <div id="canvasArea" class="canvas-container bg-dots flex-1 w-full h-full relative">
+        <canvas id="eduCanvas"></canvas>
+        
+        <!-- Floating Tools Toolbar -->
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 glass-card px-4 py-2.5 rounded-full border border-white/20 shadow-2xl flex items-center gap-3 z-40">
+            <!-- Pen -->
+            <button onclick="setTool('pen')" id="toolPen" class="w-10 h-10 rounded-full flex items-center justify-center text-slate-300 hover:bg-slate-800 transition tool-active" title="القلم">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+
+            <!-- Line / Arrow -->
+            <button onclick="setTool('line')" id="toolLine" class="w-10 h-10 rounded-full flex items-center justify-center text-slate-300 hover:bg-slate-800 transition" title="خط مستقيم">
+                <i class="fa-solid fa-slash"></i>
+            </button>
+
+            <!-- Rectangle -->
+            <button onclick="setTool('rect')" id="toolRect" class="w-10 h-10 rounded-full flex items-center justify-center text-slate-300 hover:bg-slate-800 transition" title="مستطيل">
+                <i class="fa-regular fa-square"></i>
+            </button>
+
+            <!-- Circle -->
+            <button onclick="setTool('circle')" id="toolCircle" class="w-10 h-10 rounded-full flex items-center justify-center text-slate-300 hover:bg-slate-800 transition" title="دائرة">
+                <i class="fa-regular fa-circle"></i>
+            </button>
+
+            <!-- Eraser -->
+            <button onclick="setTool('eraser')" id="toolEraser" class="w-10 h-10 rounded-full flex items-center justify-center text-slate-300 hover:bg-slate-800 transition" title="ممحاة">
+                <i class="fa-solid fa-eraser"></i>
+            </button>
+
+            <div class="w-px h-6 bg-white/20"></div>
+
+            <!-- Color Palette -->
+            <div class="flex items-center gap-1.5">
+                <button onclick="setColor('#ffffff')" class="w-6 h-6 rounded-full bg-white border border-slate-400 focus:scale-110 transition"></button>
+                <button onclick="setColor('#ef4444')" class="w-6 h-6 rounded-full bg-red-500 focus:scale-110 transition"></button>
+                <button onclick="setColor('#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 focus:scale-110 transition"></button>
+                <button onclick="setColor('#10b981')" class="w-6 h-6 rounded-full bg-emerald-500 focus:scale-110 transition"></button>
+                <button onclick="setColor('#eab308')" class="w-6 h-6 rounded-full bg-yellow-500 focus:scale-110 transition"></button>
+            </div>
+
+            <div class="w-px h-6 bg-white/20"></div>
+
+            <!-- Background Texture Option -->
+            <div class="flex items-center gap-1 text-xs">
+                <button onclick="setBgTexture('bg-dots')" class="px-2 py-1 rounded bg-slate-800 text-slate-300 hover:bg-slate-700">● نقاط</button>
+                <button onclick="setBgTexture('bg-grid')" class="px-2 py-1 rounded bg-slate-800 text-slate-300 hover:bg-slate-700">▦ شبكة</button>
+                <button onclick="setBgTexture('bg-lines')" class="px-2 py-1 rounded bg-slate-800 text-slate-300 hover:bg-slate-700">≡ سطور</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('eduCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let currentTool = 'pen';
+        let currentColor = '#ffffff';
+        let startX, startY;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function setTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('[id^="tool"]').forEach(btn => btn.classList.remove('tool-active'));
+            const activeBtn = document.getElementById('tool' + tool.charAt(0).toUpperCase() + tool.slice(1));
+            if (activeBtn) activeBtn.classList.add('tool-active');
+        }
+
+        function setColor(color) {
+            currentColor = color;
+        }
+
+        function setBgTexture(textureClass) {
+            const container = document.getElementById('canvasArea');
+            container.className = `canvas-container ${textureClass} flex-1 w-full h-full relative`;
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            startX = e.offsetX;
+            startY = e.offsetY;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.strokeStyle = currentTool === 'eraser' ? '#0f172a' : currentColor;
+            ctx.lineWidth = currentTool === 'eraser' ? 24 : 4;
+            ctx.lineCap = 'round';
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            if (currentTool === 'pen' || currentTool === 'eraser') {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (!isDrawing) return;
+            isDrawing = false;
+            if (currentTool === 'line') {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+            } else if (currentTool === 'rect') {
+                ctx.strokeRect(startX, startY, e.offsetX - startX, e.offsetY - startY);
+            } else if (currentTool === 'circle') {
+                const radius = Math.sqrt(Math.pow(e.offsetX - startX, 2) + Math.pow(e.offsetY - startY, 2));
+                ctx.beginPath();
+                ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+        });
+
+        function clearEduCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            showToast("تم مسح السبورة بنجاح!");
+        }
+
+        function downloadBoardPNG() {
+            const link = document.createElement('a');
+            link.download = 'Whiteboard_Lesson.png';
+            link.href = canvas.toDataURL();
+            link.click();
+            showToast("تم حفظ صورة السبورة بنجاح!");
+        }
+    </script>
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>

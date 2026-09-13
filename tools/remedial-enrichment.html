@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مساعد الخطط العلاجية والإثرائية (Remedial & Enrichment AI) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        select option { background-color: #0f172a !important; color: #ffffff !important; }
+        .btn-3d { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); transition: all 0.2s ease; }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-amber-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+                <span class="font-bold text-white">مساعد الخطط العلاجية والإثرائية والتعلم المتمايز</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Form Section -->
+        <div class="lg:col-span-5 glass-card p-6 rounded-3xl border border-white/10 flex flex-col space-y-5">
+            <h2 class="text-xl font-bold text-white border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-amber-400"></i> بيانات الخطة والتعلم المتمايز
+            </h2>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">المادة والمفهوم المستهدف</label>
+                <input type="text" id="topicName" placeholder="مثال: الكسور الاعتيادية، الجمع والتفريق، التناظر اللفظي..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">نوع الخطة المطلوبة</label>
+                <select id="planType" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400">
+                    <option value="both">خطة شاملة (إثرائية للمتفوقات + علاجية للدعم)</option>
+                    <option value="remedial">خطة علاجية داعمة فقط</option>
+                    <option value="enrichment">خطة إثرائية للموهوبات فقط</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">طبيعة الصعوبة / التحدي التعليمي (اختياري)</label>
+                <textarea id="challengeDesc" rows="3" placeholder="مثال: صعوبة في التمييز بين البسط والمقام، التردد أثناء القراءة..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400 leading-relaxed"></textarea>
+            </div>
+
+            <button onclick="generatePlan(this)" class="btn-3d w-full py-3.5 rounded-2xl text-slate-950 font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>توليد الخطة العلاجية/الإثرائية 🪄</span>
+            </button>
+        </div>
+
+        <!-- Result Section -->
+        <div class="lg:col-span-7 glass-card p-6 rounded-3xl border border-white/10 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-check text-amber-400"></i> تفاصيل الخطة المخصصة
+                    </h2>
+                    <button onclick="copyToClipboard('planOutput')" class="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 text-xs font-bold transition flex items-center gap-2">
+                        <i class="fa-solid fa-copy"></i>
+                        <span>نسخ الخطة</span>
+                    </button>
+                </div>
+
+                <div id="planOutput" class="space-y-4">
+                    <div class="text-center py-12 text-slate-500">
+                        <i class="fa-solid fa-seedling text-5xl mb-3 block text-slate-600"></i>
+                        <p class="text-xs">أدخلي المفهوم والبيانات لتوليد الخطة الإثرائية والعلاجية المتكاملة.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function generatePlan(btn) {
+            const topic = document.getElementById('topicName').value.trim() || (currentLang === 'en' ? 'Target Concept' : (currentLang === 'fr' ? 'Concept Ciblé' : 'المفهوم المستهدف'));
+            const type = document.getElementById('planType').value;
+            const challenge = document.getElementById('challengeDesc').value.trim() || (currentLang === 'en' ? 'Understanding core concept & practical application' : (currentLang === 'fr' ? 'Compréhension du concept et application' : 'استيعاب المفهوم وتثبيت التطبيقات'));
+
+            let html = '';
+
+            if (currentLang === 'en') {
+                if (type === 'both' || type === 'remedial') {
+                    html += `
+                        <div class="p-4 rounded-2xl bg-rose-950/40 border border-rose-800/50 text-left">
+                            <h3 class="font-bold text-rose-300 text-sm mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-hand-holding-heart"></i> 1. Remedial & Support Plan
+                            </h3>
+                            <p class="text-xs text-rose-200 font-bold mb-3">Objective: Scaffold (${topic}) and overcome challenge (${challenge}).</p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                                <li><strong>Concrete Modeling Strategy:</strong> Use visual charts and manipulatives to deconstruct the concept step-by-step.</li>
+                                <li><strong>Micro-Task Assignment:</strong> Complete a focused 2-question guided worksheet with immediate constructive feedback.</li>
+                                <li><strong>Peer Learning & Support:</strong> Pair with a proficient peer to review concepts in a collaborative dialogue.</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                if (type === 'both' || type === 'enrichment') {
+                    html += `
+                        <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-800/50 text-left mt-3">
+                            <h3 class="font-bold text-emerald-300 text-sm mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-rocket"></i> 2. Enrichment & Advanced Challenge Plan
+                            </h3>
+                            <p class="text-xs text-emerald-200 font-bold mb-3">Objective: Deepen mastery and apply higher-order thinking skills in (${topic}).</p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                                <li><strong>Critical Thinking Challenge:</strong> "What if the core variables in (${topic}) changed? How would you formulate an innovative solution?"</li>
+                                <li><strong>Leadership & Creative Task:</strong> Design an interactive quiz or mini-puzzle for classmates demonstrating the concept.</li>
+                                <li><strong>Real-World Application:</strong> Research one practical modern application of (${topic}) and present a quick 1-minute pitch.</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+            } else if (currentLang === 'fr') {
+                if (type === 'both' || type === 'remedial') {
+                    html += `
+                        <div class="p-4 rounded-2xl bg-rose-950/40 border border-rose-800/50 text-left">
+                            <h3 class="font-bold text-rose-300 text-sm mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-hand-holding-heart"></i> 1. Plan de Remédiation et de Soutien
+                            </h3>
+                            <p class="text-xs text-rose-200 font-bold mb-3">Objectif : Simplifier (${topic}) et surmonter le défi (${challenge}).</p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                                <li><strong>Stratégie de Modélisation Concrète :</strong> Utiliser des schémas visuels pour décomposer le concept pas à pas.</li>
+                                <li><strong>Micro-Tâche Ciblée :</strong> Résoudre une fiche de travail guidée de 2 questions avec feedback immédiat.</li>
+                                <li><strong>Tutorat entre Pairs :</strong> Associer l'élève à un camarade tuteur pour consolider les acquis.</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                if (type === 'both' || type === 'enrichment') {
+                    html += `
+                        <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-800/50 text-left mt-3">
+                            <h3 class="font-bold text-emerald-300 text-sm mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-rocket"></i> 2. Plan d'Enrichissement et d'Approfondissement
+                            </h3>
+                            <p class="text-xs text-emerald-200 font-bold mb-3">Objectif : Développer les compétences d'analyse et de créativité sur (${topic}).</p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                                <li><strong>Défi de Pensée Critique :</strong> "Et si les données initiales de (${topic}) changeaient ? Quelle solution créative proposeriez-vous ?"</li>
+                                <li><strong>Tâche de Leadership :</strong> Concevoir une énigme ou un mini-quiz interactif pour ses camarades.</li>
+                                <li><strong>Connexion au Réel :</strong> Identifier une application concrète de (${topic}) dans le quotidien.</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+            } else {
+                if (type === 'both' || type === 'remedial') {
+                    html += `
+                        <div class="p-4 rounded-2xl bg-rose-950/40 border border-rose-800/50">
+                            <h3 class="font-bold text-rose-300 text-sm mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-hand-holding-heart"></i> 1. الخطة العلاجية والداعمة (Remedial Plan)
+                            </h3>
+                            <p class="text-xs text-rose-200 font-bold mb-3">الهدف: تبسيط مفهوم (${topic}) وتجاوز التحدي (${challenge}).</p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                                <li><strong>استراتيجية النمذجة والوسائل المحسوسة:</strong> استخدام مجسمات وبطاقات ملونة لشرح المفهوم خطوة بخطوة.</li>
+                                <li><strong>مهمة مجزأة (Micro-Task):</strong> حل ورقة عمل مبسطة تحتوي على سؤالين محددين مع التعزيز المباشر.</li>
+                                <li><strong>الأقران والمساندة:</strong> إشراك الطالبة مع زميلة متمكنة لمراجعة المفهوم بأسلوب حوار الزملاء.</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                if (type === 'both' || type === 'enrichment') {
+                    html += `
+                        <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-800/50 mt-3">
+                            <h3 class="font-bold text-emerald-300 text-sm mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-rocket"></i> 2. الخطة الإثرائية والتحدي (Enrichment Plan)
+                            </h3>
+                            <p class="text-xs text-emerald-200 font-bold mb-3">الهدف: التعمق وتطبيق مهارات التفكير العليا في (${topic}).</p>
+                            <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                                <li><strong>سؤال تفكير ناقد (Higher Order Question):</strong> "ماذا لو تغيرت معطيات مسألة (${topic})؟ كيف سنحلها بطريقة مبتكرة؟"</li>
+                                <li><strong>مهمة قيادية وابتكارية:</strong> تصميم لغز أو مسابقة قصيرة لزميلاتها بالصف تدور حول المفهوم.</li>
+                                <li><strong>ربط بالواقع والمستقبل:</strong> البحث عن تطبيق عملي واحد لمفهوم (${topic}) في الحياة اليومية وعرضه بفكرة سريعة.</li>
+                            </ul>
+                        </div>
+                    `;
+                }
+            }
+
+            generateAIResponse(btn, 'planOutput', () => {
+                document.getElementById('planOutput').innerHTML = html;
+            });
+        }
+    </script>
+</body>
+</html>

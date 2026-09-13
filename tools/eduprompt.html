@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد المطالبات التعليمية (EduPrompt) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-pink-400 transition font-bold">
+                <i class="fa-solid fa-arrow-right text-lg"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <span class="font-bold text-white" data-i18n="t2Title">مولد المطالبات التعليمية الاحترافي (EduPrompt)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Form Section -->
+        <div class="lg:col-span-5 glass-card p-6 rounded-3xl border border-white/10 flex flex-col space-y-5">
+            <h2 class="text-xl font-bold text-white border-b border-white/10 pb-3 flex items-center gap-2" data-i18n="promptBuilderSettings">
+                <i class="fa-solid fa-sliders text-pink-400"></i> إعدادات المطالبة (Prompt Builder)
+            </h2>
+
+            <!-- AI Engine Selection -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="selectAiModel">اختر نموذج الذكاء الاصطناعي المستهدف</label>
+                <div class="grid grid-cols-3 gap-2 text-xs font-bold text-slate-700">
+                    <label class="flex items-center gap-1.5 p-2.5 rounded-xl border border-slate-200 cursor-pointer hover:bg-pink-50 transition">
+                        <input type="radio" name="aiEngine" value="ChatGPT" checked class="text-pink-600 focus:ring-pink-500">
+                        <span>🤖 ChatGPT</span>
+                    </label>
+                    <label class="flex items-center gap-1.5 p-2.5 rounded-xl border border-slate-200 cursor-pointer hover:bg-pink-50 transition">
+                        <input type="radio" name="aiEngine" value="Gemini" class="text-pink-600 focus:ring-pink-500">
+                        <span>✨ Gemini</span>
+                    </label>
+                    <label class="flex items-center gap-1.5 p-2.5 rounded-xl border border-slate-200 cursor-pointer hover:bg-pink-50 transition">
+                        <input type="radio" name="aiEngine" value="DeepSeek" class="text-pink-600 focus:ring-pink-500">
+                        <span>🔮 DeepSeek</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Goal / Task -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="selectGoal">الهدف من المطالبة (الوسيلة التعليمية)</label>
+                <select id="promptGoal" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-500">
+                    <option value="قصة تعليمية مبسطة" data-i18n-option="optStory">📖 قصة تعليمية مبسطة لشرح مفهوم معقد</option>
+                    <option value="نشاط تفاعلي وعصف ذهني" data-i18n-option="optActivity">💡 نشاط تفاعلي وعصف ذهني للطالبات</option>
+                    <option value="بطاقات أسئلة ومراجعة" data-i18n-option="optCards">🃏 بطاقات أسئلة ومراجعة ختامية</option>
+                    <option value="جدول مقارنة واستنتاج" data-i18n-option="optTable">📊 جدول مقارنة واستنتاج بين مفهومين</option>
+                    <option value="فكرة مشروع أو نشاط صفّي" data-i18n-option="optProject">🎨 فكرة مشروع أو نشاط صفّي إبداعي</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="lessonTopicLabel">الموضوع / المحتوى التعليمي</label>
+                <input type="text" id="promptTopic" placeholder="مثال: دورة حياة الماء، الجهاز الهضمي، أركان الإيمان..." data-i18n-placeholder="topicPlaceholder" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-500">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="gradeLevelLabel">الفئة العمرية / الصف الدراسي</label>
+                <select id="promptGrade" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-500">
+                    <option data-i18n-option="gPrimaryLow">الصفوف الأولية (1 - 3 ابتدائي)</option>
+                    <option data-i18n-option="gPrimaryHigh">الصفوف العليا (4 - 6 ابتدائي)</option>
+                    <option data-i18n-option="gMiddle">المرحلة المتوسطة</option>
+                    <option data-i18n-option="gHigh">المرحلة الثانوية</option>
+                </select>
+            </div>
+
+            <button onclick="buildEduPrompt(this)" class="btn-purple-glow w-full py-3.5 rounded-2xl text-white font-extrabold text-sm cursor-pointer mt-2" data-i18n="generatePromptBtn">
+                توليد المطالبة الاحترافية 🪄
+            </button>
+        </div>
+
+        <!-- Output Result Section -->
+        <div class="lg:col-span-7 glass-card p-6 rounded-3xl border border-white/10 flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center border-b border-white/10 pb-3 mb-4">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2" data-i18n="outputTitle">
+                        <i class="fa-solid fa-code text-purple-400"></i> المطالبة المجهزة (Prompt Output)
+                    </h2>
+                </div>
+
+                <div id="promptOutput" class="prose max-w-none text-slate-300 text-xs leading-relaxed space-y-4">
+                    <div class="text-center py-16 text-slate-500">
+                        <i class="fa-solid fa-wand-magic-sparkles text-4xl mb-3 text-slate-700"></i>
+                        <p>حدد هدف وموضوع المطالبة واضغط على "توليد المطالبة الاحترافية".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        function buildEduPrompt(btn) {
+            const engine = document.querySelector('input[name="aiEngine"]:checked').value;
+            const goal = document.getElementById('promptGoal').value;
+            const topic = document.getElementById('promptTopic').value || (currentLang === 'en' ? 'Target Lesson Concept' : (currentLang === 'fr' ? 'Sujet du Cours' : 'موضوع الدرس المستهدف'));
+            const grade = document.getElementById('promptGrade').value;
+
+            generateAIResponse(btn, 'promptOutput', () => {
+                let promptText = '';
+                let headerText = '';
+                let subText = '';
+
+                if (currentLang === 'en') {
+                    promptText = `You are an expert master teacher and educational consultant. Please help me create a (${goal}) for students in (${grade}) regarding the topic: "${topic}".\n\nPlease follow these requirements:\n1. Use an engaging, age-appropriate tone for the grade level.\n2. Ensure clear, simple, and professional academic language.\n3. Include interactive critical-thinking questions.\n4. Format the output with clear bullet points and tables for immediate classroom use.`;
+                    headerText = `🎯 Educational Prompt Tailored for ${engine}:`;
+                    subText = `Copy and paste this prompt directly into ${engine} for maximum performance.`;
+                } else if (currentLang === 'fr') {
+                    promptText = `Vous êtes un enseignant expert et consultant pédagogique. Veuillez m'aider à préparer un(e) (${goal}) pour des élèves de (${grade}) concernant le sujet : "${topic}".\n\nVeuillez respecter les critères suivants :\n1. Utiliser un ton captivant et adapté au niveau d'âge.\n2. Employer un langage académique clair et accessible.\n3. Inclure des questions d'apprentissage interactif et de réflexion critique.\n4. Structurer la réponse avec des puces et des tableaux prêts à l'emploi.`;
+                    headerText = `🎯 Prompt Pédagogique Optimisé pour ${engine} :`;
+                    subText = `Copiez ce texte et collez-le directement dans ${engine}.`;
+                } else {
+                    promptText = `أنت معلم خبير ومتخصص في التربية والتعليم الحديثة. أريدك أن تساعدني في إعداد (${goal}) لطالبات (${grade}) حول موضوع: "${topic}".\n\nيرجى الالتزام بالشروط التالية:\n1. أن يكون الأسلوب مشوقاً ومناسباً للفئة العمرية المستهدفة.\n2. استخدام لغة عربية فصيحة وبسيطة.\n3. تضمين أسئلة تفاعلية حافزة للتفكير الناقد.\n4. تنسيق الإجابة في نقاط واضحة وجداول إن أمكن ليسهل استخدامها مباشرة في الصف.`;
+                    headerText = `🎯 المطالبة التعليمية الموجهة لـ ${engine}:`;
+                    subText = `يمكنك نسخ هذا النص مباشرة ولصقه في ${engine} للحصول على أفضل نتيجة تعليمية.`;
+                }
+
+                document.getElementById('promptOutput').innerHTML = `
+                    <div class="bg-pink-500/10 p-4 rounded-2xl border border-pink-500/20 mb-4 text-right">
+                        <div class="font-bold text-white text-base">${headerText}</div>
+                        <div class="text-xs text-pink-300 mt-1">${subText}</div>
+                    </div>
+                    <div class="bg-slate-900 text-pink-300 p-5 rounded-2xl font-mono text-sm leading-relaxed whitespace-pre-line relative border border-slate-800">
+                        ${promptText}
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>

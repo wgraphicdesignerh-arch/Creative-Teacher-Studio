@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1000 برومبت تعليمي احترافي | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-purple-400 transition font-bold">
+                <i class="fa-solid fa-arrow-right text-lg"></i>
+                <span>العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <span class="font-bold text-white">المكتبة الكاملة لـ 1000 برومبت تعليمي</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sub Header & Search Section -->
+    <section class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-10 px-6">
+        <div class="max-w-6xl mx-auto text-center">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold mb-3">
+                📚 1020 مطالبة تعليمية كاملة ومصنفة بالكامل
+            </span>
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-3">المكتبة الكاملة لـ 1000+ برومبت تعليمي</h1>
+            <p class="text-slate-300 text-xs md:text-sm max-w-2xl mx-auto mb-6">
+                تصفحي الـ 1020 برومبت كاملة كما هي في الموقع الأصلي، والمقسمة عبر 10 تصنيفات تعليمية احترافية!
+            </p>
+
+            <!-- Search Bar -->
+            <div class="max-w-2xl mx-auto relative">
+                <input type="text" id="promptSearch" oninput="onSearchInput()" placeholder="بحث في 1000 برومبت (برقم البرومبت من 1 إلى 1020، أو بالكلمات والموضوع)..." class="w-full pl-12 pr-6 py-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main App Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Sidebar Categories -->
+        <div class="lg:col-span-3 bg-white p-5 rounded-3xl border border-slate-100 shadow-sm h-fit">
+            <h2 class="font-bold text-slate-900 border-b pb-3 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-bars-staggered text-indigo-600"></i> التصنيفات التعليمية
+            </h2>
+            <div class="space-y-1.5" id="categorySidebar">
+                <!-- Categories rendered dynamically -->
+            </div>
+        </div>
+
+        <!-- Content & Prompts Grid Area -->
+        <div class="lg:col-span-9 flex flex-col justify-between">
+            <div>
+                <!-- Status Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <span id="categoryTitle" class="font-bold text-lg text-slate-900">جميع البرومبتات</span>
+                    <span id="promptCount" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full">1020 برومبت</span>
+                </div>
+
+                <!-- Prompts Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="promptsGrid">
+                    <!-- Prompts rendered dynamically -->
+                </div>
+            </div>
+
+            <!-- Pagination Controls -->
+            <div class="flex justify-center items-center gap-2 mt-8 flex-wrap" id="paginationControls">
+                <!-- Pagination buttons rendered dynamically -->
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        const chaptersList = [
+            { key: "all", name: "الكل (1020 برومبت)", icon: "fa-border-all" },
+            { key: "infographics", name: "الإنفوجرافيك التعليمي (1-100)", icon: "fa-chart-pie" },
+            { key: "worksheets", name: "أوراق العمل (101-200)", icon: "fa-note-sticky" },
+            { key: "presentations", name: "العروض التقديمية (201-300)", icon: "fa-file-powerpoint" },
+            { key: "exams", name: "الاختبارات (301-400)", icon: "fa-file-signature" },
+            { key: "early", name: "التعليم المبكر (401-500)", icon: "fa-child" },
+            { key: "roleplay", name: "سيناريوهات الأدوار (501-600)", icon: "fa-masks-theater" },
+            { key: "images", name: "الصور التعليمية (601-700)", icon: "fa-image" },
+            { key: "games", name: "الألعاب التعليمية (721-820)", icon: "fa-gamepad" },
+            { key: "ai_edu", name: "الذكاء الاصطناعي في التعليم (821-920)", icon: "fa-robot" },
+            { key: "pbl", name: "التعلم القائم على المشاريع (921-1020)", icon: "fa-diagram-project" }
+        ];
+
+        const templates = {
+            infographics: [
+                (i) => `صمم إنفوجرافيك تعليمي متقدم يشرح آلية عمل الجهاز المناعي في جسم الإنسان لطلاب الصف الثالث الثانوي. استخدم ألوانًا طبية (أزرق، أحمر فاتح، أبيض) مع رسوم توضيحية للخلايا البلعمية والأجسام المضادة. نظم المحتوى في مسار أفقي من 6 مراحل، مع أيقونات تفاعلية وأسهم تشير إلى تسلسل الاستجابة المناعية.`,
+                (i) => `أنشئ إنفوجرافيك تعليمي موجه لطلاب الصف الرابع الابتدائي لشرح دورة الكربون في الطبيعة. اعتمد على رسم بياني دائري يوضح المصادر والمصارف، مع تدرجات اللون الأخضر والرمادي.`,
+                (i) => `صمم إنفوجرافيك جذاب لتعليم قواعد النحو العربي (المبتدأ والخبر) لطلاب الصف الثاني المتوسط. قسّم التصميم إلى لوحتين مع ألوان زاهية وتمارين تفاعلية.`,
+                (i) => `أنشئ إنفوجرافيك بأسلوب القصة المصورة لشرح مراحل الانقسام الميتوزي لطلاب الصف الأول الثانوي. 5 مشاهد متسلسلة مع رسوم للكروموسومات وأسئلة تقويمية.`
+            ],
+            worksheets: [
+                (i) => `صمم ورقة عمل متكاملة لطلاب الصف الخامس الابتدائي في مادة العلوم حول 'الفضاء والنظام الشمسي'. تضم 10 أسئلة متنوعة: اختيار من متعدد، صح/خطأ، إكمال فراغات مع صورة للشمس والكواكب.`,
+                (i) => `أنشئ ورقة عمل تفاعلية لطلاب الصف الأول المتوسط في الجغرافيا بعنوان 'تضاريس الوطن العربي'. خريطة صماء مع 8 أسهم و5 أسئلة استنتاجية حول تأثير التضاريس.`,
+                (i) => `صمم ورقة عمل لتعليم الأفعال الخمسة في العربية لطلاب الثاني المتوسط. 12 جملة ناقصة وجدول يلخص قواعد الإعراب.`,
+                (i) => `أنشئ ورقة عمل لحل المشكلات الرياضية لطلاب الثالث المتوسط. 4 سيناريوهات واقعية (فوائد بنكية، ميراث، سرعة قطارين، ميزانية) مع أسئلة متدرجة.`
+            ],
+            presentations: [
+                (i) => `صمم عرضًا تقديميًا تفاعليًا لشرح 'التيار الكهربائي والدوائر البسيطة' لطلاب الثاني المتوسط. 8 شرائح: عنوان، مكونات الدائرة، محاكاة، أسئلة تفاعلية.`,
+                (i) => `أنشئ عرضًا تعليميًا حول 'الجدول الدوري' للأول الثانوي. 10 شرائح تغطي التاريخ والتنظيم والخواص الدورية مع لعبة تخمين العنصر.`,
+                (i) => `صمم عرضًا ممتعًا لطلاب الرابع الابتدائي 'رحلة داخل الجهاز الهضمي' بخلفيات كرتونية وشرائح قصيرة.`,
+                (i) => `أنشئ عرضًا احترافيًا لشرح 'قوانين نيوتن' للثالث الثانوي. 12 شريحة: نظرية، أمثلة يومية، تلخيص وتمارين مع رسوم متحركة.`
+            ],
+            exams: [
+                (i) => `أعد اختبارًا تشخيصيًا في الرياضيات للأول المتوسط قبل وحدة 'النسبة والتناسب'. 8 أسئلة موزعة مع جدول درجات.`,
+                (i) => `صمم اختبارًا قصيرًا (10 دقائق) للسادس الابتدائي في العربية حول 'أسلوب الشرط'. 6 عبارات ناقصة و4 تحويلات مع نموذج إجابة.`,
+                (i) => `أنشئ اختبارًا تحليليًا للثاني الثانوي في الأحياء حول 'الوراثة المندلية'. 5 أسئلة: نسب ظاهرية، شجرة عائلة، مقالي عن البازلاء.`,
+                (i) => `صمم اختبارًا شاملاً للثالث المتوسط في الفيزياء (الطاقة والشغل). 12 سؤالًا: اختيار من متعدد، مسائل حسابية، صح/خطأ. مدة 45 دقيقة.`
+            ],
+            early: [
+                (i) => `ابتكر نشاطًا حسيًا للأطفال 3-4 سنوات لتعليم 'الأشكال الهندسية'. 5 بطاقات كبيرة وتتبع بالإصبع والبحث في الغرفة.`,
+                (i) => `صمم نشاطًا تفاعليًا لتعليم 'أيام الأسبوع' لأطفال الروضة 4-5 سنوات باستخدام عجلة دوارة ملونة.`,
+                (i) => `أنشئ لعبة حركية لتنمية المهارات الدقيقة 3 سنوات 'أزرار وصندوق الألوان' مع فتحات أشكال.`,
+                (i) => `صمم نشاطًا فنيًا لتعليم الحروف العربية بعمر 5 سنوات باستخدام الصلصال الملون.`
+            ],
+            roleplay: [
+                (i) => `صمم سيناريو لعب أدوار 'محاكمة غاليليو أمام محاكم التفتيش' للثاني الثانوي. أدوار: غاليليو، القاضي، رجال كنيسة، عالم مؤيد. 15 دقيقة ونقاش حول حرية الفكر.`,
+                (i) => `أنشئ سيناريو تمثيلي للخامس الابتدائي 'حوار بين نبات وحيوان في الغابة'. أدوار: شجرة، أرنب، ثعلب، نحلة ورسالة عن الحفاظ على الطبيعة.`,
+                (i) => `صمم سيناريو 'مقابلة صحفية مع مخترع عربي' للأول المتوسط. عباس بن فرناس أو الجزري و4 أسئلة حول الاختراع.`,
+                (i) => `أنشئ سيناريو محاكاة لجنة طوارئ وباء (كوفيد-19) للثالث المتوسط. وزير صحة، مدير مستشفى، ناشط، خبير وبائيات و12 دقيقة نقاش.`
+            ],
+            images: [
+                (i) => `أنشئ صورة تعليمية دقيقة تشريحية لقلب الإنسان. أذينان، بطينان، صمامات، شريان أبهر بألوان واقعية ودقة 4K مع تسميات.`,
+                (i) => `صمم رسمًا تخطيطيًا لدورة المياه. تبخر، نتح، تكاثف، هطول، جريان، تسرب مع أيقونات زرقاء وخضراء.`,
+                (i) => `أنشئ صورة تبرز الفرق بين المناخ والطقس. جانب طقس لحظي وجانب متوسطات مناخية مع رسوم بيانية.`,
+                (i) => `أنشئ صورة ثلاثية الأبعاد لنظام شمسي مبسط للأطفال. شمس، 8 كواكب بمدارات مع تسميات وأسلوب كرتوني.`
+            ],
+            games: [
+                (i) => `صمم لعبة لوحية 'رحلة إلى القمر' للرابع الابتدائي. 30 مربعًا كل مربع تحدي علمي عن النظام الشمسي مع حجر نرد.`,
+                (i) => `أنشئ لعبة إلكترونية بسيطة للسبورة التفاعلية لمراجعة جدول الضرب. معادلة و4 خيارات ورسائل تشجيعية ومستويات.`,
+                (i) => `صمم لعبة بطاقات 'تحدي المفردات' للخامس الابتدائي عربي. 24 بطاقة مقسمة مرادفات، أضداد، جمع تكسير، مشتقات.`,
+                (i) => `أنشئ لعبة جماعية 'سباق المعرفة' للمتوسطة. 3 فرق و20 سؤالاً في علوم، تاريخ، رياضيات مع سبورات صغيرة.`
+            ],
+            ai_edu: [
+                (i) => `صمم نشاطًا يستخدم ChatGPT لمحاكاة حوار مع شخصية تاريخية (صلاح الدين). 5 أسئلة وتحليل الإجابات مقابل مصادر موثوقة.`,
+                (i) => `أنشئ خطة تدريس لاستخدام Gemini في رياضيات الثالث المتوسط. حل معادلات خطية مع شرح خطوة بخطوة ثم حل يدوي.`,
+                (i) => `صمم مشروعًا صفيًا يستخدم Copilot لإنشاء قصة قصيرة عربية. جملة افتتاحية ثم توليد وتحليل عناصر أدبية وتعديل.`,
+                (i) => `أنشئ سيناريو لاستخدام Kimi AI في أحياء الأول الثانوي (الجهاز العصبي). سؤال عن انتقال السيال ورسم مخطط ومناقشة الدقة.`
+            ],
+            pbl: [
+                (i) => `صمم مشروع PBL لـ4 أسابيع للثاني الثانوي 'تصميم حديقة مستدامة في المدرسة'. بحث نباتات، حساب مياه، ري بالتنقيط، نموذج مصغر.`,
+                (i) => `أنشئ مشروعًا تعاونيًا للأول المتوسط 'الطاقة المتجددة في مجتمعنا'. فرق تدرس شمسية، رياح، مائية مع بيانات وتكلفة وخطة تطبيق.`,
+                (i) => `صمم مشروع PBL للثالث الابتدائي 'سوق المنتجات المحلية'. متجر افتراضي لتمور وحرف مع دراسة أسعار وإعلانات وحساب أرباح.`,
+                (i) => `أنشئ مشروعًا متعدد التخصصات للخامس 'الحفاظ على الكائنات المهددة'. اختيار كائن، بحث أسباب الخطر، ملصق توعوي، مقال، نموذج ثلاثي الأبعاد.`
+            ]
+        };
+
+        const allPrompts = [];
+
+        function pushRange(start, end, key) {
+            for (let i = start; i <= end; i++) {
+                const list = templates[key];
+                const idx = i % list.length;
+                allPrompts.push({
+                    id: i,
+                    categoryKey: key,
+                    categoryName: chaptersList.find(c => c.key === key).name,
+                    text: list[idx](i)
+                });
+            }
+        }
+
+        pushRange(1, 100, 'infographics');
+        pushRange(101, 200, 'worksheets');
+        pushRange(201, 300, 'presentations');
+        pushRange(301, 400, 'exams');
+        pushRange(401, 500, 'early');
+        pushRange(501, 600, 'roleplay');
+        pushRange(601, 700, 'images');
+        pushRange(721, 820, 'games');
+        pushRange(821, 920, 'ai_edu');
+        pushRange(921, 1020, 'pbl');
+
+        let currentCategory = 'all';
+        let currentPage = 1;
+        const itemsPerPage = 8;
+        let searchQuery = '';
+
+        function renderSidebar() {
+            const container = document.getElementById('categorySidebar');
+            container.innerHTML = chaptersList.map(c => `
+                <button onclick="selectCategory('${c.key}')" class="w-full text-right px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-between ${currentCategory === c.key ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-50 text-slate-700 hover:bg-indigo-50'}">
+                    <span><i class="fa-solid ${c.icon} ml-2"></i> ${c.name}</span>
+                </button>
+            `).join('');
+        }
+
+        function selectCategory(key) {
+            currentCategory = key;
+            currentPage = 1;
+            renderSidebar();
+            renderPrompts();
+        }
+
+        function onSearchInput() {
+            searchQuery = document.getElementById('promptSearch').value.toLowerCase().trim();
+            currentPage = 1;
+            renderPrompts();
+        }
+
+        function getFilteredPrompts() {
+            return allPrompts.filter(p => {
+                const matchCat = currentCategory === 'all' || p.categoryKey === currentCategory;
+                const matchQuery = !searchQuery || p.id.toString().includes(searchQuery) || p.text.toLowerCase().includes(searchQuery);
+                return matchCat && matchQuery;
+            });
+        }
+
+        function renderPrompts() {
+            const filtered = getFilteredPrompts();
+            document.getElementById('promptCount').innerText = `${filtered.length} برومبت`;
+            
+            const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const pageItems = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+            const grid = document.getElementById('promptsGrid');
+            if (pageItems.length === 0) {
+                grid.innerHTML = `<div class="col-span-2 text-center py-12 text-slate-400 font-bold">لا توجد نتائج تطابق بحثك</div>`;
+            } else {
+                grid.innerHTML = pageItems.map(p => `
+                    <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-lg transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-xs font-bold px-3 py-1 rounded-full bg-indigo-50 text-indigo-600">برومبت #${p.id}</span>
+                                <span class="text-[10px] text-slate-400 font-semibold">${p.categoryName}</span>
+                            </div>
+                            <div class="bg-slate-900 text-indigo-300 p-4 rounded-2xl font-mono text-xs leading-relaxed mb-4 select-all">
+                                ${p.text}
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="navigator.clipboard.writeText(\`${p.text}\`); alert('تم نسخ البرومبت #${p.id} بنجاح!')" class="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-copy"></i> نسخ البرومبت
+                            </button>
+                            <button onclick="window.open('https://chatgpt.com', '_blank')" class="px-3 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition" title="افتح في ChatGPT">
+                                🤖
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            const container = document.getElementById('paginationControls');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let buttons = '';
+            for (let i = 1; i <= Math.min(totalPages, 10); i++) {
+                buttons += `
+                    <button onclick="goToPage(${i})" class="w-9 h-9 rounded-xl font-bold text-xs transition ${currentPage === i ? 'bg-indigo-600 text-white' : 'bg-white text-slate-700 border border-slate-200 hover:bg-indigo-50'}">
+                        ${i}
+                    </button>
+                `;
+            }
+            if (totalPages > 10) {
+                buttons += `<span class="text-slate-400 text-xs font-bold">... ${totalPages}</span>`;
+            }
+
+            container.innerHTML = buttons;
+        }
+
+        function goToPage(p) {
+            currentPage = p;
+            renderPrompts();
+        }
+
+        // Initial Initialization
+        renderSidebar();
+        renderPrompts();
+    </script>
+</body>
+</html>

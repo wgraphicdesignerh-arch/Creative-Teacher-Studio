@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محول الصور المخصص إلى ملفات PDF (EduImg2PDF) | منصة إشراقة المعلمة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jsPDF CDN for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-blue-400 transition font-bold">
+                <i class="fa-solid fa-arrow-right text-lg"></i>
+                <span>العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <span class="font-bold text-white">محول ومدمج الصور إلى PDF (EduImg2PDF)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Form Options Section -->
+        <div class="lg:col-span-5 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col space-y-5">
+            <h2 class="text-xl font-bold text-slate-900 border-b pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-blue-600"></i> إعدادات التصدير لـ PDF
+            </h2>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">عنوان المستند (الترويسة)</label>
+                <input type="text" id="pdfHeaderTitle" placeholder="مثال: أوراق عمل مادة العلوم - الصف الخامس" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">قياس الصفحة</label>
+                    <select id="pageSize" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        <option value="a4">A4 (افتراضي قياسي)</option>
+                        <option value="letter">Letter</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">اتجاه الصفحة</label>
+                    <select id="pageOrientation" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        <option value="p">عمودي (Portrait)</option>
+                        <option value="l">أفقي (Landscape)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">علامة مائية / اسم المعلمة (Watermark)</label>
+                <input type="text" id="watermarkText" placeholder="مثال: إعداد المعلمة / نورة... " class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+            </div>
+
+            <button onclick="generatePDF(this)" class="w-full py-3.5 rounded-xl text-white font-bold gradient-bg shadow-md hover:shadow-lg transition">
+                تحويل وتنزيل ملف الـ PDF 📄
+            </button>
+        </div>
+
+        <!-- Dropzone & Image List Section -->
+        <div class="lg:col-span-7 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-center border-b pb-3 mb-4">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-images text-blue-600"></i> رفع وتحديد الصور
+                    </h2>
+                    <button onclick="clearImages()" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition">
+                        <i class="fa-solid fa-trash mr-1"></i> مسح الصور
+                    </button>
+                </div>
+
+                <!-- Drag & Drop Zone -->
+                <div onclick="document.getElementById('imageInput').click()" class="border-2 border-dashed border-blue-300 bg-blue-50/40 rounded-2xl p-8 text-center cursor-pointer hover:bg-blue-50 transition mb-6">
+                    <i class="fa-solid fa-cloud-arrow-up text-4xl text-blue-500 mb-2"></i>
+                    <p class="font-bold text-slate-700 text-sm">اضغطي هنا لاختيار الصور أو اسحبي الصور إلى هنا</p>
+                    <p class="text-xs text-slate-400 mt-1">يدعم صيغ (JPG, PNG, WebP)</p>
+                    <input type="file" id="imageInput" multiple accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                </div>
+
+                <!-- Selected Images Preview Container -->
+                <div id="imageListContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <div class="col-span-full text-center py-8 text-slate-400 text-xs">
+                        لم يتم اختيار أي صور بعد.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script>
+        let loadedImages = [];
+
+        function handleImageUpload(e) {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    loadedImages.push(event.target.result);
+                    renderImageList();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderImageList() {
+            const container = document.getElementById('imageListContainer');
+            if (loadedImages.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-8 text-slate-400 text-xs">لم يتم اختيار أي صور بعد.</div>`;
+                return;
+            }
+
+            container.innerHTML = loadedImages.map((imgSrc, index) => `
+                <div class="relative group rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 aspect-video flex items-center justify-center">
+                    <img src="${imgSrc}" class="object-cover w-full h-full">
+                    <button onclick="removeImage(${index})" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs shadow-md opacity-90 hover:opacity-100 transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                    <span class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] font-bold">صفحة ${index + 1}</span>
+                </div>
+            `).join('');
+        }
+
+        function removeImage(idx) {
+            loadedImages.splice(idx, 1);
+            renderImageList();
+        }
+
+        function clearImages() {
+            loadedImages = [];
+            renderImageList();
+        }
+
+        function generatePDF(btn) {
+            if (loadedImages.length === 0) {
+                alert('يرجى رفع صورة واحدة على الأقل قبل التصدير!');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const orientation = document.getElementById('pageOrientation').value;
+            const doc = new jsPDF(orientation, 'mm', 'a4');
+            const watermark = document.getElementById('watermarkText').value;
+
+            loadedImages.forEach((imgData, index) => {
+                if (index > 0) doc.addPage();
+                
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+
+                doc.addImage(imgData, 'JPEG', 10, 10, pageWidth - 20, pageHeight - 20);
+
+                if (watermark) {
+                    doc.setFontSize(10);
+                    doc.setTextColor(150);
+                    doc.text(watermark, pageWidth / 2, pageHeight - 5, { align: 'center' });
+                }
+            });
+
+            doc.save('TeachersGlow_Document.pdf');
+        }
+    </script>
+</body>
+</html>

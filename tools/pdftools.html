@@ -1,0 +1,3298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>Edu PDF Pro | Secure Local PDF Processing</title>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { pdfRed: { 50: '#fef2f2', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c' } } } } }
+    </script>
+    <!-- Font Awesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- pdf-lib, pdf.js, JSZip -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #070a12; color: #f8fafc; }
+        select option { background-color: #0f172a !important; color: #ffffff !important; }
+        
+        /* High contrast text rules */
+        .tool-card { 
+            background: rgba(17, 24, 39, 0.85) !important; 
+            border: 1px solid rgba(255, 255, 255, 0.12) !important; 
+            color: #ffffff !important;
+            transition: all 0.25s ease-in-out;
+        }
+        .tool-card p, .tool-card span { 
+            color: #ffffff !important; 
+            font-weight: 700;
+        }
+        .tool-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 12px 30px rgba(220, 38, 38, 0.25); 
+            border-color: rgba(239, 68, 68, 0.5) !important;
+            background: rgba(30, 41, 59, 0.95) !important; 
+        }
+
+        /* Inputs & forms visibility */
+        input, select, textarea {
+            background-color: #0f172a !important;
+            color: #ffffff !important;
+            border-color: #334155 !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        label {
+            color: #f1f5f9 !important;
+            font-weight: 700;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .rotate-preview { transition: transform 0.2s ease; will-change: transform; }
+        .tool-card:active { transform: scale(0.97); }
+        .preview-img { cursor: pointer; transition: transform 0.1s ease; }
+        .preview-img:active { transform: scale(0.98); }
+        @media (max-width: 480px) {
+            .thumb-container { min-height: 160px; }
+        }
+
+        /* Workflow styles */
+        .wf-available-btn {
+            background: #111827 !important;
+            color: #f8fafc !important;
+            border: 1.5px solid #374151 !important;
+        }
+        .wf-available-btn:hover {
+            border-color: #ef4444 !important;
+            background: #1f2937 !important;
+        }
+        .wf-settings-box {
+            background: #0f172a !important;
+            color: #f8fafc !important;
+            border: 1px solid #334155;
+        }
+        .wf-op-card {
+            background: #111827 !important;
+            color: #ffffff !important;
+            border: 1.5px solid #374151 !important;
+        }
+        .wf-op-name {
+            color: #ffffff !important;
+        }
+        .wf-op-summary {
+            color: #cbd5e1 !important;
+        }
+        .preview-box {
+            background: #0f172a !important;
+            color: #ffffff !important;
+            border: 1px solid #334155;
+        }
+        .wf-page-box {
+            background: #0f172a !important;
+            color: #ffffff !important;
+        }
+        .wf-thumb-card {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+        .wf-thumb-footer {
+            color: #e2e8f0 !important;
+        }
+
+        /* ===== تعديلات للهيدر الموحد ===== */
+        #header-placeholder {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        /* ===== الفوتر البسيط الموحد للأدوات ===== */
+        .footer-tools {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding: 16px 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 500;
+            margin-top: 40px;
+        }
+        body.dark-mode .footer-tools {
+            background: rgba(15, 23, 42, 0.85);
+            border-top-color: #1e293b;
+            color: #94a3b8;
+        }
+
+        /* ===== Dark Mode Overrides ===== */
+        body.dark-mode {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        body.dark-mode .bg-slate-50 {
+            background: #0f172a !important;
+        }
+        body.dark-mode .bg-white {
+            background: #1e293b !important;
+        }
+        body.dark-mode .text-slate-800 {
+            color: #e2e8f0 !important;
+        }
+        body.dark-mode .text-slate-500 {
+            color: #94a3b8 !important;
+        }
+        body.dark-mode .border-slate-200 {
+            border-color: #334155 !important;
+        }
+        body.dark-mode .border-slate-300 {
+            border-color: #334155 !important;
+        }
+        body.dark-mode .bg-slate-100 {
+            background: #1e293b !important;
+        }
+        body.dark-mode .bg-slate-200 {
+            background: #2d3748 !important;
+        }
+        body.dark-mode .hover\:bg-slate-300:hover {
+            background: #3d4a5c !important;
+        }
+        body.dark-mode .dark\:bg-slate-800 {
+            background: #1e293b !important;
+        }
+        body.dark-mode .dark\:bg-slate-700 {
+            background: #2d3748 !important;
+        }
+        body.dark-mode .dark\:bg-slate-900 {
+            background: #0f172a !important;
+        }
+        body.dark-mode .dark\:border-slate-600 {
+            border-color: #334155 !important;
+        }
+        body.dark-mode .dark\:border-slate-700 {
+            border-color: #334155 !important;
+        }
+        body.dark-mode .dark\:text-slate-100 {
+            color: #e2e8f0 !important;
+        }
+        body.dark-mode .dark\:text-slate-300 {
+            color: #94a3b8 !important;
+        }
+        body.dark-mode .dark\:text-slate-400 {
+            color: #94a3b8 !important;
+        }
+        body.dark-mode .dark\:bg-slate-800\/90 {
+            background: rgba(30, 41, 59, 0.9) !important;
+        }
+        body.dark-mode .dark\:border-slate-700 {
+            border-color: #334155 !important;
+        }
+        body.dark-mode .dark\:hover\:bg-slate-700:hover {
+            background: #2d3748 !important;
+        }
+        body.dark-mode .dark\:bg-slate-700\/50 {
+            background: rgba(45, 55, 72, 0.5) !important;
+        }
+        body.dark-mode .dark\:bg-slate-700\/30 {
+            background: rgba(45, 55, 72, 0.3) !important;
+        }
+        body.dark-mode .wf-op-card {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+        body.dark-mode .wf-op-card:hover {
+            background: #2d3748 !important;
+        }
+        body.dark-mode .wf-available-btn {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            color: #e2e8f0 !important;
+        }
+        body.dark-mode .wf-available-btn:hover {
+            border-color: #dc2626 !important;
+        }
+        body.dark-mode .wf-settings-box {
+            background: #0f172a !important;
+            color: #e2e8f0 !important;
+        }
+        body.dark-mode .wf-field label {
+            color: #94a3b8 !important;
+        }
+        body.dark-mode .wf-field input,
+        body.dark-mode .wf-field select,
+        body.dark-mode .wf-field textarea {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            color: #e2e8f0 !important;
+        }
+        body.dark-mode .wf-step-indicator.pending {
+            background: #1e293b !important;
+            color: #94a3b8 !important;
+        }
+        body.dark-mode .wf-step-indicator.running {
+            background: #3b2800 !important;
+            color: #fcd34d !important;
+        }
+        body.dark-mode .wf-step-indicator.done {
+            background: #052e16 !important;
+            color: #86efac !important;
+        }
+        body.dark-mode .wf-step-indicator.error {
+            background: #3f0000 !important;
+            color: #f87171 !important;
+        }
+        body.dark-mode .wf-empty-state {
+            border-color: #334155 !important;
+        }
+        body.dark-mode .wf-page-box {
+            background: #0f172a !important;
+            color: #e2e8f0 !important;
+        }
+        body.dark-mode .wf-thumb-card {
+            border-color: #334155 !important;
+            background: #1e293b !important;
+        }
+        body.dark-mode .wf-thumb-card.selected {
+            background: #2d0000 !important;
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px #7f1d1d !important;
+        }
+        body.dark-mode .wf-thumb-footer {
+            color: #94a3b8 !important;
+        }
+        body.dark-mode .wf-thumb-canvas-wrap {
+            background: #1e293b !important;
+        }
+        body.dark-mode .wf-rot-btn {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            color: #e2e8f0 !important;
+        }
+        body.dark-mode .wf-rot-btn:hover {
+            background: #2d3748 !important;
+        }
+        body.dark-mode .wf-mv-btn {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            color: #e2e8f0 !important;
+        }
+        body.dark-mode .wf-mv-btn:hover {
+            background: #2d3748 !important;
+        }
+        body.dark-mode .wf-op-btn {
+            background: #334155 !important;
+            color: #94a3b8 !important;
+        }
+        body.dark-mode .wf-op-btn:hover {
+            background: #475569 !important;
+        }
+        body.dark-mode .wf-op-btn.danger:hover {
+            background: #3f0000 !important;
+            color: #f87171 !important;
+        }
+        body.dark-mode .wf-settings-box .wf-field input,
+        body.dark-mode .wf-settings-box .wf-field select {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            color: #e2e8f0 !important;
+        }
+        body.dark-mode .preview-box {
+            background: #1e293b !important;
+            color: #e2e8f0 !important;
+        }
+        body.dark-mode .preview-box .text-gray-600 {
+            color: #94a3b8 !important;
+        }
+        body.dark-mode .bg-emerald-50 {
+            background: #052e16 !important;
+            border-color: #065f46 !important;
+        }
+        body.dark-mode .text-emerald-600 {
+            color: #34d399 !important;
+        }
+        body.dark-mode .border-emerald-200 {
+            border-color: #065f46 !important;
+        }
+        body.dark-mode .bg-violet-50 {
+            background: #1a0a2a !important;
+            border-color: #4a1a7a !important;
+        }
+        body.dark-mode .text-violet-600 {
+            color: #a78bfa !important;
+        }
+        body.dark-mode .text-violet-700 {
+            color: #a78bfa !important;
+        }
+        body.dark-mode .border-violet-200 {
+            border-color: #4a1a7a !important;
+        }
+        body.dark-mode .dark\:bg-violet-950\/30 {
+            background: rgba(79, 70, 229, 0.15) !important;
+        }
+        body.dark-mode .dark\:border-violet-800 {
+            border-color: #4a1a7a !important;
+        }
+        body.dark-mode .dark\:text-violet-300 {
+            color: #a78bfa !important;
+        }
+        body.dark-mode .dark\:text-violet-400 {
+            color: #a78bfa !important;
+        }
+        body.dark-mode .bg-gradient-to-br.from-violet-50 {
+            background-image: linear-gradient(to bottom right, #1a0a2a, #2a0a3a) !important;
+        }
+        body.dark-mode .bg-gradient-to-br.to-purple-50 {
+            background-image: linear-gradient(to bottom right, #1a0a2a, #2a0a3a) !important;
+        }
+        body.dark-mode .dark\:from-violet-950\/30 {
+            --tw-gradient-from: rgba(79, 70, 229, 0.15) !important;
+        }
+        body.dark-mode .dark\:to-purple-950\/30 {
+            --tw-gradient-to: rgba(128, 90, 213, 0.15) !important;
+        }
+        body.dark-mode .bg-indigo-500 {
+            background: #4f46e5 !important;
+        }
+        body.dark-mode .bg-indigo-500:hover {
+            background: #6366f1 !important;
+        }
+        body.dark-mode .bg-pdfRed-600 {
+            background: #dc2626 !important;
+        }
+        body.dark-mode .bg-pdfRed-600:hover {
+            background: #b91c1c !important;
+        }
+        body.dark-mode .bg-emerald-600 {
+            background: #059669 !important;
+        }
+        body.dark-mode .bg-emerald-600:hover {
+            background: #047857 !important;
+        }
+        body.dark-mode .bg-violet-600 {
+            background: #7c3aed !important;
+        }
+        body.dark-mode .bg-violet-600:hover {
+            background: #6d28d9 !important;
+        }
+        body.dark-mode .text-rose-600 {
+            color: #f87171 !important;
+        }
+        body.dark-mode .bg-rose-100 {
+            background: #3f0000 !important;
+        }
+        body.dark-mode .hover\:bg-rose-200:hover {
+            background: #5f0000 !important;
+        }
+        body.dark-mode .text-slate-400 {
+            color: #94a3b8 !important;
+        }
+
+        /* ===== باقي أنماط الصفحة ===== */
+        .wf-op-card { background: white; border: 1.5px solid #e2e8f0; border-radius: 1rem; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem; cursor: grab; transition: all 0.2s; user-select: none; }
+        .wf-op-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+        .wf-op-card.dragging { opacity: 0.5; transform: scale(0.97); }
+        .wf-op-card.drag-over { border-color: #dc2626; background: #fef2f2; }
+        .wf-op-icon { width: 38px; height: 38px; border-radius: 0.6rem; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+        .wf-op-handle { color: #94a3b8; cursor: grab; font-size: 1.1rem; flex-shrink: 0; }
+        .wf-op-name { font-weight: 700; font-size: 0.95rem; flex: 1; }
+        .wf-op-summary { font-size: 0.75rem; color: #64748b; }
+        .wf-op-btns { display: flex; gap: 0.3rem; flex-shrink: 0; }
+        .wf-op-btn { background: #f1f5f9; border: none; border-radius: 0.5rem; padding: 5px 8px; cursor: pointer; font-size: 0.8rem; color: #475569; transition: 0.2s; font-family: inherit; }
+        .wf-op-btn:hover { background: #e2e8f0; }
+        .wf-op-btn.danger:hover { background: #fee2e2; color: #dc2626; }
+        .wf-available-btn { background: white; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; padding: 0.5rem 0.8rem; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: 0.2s; color: #1e293b; font-family: inherit; }
+        .wf-available-btn:hover { border-color: #dc2626; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .wf-settings-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        .wf-settings-box { background: white; border-radius: 1.5rem; padding: 1.5rem; max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.2); }
+        .wf-field { margin-bottom: 1rem; }
+        .wf-field label { font-weight: 700; font-size: 0.85rem; color: #475569; display: block; margin-bottom: 0.3rem; }
+        .wf-field input, .wf-field select, .wf-field textarea { width: 100%; border: 1.5px solid #e2e8f0; border-radius: 0.6rem; padding: 0.5rem 0.75rem; font-size: 0.9rem; font-family: inherit; background: white; color: #1e293b; box-sizing: border-box; }
+        .wf-field input:focus, .wf-field select:focus, .wf-field textarea:focus { outline: none; border-color: #dc2626; }
+        .wf-step-indicator { display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.75rem; border-radius: 0.75rem; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; }
+        .wf-step-indicator.pending { background: #f1f5f9; color: #64748b; }
+        .wf-step-indicator.running { background: #fef9c3; color: #854d0e; }
+        .wf-step-indicator.done { background: #dcfce7; color: #166534; }
+        .wf-step-indicator.error { background: #fee2e2; color: #991b1b; }
+        #wfDropZone { transition: border-color 0.2s, background 0.2s; }
+        #wfDropZone:hover { border-color: #dc2626; }
+        .wf-empty-state { border: 2px dashed #e2e8f0; border-radius: 1rem; padding: 2rem; text-align: center; color: #94a3b8; }
+
+        /* Visual Page Picker */
+        .wf-page-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 600; display: flex; align-items: flex-start; justify-content: center; padding: 1rem; overflow-y: auto; }
+        .wf-page-box { background: white; border-radius: 1.5rem; padding: 1.25rem; width: 100%; max-width: 860px; margin: auto; box-shadow: 0 32px 80px rgba(0,0,0,0.3); }
+        .wf-thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.75rem; margin-top: 0.75rem; max-height: 60vh; overflow-y: auto; padding: 0.25rem; }
+        .wf-thumb-card { border: 2.5px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden; cursor: pointer; transition: all 0.18s; background: #f8fafc; position: relative; user-select: none; }
+        .wf-thumb-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+        .wf-thumb-card.selected { border-color: #dc2626; background: #fef2f2; box-shadow: 0 0 0 3px #fca5a5; }
+        .wf-thumb-canvas-wrap { width: 100%; aspect-ratio: 0.707; position: relative; overflow: hidden; background: white; display: flex; align-items: center; justify-content: center; }
+        .wf-thumb-canvas-wrap canvas { max-width: 100%; max-height: 100%; display: block; }
+        .wf-thumb-footer { padding: 0.3rem 0.4rem; text-align: center; font-size: 0.72rem; font-weight: 700; color: #475569; }
+        .wf-rot-badge { position: absolute; top: 4px; left: 4px; background: #f59e0b; color: white; font-size: 0.65rem; font-weight: 800; padding: 2px 5px; border-radius: 999px; display: none; }
+        .wf-rot-badge.visible { display: block; }
+        .wf-del-check { position: absolute; top: 5px; right: 5px; width: 20px; height: 20px; accent-color: #dc2626; }
+        .wf-order-badge { position: absolute; top: 4px; right: 4px; background: #7c3aed; color: white; font-size: 0.72rem; font-weight: 800; min-width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 999px; }
+        .wf-rot-controls { display: flex; gap: 3px; justify-content: center; padding: 4px 3px 5px; flex-wrap: wrap; }
+        .wf-rot-btn { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 6px; font-size: 0.68rem; cursor: pointer; font-family: inherit; transition: 0.15s; }
+        .wf-rot-btn:hover { background: #e2e8f0; }
+        .wf-mv-controls { display: flex; gap: 3px; justify-content: center; padding: 4px 3px 5px; }
+        .wf-mv-btn { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 7px; font-size: 0.72rem; cursor: pointer; font-family: inherit; transition: 0.15s; }
+        .wf-mv-btn:hover { background: #e2e8f0; }
+        .wf-thumb-card.drag-over-page { border-color: #7c3aed !important; background: #f5f3ff !important; }
+
+        /* Preview */
+        .preview-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 999; display: flex; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(6px); }
+        .preview-box { background: white; border-radius: 1.5rem; max-width: 90vw; max-height: 90vh; overflow: auto; padding: 1.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative; }
+        .preview-close { position: sticky; top: 0; float: left; background: #ef4444; color: white; border: none; border-radius: 999px; width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer; transition: 0.2s; z-index: 10; }
+        .preview-close:hover { transform: scale(1.1); }
+
+        /* ===== إصلاح مشكلة الارتفاع ===== */
+        #header-placeholder {
+            flex-shrink: 0;
+        }
+
+        /* ===== Workflow section ===== */
+        .wf-empty-state {
+            border: 2px dashed #e2e8f0;
+            border-radius: 1rem;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-rose-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-rose-600 to-purple-600 flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <span class="font-bold text-white text-sm md:text-base">مجموعة أدوات الـ PDF الاحترافية (EduPDF Pro)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== المحتوى الرئيسي ===== -->
+    <main class="flex-1 max-w-7xl mx-auto px-3 sm:px-4 py-5 md:py-8">
+        <!-- شريط الأمان -->
+        <div class="mb-5 p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl text-center text-sm border border-emerald-200">
+            <i class="fa-solid fa-shield-halved text-emerald-600"></i> <span data-i18n="securityMsg">ملفاتك لا تغادر جهازك أبداً - معالجة محلية</span>
+        </div>
+
+        <!-- لوحة الأدوات -->
+        <section id="dashboardSection" class="space-y-5">
+            <h2 class="text-2xl font-bold text-center text-white" data-i18n="whatToDo">ماذا تريد أن تفعل بـ PDF؟</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
+                <button onclick="switchTool('merge')" class="tool-card p-3 md:p-4 rounded-2xl shadow-md text-center"><i class="fa-solid fa-object-group text-2xl md:text-3xl text-red-500"></i><p class="font-bold mt-1 text-sm md:text-base text-white" data-i18n="toolMerge">دمج</p></button>
+                <button onclick="switchTool('split')" class="tool-card p-3 md:p-4 rounded-2xl shadow-md text-center"><i class="fa-solid fa-scissors text-2xl md:text-3xl text-orange-400"></i><p class="font-bold mt-1 text-sm md:text-base text-white" data-i18n="toolSplit">تقسيم</p></button>
+                <button onclick="switchTool('remove')" class="tool-card p-3 md:p-4 rounded-2xl shadow-md text-center"><i class="fa-solid fa-trash-can text-2xl md:text-3xl text-rose-400"></i><p class="font-bold mt-1 text-sm md:text-base text-white" data-i18n="toolRemove">حذف صفحات</p></button>
+                <button onclick="switchTool('rearrange')" class="tool-card p-3 md:p-4 rounded-2xl shadow-md text-center"><i class="fa-solid fa-arrows-alt text-2xl md:text-3xl text-indigo-400"></i><p class="font-bold mt-1 text-sm md:text-base text-white" data-i18n="toolRearrange">ترتيب</p></button>
+                <button onclick="switchTool('rotate')" class="tool-card p-3 md:p-4 rounded-2xl shadow-md text-center"><i class="fa-solid fa-rotate-right text-2xl md:text-3xl text-amber-400"></i><p class="font-bold mt-1 text-sm md:text-base text-white" data-i18n="toolRotate">تدوير</p></button>
+                <button onclick="switchTool('pdf2img')" class="tool-card p-3 md:p-4 rounded-2xl shadow-md text-center"><i class="fa-solid fa-image text-2xl md:text-3xl text-emerald-400"></i><p class="font-bold mt-1 text-sm md:text-base text-white" data-i18n="toolPdf2Img">PDF ← صور</p></button>
+                <button onclick="switchTool('img2pdf')" class="tool-card p-3 md:p-4 rounded-2xl shadow-md text-center"><i class="fa-solid fa-images text-2xl md:text-3xl text-blue-400"></i><p class="font-bold mt-1 text-sm md:text-base text-white" data-i18n="toolImg2Pdf">صور ← PDF</p></button>
+                <button onclick="switchTool('watermark')" class="tool-card p-3 md:p-4 rounded-2xl shadow-md text-center"><i class="fa-solid fa-stamp text-2xl md:text-3xl text-purple-400"></i><p class="font-bold mt-1 text-sm md:text-base text-white" data-i18n="toolWatermark">علامة مائية</p></button>
+                <button onclick="switchTool('pagenum')" class="tool-card p-3 md:p-4 rounded-2xl shadow-md text-center"><i class="fa-solid fa-list-ol text-2xl md:text-3xl text-teal-400"></i><p class="font-bold mt-1 text-sm md:text-base text-white" data-i18n="toolPageNum">ترقيم</p></button>
+                <button onclick="switchTool('compress')" class="tool-card p-3 md:p-4 rounded-2xl shadow-md text-center"><i class="fa-solid fa-file-contract text-2xl md:text-3xl text-cyan-400"></i><p class="font-bold mt-1 text-sm md:text-base text-white" data-i18n="toolCompress">ضغط</p></button>
+                <button onclick="openWorkflow()" class="tool-card p-3 md:p-4 bg-gradient-to-br from-violet-900/40 to-purple-900/40 border-2 border-violet-500/30 rounded-2xl shadow-md text-center col-span-2 sm:col-span-3 md:col-span-1"><i class="fa-solid fa-diagram-project text-2xl md:text-3xl text-violet-400"></i><p class="font-bold mt-1 text-sm md:text-base text-white">PDF Workflow</p><p class="text-xs text-violet-300 mt-0.5">PDF Workflow</p></button>
+            </div>
+        </section>
+
+        <!-- مساحة العمل -->
+        <section id="toolWorkspaceSection" class="hidden space-y-5">
+            <div class="flex justify-between items-center">
+                <button onclick="backToDashboard()" class="bg-slate-800 hover:bg-slate-700 text-white p-2.5 rounded-xl border border-white/10 transition"><i class="fa-solid fa-house text-xl"></i></button>
+                <h2 id="currentToolTitle" class="text-xl font-bold text-white"></h2>
+            </div>
+            <div id="dropZone" class="border-4 border-dashed border-slate-700 bg-slate-900/50 rounded-2xl p-8 text-center cursor-pointer hover:border-rose-500 transition">
+                <i class="fa-solid fa-cloud-arrow-up text-4xl text-slate-400"></i>
+                <p class="mt-2 text-sm text-slate-200 font-bold" data-i18n="dropHint">اسحب ملفاتك هنا أو انقر للاختيار</p>
+                <input type="file" id="fileInput" class="hidden" multiple>
+            </div>
+            <div id="interactiveWorkspace" class="hidden space-y-5">
+                <div id="pagesContainer" class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[60vh] overflow-auto p-3 bg-slate-900 rounded-2xl border border-white/10 custom-scrollbar"></div>
+                <div id="toolSettingsPanel" class="bg-slate-900 p-5 rounded-2xl border border-white/10 space-y-3"></div>
+                <div class="flex flex-col sm:flex-row justify-between gap-3">
+                    <div class="flex gap-2">
+                        <button onclick="clearWorkspace()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-5 py-2 rounded-xl font-bold transition" data-i18n="clearAll">مسح الكل</button>
+                        <button onclick="previewResult()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-xl font-bold transition">👁️ معاينة</button>
+                    </div>
+                    <button id="executeBtn" class="bg-gradient-to-r from-rose-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white px-6 py-2 rounded-xl font-bold shadow-lg shadow-rose-900/30 transition" data-i18n="startProcessing">ابدأ المعالجة</button>
+                </div>
+                <div id="progressBarContainer" class="hidden">
+                    <div class="progress-bar-bg">
+                        <div id="progressBar" class="progress-bar-fill" style="width:0%"></div>
+                    </div>
+                    <p id="progressText" class="progress-text">0%</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم النتيجة -->
+        <section id="resultSection" class="hidden text-center p-8 bg-slate-900 rounded-3xl border border-white/10 shadow-xl space-y-4">
+            <div class="flex justify-between"><div></div><button onclick="backToDashboard()" class="bg-slate-800 hover:bg-slate-700 text-white p-2.5 rounded-xl border border-white/10 transition"><i class="fa-solid fa-house text-xl"></i></button></div>
+            <i class="fa-solid fa-circle-check text-6xl text-emerald-400"></i>
+            <h2 class="text-2xl font-bold text-white" data-i18n="successTitle">تمت العملية بنجاح!</h2>
+            <a id="downloadLink" href="#" download="result.pdf" class="inline-block bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3 rounded-xl font-bold shadow-lg transition" data-i18n="downloadFile">تحميل الملف <i class="fa-solid fa-download"></i></a>
+            <button onclick="resetToCurrentTool()" class="text-rose-400 hover:text-rose-300 font-bold block mx-auto mt-2" data-i18n="anotherOp">إجراء عملية أخرى</button>
+        </section>
+    
+</main>
+
+    <!-- ===== قسم PDF Workflow ===== -->
+    <section id="workflowSection" class="hidden flex-1 max-w-7xl mx-auto px-3 sm:px-4 py-5 md:py-8 w-full">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-5">
+            <button onclick="closeWorkflow()" class="bg-slate-800 hover:bg-slate-700 text-white p-2.5 rounded-xl border border-white/10 transition">
+                <i class="fa-solid fa-house text-xl"></i>
+            </button>
+            <div class="text-center">
+                <h2 class="text-xl font-bold flex items-center gap-2 justify-center text-white">
+                    <i class="fa-solid fa-diagram-project text-violet-400"></i>
+                    <span id="wfTitle">Multiple operations - PDF Workflow</span>
+                </h2>
+                <p class="text-xs text-slate-300 mt-0.5" id="wfSubtitle">نفّذ عدة عمليات على ملف PDF واحد بضغطة واحدة</p>
+            </div>
+            <div></div>
+        </div>
+
+        <!-- Step 1: Upload -->
+        <div id="wfUploadStep" class="space-y-4">
+            <div id="wfDropZone" class="border-4 border-dashed border-slate-700 bg-slate-900/50 rounded-2xl p-10 text-center cursor-pointer hover:border-violet-500 transition"
+                 onclick="document.getElementById('wfFileInput').click()"
+                 ondragover="event.preventDefault(); this.style.borderColor='#8b5cf6'"
+                 ondragleave="this.style.borderColor=''"
+                 ondrop="wfHandleDrop(event)">
+                <i class="fa-solid fa-file-pdf text-5xl text-violet-400"></i>
+                <p class="mt-3 font-bold text-lg text-white" id="wfDropText">اسحب ملف PDF هنا أو انقر للاختيار</p>
+                <p class="text-sm text-slate-400 mt-1" id="wfDropHint">ملف PDF واحد فقط</p>
+                <input type="file" id="wfFileInput" class="hidden" accept=".pdf" onchange="wfHandleFile(this.files[0])">
+            </div>
+        </div>
+
+        <!-- Step 2: Build workflow -->
+        <div id="wfBuilderStep" class="hidden space-y-5">
+            <!-- File info -->
+            <div class="flex items-center gap-3 p-3 bg-violet-950/40 border border-violet-800/60 rounded-xl text-white">
+                <i class="fa-solid fa-file-pdf text-2xl text-violet-400"></i>
+                <div class="flex-1 min-w-0">
+                    <p class="font-bold truncate text-white" id="wfFileName">filename.pdf</p>
+                    <p class="text-xs text-slate-300" id="wfFileInfo">0 صفحة · 0 KB</p>
+                </div>
+                <button onclick="wfReset()" class="text-xs bg-slate-800 hover:bg-rose-900 text-rose-300 px-3 py-1.5 rounded-lg border border-slate-700 font-bold transition" id="wfChangeBtnTxt">تغيير الملف</button>
+            </div>
+
+            <!-- Available operations -->
+            <div>
+                <p class="font-bold text-sm text-slate-300 mb-2" id="wfAddOpLabel">إضافة عملية:</p>
+                <div class="flex flex-wrap gap-2" id="wfAvailableOps">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <!-- Operations queue -->
+            <div>
+                <p class="font-bold text-sm text-slate-500 mb-2" id="wfQueueLabel">قائمة العمليات <span id="wfQueueCount" class="bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300 px-2 py-0.5 rounded-full text-xs">0</span></p>
+                <div id="wfOpsQueue" class="space-y-2 min-h-[60px]">
+                    <div class="wf-empty-state" id="wfEmptyState">
+                        <i class="fa-solid fa-plus-circle text-2xl mb-2"></i>
+                        <p id="wfEmptyText">أضف عملية من القائمة أعلاه</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execute button -->
+            <div class="flex justify-center pt-2">
+                <button id="wfExecuteBtn" onclick="wfExecute()" class="bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white px-10 py-3 rounded-2xl font-bold text-lg transition flex items-center gap-3">
+                    <i class="fa-solid fa-play"></i>
+                    <span id="wfExecuteBtnTxt">تنفيذ العمليات</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Progress -->
+        <div id="wfProgressStep" class="hidden space-y-4">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg">
+                <h3 class="font-bold text-lg mb-4 text-center" id="wfProgressTitle">جاري التنفيذ...</h3>
+                <div class="progress-bar-bg mb-2">
+                    <div id="wfProgressBar" class="progress-bar-fill" style="background: #7c3aed;"></div>
+                </div>
+                <p id="wfProgressText" class="progress-text text-center text-violet-600 font-bold"></p>
+                <div id="wfStepsLog" class="mt-4 space-y-1"></div>
+            </div>
+        </div>
+
+        <!-- Step 4: Result -->
+        <div id="wfResultStep" class="hidden space-y-4">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl text-center space-y-4">
+                <i class="fa-solid fa-circle-check text-6xl text-emerald-500"></i>
+                <h3 class="text-2xl font-bold" id="wfSuccessTitle">تمت جميع العمليات بنجاح!</h3>
+                <!-- Summary -->
+                <div id="wfResultSummary" class="text-right space-y-1 max-w-sm mx-auto"></div>
+                <!-- Download -->
+                <a id="wfDownloadLink" href="#" download="workflow-result.pdf"
+                   class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-bold transition">
+                    <i class="fa-solid fa-download"></i>
+                    <span id="wfDownloadTxt">تحميل الملف النهائي</span>
+                </a>
+                <br>
+                <button onclick="wfRunAgain()" class="text-violet-600 font-bold text-sm hover:underline" id="wfRunAgainTxt">تنفيذ workflow جديد</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Workflow Settings Modal ===== -->
+    <div id="wfSettingsModal" class="wf-settings-modal hidden">
+        <div class="wf-settings-box">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg" id="wfModalTitle">إعدادات العملية</h3>
+                <button onclick="wfCloseSettings()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center hover:bg-red-100 hover:text-red-600 transition">✕</button>
+            </div>
+            <div id="wfModalBody" class="space-y-3"></div>
+            <div class="flex gap-2 mt-5">
+                <button onclick="wfSaveSettings()" class="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-2 rounded-xl font-bold transition" id="wfSaveBtnTxt">حفظ الإعدادات</button>
+                <button onclick="wfCloseSettings()" class="px-4 bg-slate-200 dark:bg-slate-700 rounded-xl font-bold hover:bg-slate-300 transition" id="wfCancelBtnTxt">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Visual Page Picker Modal ===== -->
+    <div id="wfPageModal" class="wf-page-modal hidden">
+        <div class="wf-page-box">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-bold text-lg" id="wfPageModalTitle">اختر الصفحات</h3>
+                <button onclick="wfClosePageModal()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center hover:bg-red-100 hover:text-red-600 transition text-lg font-bold">✕</button>
+            </div>
+            <!-- Sub-toolbar (delete mode extras) -->
+            <div id="wfPageModalToolbar" class="hidden mb-3 flex flex-wrap gap-2 items-center">
+                <span class="text-sm font-bold text-slate-500" id="wfPageModalToolbarLabel"></span>
+                <button id="wfDelSelectAllBtn" class="hidden text-xs bg-rose-100 text-rose-700 px-3 py-1 rounded-lg font-bold hover:bg-rose-200 transition" onclick="wfDelSelectAll()">تحديد الكل</button>
+                <button id="wfDelClearBtn" class="hidden text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-lg font-bold hover:bg-slate-200 transition" onclick="wfDelClear()">إلغاء التحديد</button>
+                <div id="wfDelRangeWrap" class="hidden flex items-center gap-1">
+                    <input id="wfDelRangeInput" type="text" placeholder="مثال: 2-5 أو 1,3,7"
+                           class="border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1 text-sm font-mono w-32 bg-white dark:bg-slate-800 dark:text-white" />
+                    <button onclick="wfDelApplyRange()" class="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg font-bold hover:bg-indigo-200 transition">تطبيق</button>
+                </div>
+            </div>
+            <!-- Thumb grid -->
+            <div id="wfThumbGrid" class="wf-thumb-grid custom-scrollbar"></div>
+            <!-- Footer buttons -->
+            <div class="flex gap-2 mt-4">
+                <button onclick="wfSavePageModal()" class="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-2 rounded-xl font-bold transition" id="wfPageSaveTxt">حفظ</button>
+                <button onclick="wfClosePageModal()" class="px-5 bg-slate-200 dark:bg-slate-700 rounded-xl font-bold hover:bg-slate-300 transition" id="wfPageCancelTxt">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== الفوتر البسيط الموحد ===== -->
+    <footer class="footer-tools">
+        <span data-i18n="footerRights">© 2026 Edufiresoft — جميع الحقوق محفوظة</span>
+    </footer>
+
+    <!-- مودال مخصص -->
+    <div id="customModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl max-w-sm w-full">
+            <h3 id="modalTitle" class="font-bold"></h3>
+            <p id="modalBody" class="mt-2"></p>
+            <button onclick="closeModal()" class="mt-4 bg-pdfRed-600 text-white px-4 py-2 rounded w-full sm:w-auto" data-i18n="close">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- SVG icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+        <defs>
+            <symbol id="ico-ai" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7z"/>
+            </symbol>
+            <symbol id="ico-signout" viewBox="0 0 512 512">
+                <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/>
+            </symbol>
+        </defs>
+    </svg>
+
+    <script>
+        // ============================================================
+        // 0. نظام الترجمة الشامل
+        // ============================================================
+        const translations = {
+            ar: {
+                // الهيدر
+                help: "مساعدة",
+                save: "حفظ",
+                open: "فتح",
+                export: "تصدير",
+                clear: "مسح",
+                // شريط الأمان
+                securityMsg: "ملفاتك لا تغادر جهازك أبداً - معالجة محلية",
+                // لوحة الأدوات
+                whatToDo: "ماذا تريد أن تفعل بـ PDF؟",
+                toolMerge: "دمج",
+                toolSplit: "تقسيم",
+                toolRemove: "حذف صفحات",
+                toolRearrange: "ترتيب",
+                toolRotate: "تدوير",
+                toolPdf2Img: "PDF ← صور",
+                toolImg2Pdf: "صور ← PDF",
+                toolWatermark: "علامة مائية",
+                toolPageNum: "ترقيم",
+                toolCompress: "ضغط",
+                // مساحة العمل
+                dropHint: "اسحب ملفاتك هنا أو انقر للاختيار",
+                clearAll: "مسح الكل",
+                startProcessing: "ابدأ المعالجة",
+                // النتيجة
+                successTitle: "تمت العملية بنجاح!",
+                downloadFile: "تحميل الملف",
+                anotherOp: "إجراء عملية أخرى",
+                // الفوتر
+                footerRights: "© 2026 Edufiresoft — جميع الحقوق محفوظة",
+                // مودال
+                close: "إغلاق",
+                // أسماء الأدوات (للعنوان الديناميكي)
+                toolNames: {
+                    merge: "دمج PDF",
+                    split: "تقسيم PDF",
+                    remove: "حذف صفحات",
+                    rearrange: "إعادة ترتيب",
+                    rotate: "تدوير الصفحات",
+                    pdf2img: "PDF ← صور",
+                    img2pdf: "صور ← PDF",
+                    watermark: "علامة مائية",
+                    pagenum: "ترقيم الصفحات",
+                    compress: "ضغط PDF",
+                    workflow: "Multiple operations"
+                },
+                // رسائل المودال
+                modalError: "خطأ",
+                modalSuccess: "نجاح",
+                modalWarning: "تنبيه",
+                noFiles: "لم يتم رفع أي ملفات",
+                fileNotPdf: "ليس PDF",
+                fileNotImage: "ليس صورة",
+                sessionSaved: "تم حفظ الجلسة باسم: ",
+                sessionOpened: "تم فتح الجلسة: ",
+                sessionNotFound: "الجلسة غير موجودة.",
+                noSessions: "لم يتم العثور على جلسات محفوظة.",
+                clearConfirm: "هل أنت متأكد من مسح جميع الملفات المرفوعة؟",
+                workspaceCleared: "تم تنظيف مساحة العمل.",
+                exportNotice: "سيتم تصدير لقطة للوحة العمل (الصفحات المعروضة).",
+                processingFailed: "فشل الإنتاج",
+                helpText: "🛠️ الأدوات المتاحة:\n- دمج: جمع عدة PDF في ملف واحد\n- تقسيم: استخراج صفحات معينة أو كل صفحة لوحدها\n- حذف صفحات: إزالة صفحات غير مرغوب فيها\n- ترتيب: إعادة ترتيب الصفحات بسحبها\n- تدوير: تغيير اتجاه الصفحات\n- PDF ← صور: تحويل كل صفحة إلى صورة\n- صور ← PDF: تجميع الصور في PDF\n- علامة مائية: إضافة نص شفاف\n- ترقيم: إضافة أرقام صفحات\n- ضغط: تقليل حجم الملف",
+                loginFailed: "فشل تسجيل الدخول: ",
+                loginBtn: "تسجيل الدخول",
+                welcome: "مرحباً",
+                logout: "تسجيل الخروج",
+                home: "الرئيسية",
+                // إعدادات الأدوات
+                fileLabel: "ملف PDF:",
+                splitMode: "نمط التقسيم:",
+                splitAll: "كل صفحة منفصلة",
+                splitRange: "نطاق صفحات",
+                rangeHint: "النطاق (مثال: 1-3):",
+                formatLabel: "الصيغة:",
+                scaleLabel: "الدقة:",
+                compressLevel: "مستوى الضغط:",
+                low: "منخفض",
+                medium: "متوسط",
+                high: "عالي (ضغط الصور)",
+                watermarkText: "نص العلامة:",
+                opacity: "الشفافية:",
+                light: "خفيف",
+                normal: "وسط",
+                bold: "واضح",
+                colorLabel: "اللون:",
+                sizeLabel: "الحجم:",
+                positionLabel: "الموضع:",
+                bottomCenter: "أسفل المنتصف",
+                bottomRight: "أسفل اليمين",
+                startNum: "رقم البدء:",
+                formatNum: "التنسيق:",
+                rotateAll: "تدوير الكل +90°",
+                resetRotate: "إعادة ضبط الكل",
+                rotateHint: "اضغط أزرار التدوير أسفل كل صفحة",
+                // إضافات للعلامة المائية
+                watermarkType: "نوع العلامة",
+                watermarkTextLabel: "نص",
+                watermarkImageLabel: "صورة",
+                fontFamily: "الخط",
+                angle: "زاوية التدوير",
+                position: "الموضع",
+                center: "وسط",
+                topLeft: "أعلى يسار",
+                topRight: "أعلى يمين",
+                bottomLeft: "أسفل يسار",
+                bottomRightPos: "أسفل يمين",
+                pagesScope: "نطاق الصفحات",
+                allPages: "الكل",
+                oddPages: "فردية",
+                evenPages: "زوجية",
+                rangePages: "نطاق",
+                rangeHintWatermark: "النطاق (مثال: 1-3)",
+                imageFile: "اختر صورة"
+            },
+            en: {
+                // Header
+                help: "Help",
+                save: "Save",
+                open: "Open",
+                export: "Export",
+                clear: "Clear",
+                // Security bar
+                securityMsg: "Your files never leave your device - 100% local processing",
+                // Tools panel
+                whatToDo: "What do you want to do with PDF?",
+                toolMerge: "Merge",
+                toolSplit: "Split",
+                toolRemove: "Delete Pages",
+                toolRearrange: "Reorder",
+                toolRotate: "Rotate",
+                toolPdf2Img: "PDF → Images",
+                toolImg2Pdf: "Images → PDF",
+                toolWatermark: "Watermark",
+                toolPageNum: "Page Numbers",
+                toolCompress: "Compress",
+                // Workspace
+                dropHint: "Drag & drop your files here or click to select",
+                clearAll: "Clear All",
+                startProcessing: "Start Processing",
+                // Result
+                successTitle: "Operation Completed Successfully!",
+                downloadFile: "Download File",
+                anotherOp: "Another Operation",
+                // Footer
+                footerRights: "© 2026 Edufiresoft — All Rights Reserved",
+                // Modal
+                close: "Close",
+                // Tool names (dynamic title)
+                toolNames: {
+                    merge: "Merge PDF",
+                    split: "Split PDF",
+                    remove: "Delete Pages",
+                    rearrange: "Rearrange Pages",
+                    rotate: "Rotate Pages",
+                    pdf2img: "PDF → Images",
+                    img2pdf: "Images → PDF",
+                    watermark: "Watermark",
+                    pagenum: "Page Numbering",
+                    compress: "Compress PDF",
+                    workflow: "PDF Workflow"
+                },
+                // Modal messages
+                modalError: "Error",
+                modalSuccess: "Success",
+                modalWarning: "Warning",
+                noFiles: "No files uploaded",
+                fileNotPdf: "is not a PDF",
+                fileNotImage: "is not an image",
+                sessionSaved: "Session saved as: ",
+                sessionOpened: "Session opened: ",
+                sessionNotFound: "Session not found.",
+                noSessions: "No saved sessions found.",
+                clearConfirm: "Are you sure you want to clear all uploaded files?",
+                workspaceCleared: "Workspace cleared.",
+                exportNotice: "A snapshot of the workspace (displayed pages) will be exported.",
+                processingFailed: "Processing failed",
+                helpText: "🛠️ Available tools:\n- Merge: Combine multiple PDFs into one\n- Split: Extract specific pages or each page separately\n- Delete Pages: Remove unwanted pages\n- Reorder: Rearrange pages by dragging\n- Rotate: Change page orientation\n- PDF → Images: Convert each page to an image\n- Images → PDF: Combine images into a PDF\n- Watermark: Add transparent text\n- Page Numbers: Add page numbers\n- Compress: Reduce file size",
+                loginFailed: "Login failed: ",
+                loginBtn: "Login",
+                welcome: "Welcome",
+                logout: "Sign out",
+                home: "Home",
+                // Tool settings
+                fileLabel: "PDF File:",
+                splitMode: "Split Mode:",
+                splitAll: "Each page separately",
+                splitRange: "Page Range",
+                rangeHint: "Range (e.g. 1-3):",
+                formatLabel: "Format:",
+                scaleLabel: "Scale:",
+                compressLevel: "Compression Level:",
+                low: "Low",
+                medium: "Medium",
+                high: "High (image compression)",
+                watermarkText: "Watermark Text:",
+                opacity: "Opacity:",
+                light: "Light",
+                normal: "Normal",
+                bold: "Bold",
+                colorLabel: "Color:",
+                sizeLabel: "Size:",
+                positionLabel: "Position:",
+                bottomCenter: "Bottom Center",
+                bottomRight: "Bottom Right",
+                startNum: "Start Number:",
+                formatNum: "Format:",
+                rotateAll: "Rotate All +90°",
+                resetRotate: "Reset All",
+                rotateHint: "Click rotation buttons below each page",
+                // إضافات للعلامة المائية
+                watermarkType: "Watermark Type",
+                watermarkTextLabel: "Text",
+                watermarkImageLabel: "Image",
+                fontFamily: "Font",
+                angle: "Rotation Angle",
+                position: "Position",
+                center: "Center",
+                topLeft: "Top Left",
+                topRight: "Top Right",
+                bottomLeft: "Bottom Left",
+                bottomRightPos: "Bottom Right",
+                pagesScope: "Page Scope",
+                allPages: "All",
+                oddPages: "Odd",
+                evenPages: "Even",
+                rangePages: "Range",
+                rangeHintWatermark: "Range (e.g. 1-3)",
+                imageFile: "Choose Image"
+            }
+        };
+
+        let currentLang = localStorage.getItem('preferredLanguage') || 'ar';
+
+        function t(key) {
+            const keys = key.split('.');
+            let val = translations[currentLang];
+            for (let k of keys) {
+                if (val && val[k] !== undefined) val = val[k];
+                else return key;
+            }
+            return val || key;
+        }
+
+        // ============================================================
+        // دالة تحديث رابط الشعار ديناميكياً حسب اللغة
+        // ============================================================
+        function updateLogoLink() {
+            const logoLink = document.getElementById('logoHomeLink');
+            if (logoLink) {
+                const lang = document.documentElement.lang || 'ar';
+                logoLink.href = lang === 'ar' ? '/?lang=ar' : '/?lang=en';
+            }
+        }
+
+        // دالة للانتظار حتى يتوفر عنصر الشعار
+        function waitForLogoLink() {
+            const logoLink = document.getElementById('logoHomeLink');
+            if (logoLink) {
+                updateLogoLink();
+            } else {
+                setTimeout(() => {
+                    const logoLinkRetry = document.getElementById('logoHomeLink');
+                    if (logoLinkRetry) {
+                        updateLogoLink();
+                    }
+                }, 100);
+            }
+        }
+
+        function applyTranslations() {
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                const val = t(key);
+                if (val !== key) {
+                    el.textContent = val;
+                }
+            });
+
+            // تحديث الفوتر
+            const footer = document.querySelector('.footer-tools span');
+            if (footer) {
+                footer.textContent = t('footerRights');
+            }
+
+            const titleEl = document.getElementById('currentToolTitle');
+            if (titleEl && currTool) {
+                const toolName = t('toolNames.' + currTool);
+                if (toolName !== 'toolNames.' + currTool) {
+                    titleEl.textContent = toolName;
+                }
+            }
+
+            if (currTool && !document.getElementById('dashboardSection').classList.contains('hidden')) {
+                const tool = currTool;
+                if (!document.getElementById('toolWorkspaceSection').classList.contains('hidden')) {
+                    loadToolSettings(currTool);
+                }
+            }
+
+            // تحديث Workflow texts
+            if (typeof wfUpdateTexts === 'function') {
+                wfUpdateTexts();
+            }
+
+            // تحديث رابط الشعار
+            waitForLogoLink();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('preferredLanguage', currentLang);
+            applyTranslations();
+            if (!document.getElementById('toolWorkspaceSection').classList.contains('hidden')) {
+                loadToolSettings(currTool);
+            }
+        }
+
+        // مزامنة اللغة مع الهيدر الموحد
+        document.addEventListener('header:languageChanged', (e) => {
+            currentLang = e.detail.lang;
+            localStorage.setItem('preferredLanguage', currentLang);
+            applyTranslations();
+            if (!document.getElementById('toolWorkspaceSection').classList.contains('hidden')) {
+                loadToolSettings(currTool);
+            }
+            if (typeof wfUpdateTexts === 'function') {
+                wfUpdateTexts();
+            }
+            // تحديث رابط الشعار
+            waitForLogoLink();
+        });
+
+        // مزامنة الوضع الداكن مع الهيدر الموحد
+        document.addEventListener('header:darkModeChanged', (e) => {
+            if (e.detail.darkMode) {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.body.classList.remove('dark-mode');
+            }
+            localStorage.setItem('edupdf_dark_mode', e.detail.darkMode ? 'true' : 'false');
+        });
+
+        // ============================================================
+        // 1. إعدادات Firebase
+        // ============================================================
+        // تم نقلها إلى auth.js الموحد
+
+        // ============================================================
+        // 2. إدارة المصادقة - تم نقلها إلى الهيدر الموحد
+        // ============================================================
+
+        const showMsg = (t, m) => {
+            document.getElementById('modalTitle').innerText = t;
+            document.getElementById('modalBody').innerText = m;
+            document.getElementById('customModal').classList.remove('hidden');
+        };
+        const closeModal = () => document.getElementById('customModal').classList.add('hidden');
+
+        // ============================================================
+        // 3. دوال الأداة (Edu PDF Pro)
+        // ============================================================
+        let currTool = 'merge', upFiles = [], isProc = false, rotMap = new Map();
+        const dash = document.getElementById('dashboardSection'), work = document.getElementById('toolWorkspaceSection'), resDiv = document.getElementById('resultSection');
+        const dropZ = document.getElementById('dropZone'), fileInp = document.getElementById('fileInput'), intWork = document.getElementById('interactiveWorkspace');
+        const pagesCont = document.getElementById('pagesContainer'), setPanel = document.getElementById('toolSettingsPanel'), execBtn = document.getElementById('executeBtn');
+        const progCont = document.getElementById('progressBarContainer'), progBar = document.getElementById('progressBar'), progText = document.getElementById('progressText');
+
+        // ===== نظام التراجع والإعادة =====
+        let history = [];
+        let historyIndex = -1;
+        const MAX_HISTORY = 50;
+
+        function saveHistory() {
+            const state = {
+                upFiles: upFiles.map(f => ({
+                    id: f.id,
+                    name: f.name,
+                    type: f.type,
+                    pageCount: f.pageCount || 0,
+                    file: f.file
+                })),
+                order: Array.from(pagesCont.children).map(el => ({
+                    fileId: el.dataset.fileId,
+                    pageIdx: parseInt(el.dataset.pageIdx)
+                })),
+                rotMap: Array.from(rotMap.entries())
+            };
+            if (historyIndex < history.length - 1) {
+                history = history.slice(0, historyIndex + 1);
+            }
+            history.push(state);
+            if (history.length > MAX_HISTORY) history.shift();
+            historyIndex = history.length - 1;
+        }
+
+        function restoreHistory(index) {
+            if (index < 0 || index >= history.length) return;
+            const state = history[index];
+            upFiles = state.upFiles.map(f => ({
+                ...f,
+                file: f.file
+            }));
+            rotMap = new Map(state.rotMap);
+            pagesCont.innerHTML = '';
+            state.order.forEach(({ fileId, pageIdx }) => {
+                const item = upFiles.find(f => f.id === fileId);
+                if (item) {
+                    const thumb = item.pagesThumbs?.[pageIdx] || '';
+                    const label = `${item.name} - ${pageIdx+1}`;
+                    addThumb(fileId, pageIdx, thumb, label);
+                }
+            });
+            historyIndex = index;
+        }
+
+        window.undoAction = () => {
+            if (historyIndex > 0) {
+                restoreHistory(historyIndex - 1);
+                showMsg(t('modalSuccess'), (currentLang === 'ar' ? 'تم التراجع' : 'Undo done'));
+            } else {
+                showMsg(t('modalWarning'), (currentLang === 'ar' ? 'لا يوجد إجراء للتراجع عنه' : 'Nothing to undo'));
+            }
+        };
+
+        window.redoAction = () => {
+            if (historyIndex < history.length - 1) {
+                restoreHistory(historyIndex + 1);
+                showMsg(t('modalSuccess'), (currentLang === 'ar' ? 'تمت الإعادة' : 'Redo done'));
+            } else {
+                showMsg(t('modalWarning'), (currentLang === 'ar' ? 'لا يوجد إجراء للإعادة' : 'Nothing to redo'));
+            }
+        };
+
+        // ===== الإعدادات الأخيرة =====
+        function loadLastSettings() {
+            const saved = localStorage.getItem('edupdf_last_settings');
+            if (saved) {
+                try {
+                    const settings = JSON.parse(saved);
+                } catch (e) {}
+            }
+        }
+
+        function saveLastSettings() {
+            try {
+                localStorage.setItem('edupdf_last_settings', JSON.stringify({
+                    tool: currTool,
+                    lang: currentLang
+                }));
+            } catch (e) {}
+        }
+
+        // ===== الوضع الليلي =====
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('edupdf_dark_mode', isDark ? 'true' : 'false');
+        }
+
+        function loadDarkMode() {
+            const dark = localStorage.getItem('edupdf_dark_mode');
+            if (dark === 'true') {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        // ===== اختصارات لوحة المفاتيح =====
+        document.addEventListener('keydown', (e) => {
+            const ctrl = e.ctrlKey || e.metaKey;
+            const key = e.key.toLowerCase();
+
+            if (['input', 'textarea', 'select'].includes(e.target.tagName.toLowerCase())) return;
+
+            if (ctrl && key === 'o') {
+                e.preventDefault();
+                fileInp.click();
+            } else if (ctrl && key === 's') {
+                e.preventDefault();
+                showSaveModal();
+            } else if (ctrl && key === 'z') {
+                e.preventDefault();
+                undoAction();
+            } else if (ctrl && key === 'y') {
+                e.preventDefault();
+                redoAction();
+            } else if (key === 'delete' || key === 'backspace') {
+                const children = pagesCont.children;
+                if (children.length > 0) {
+                    const last = children[children.length - 1];
+                    last.remove();
+                    saveHistory();
+                    showMsg(t('modalSuccess'), (currentLang === 'ar' ? 'تم حذف الصفحة' : 'Page deleted'));
+                }
+            } else if (ctrl && key === 'd') {
+                e.preventDefault();
+                switchTool('merge');
+            } else if (ctrl && key === 'p') {
+                e.preventDefault();
+                switchTool('compress');
+            }
+        });
+
+        // ===== معاينة مباشرة =====
+        window.previewResult = async () => {
+            if (upFiles.length === 0 && currTool !== 'img2pdf') {
+                showMsg(t('modalWarning'), t('noFiles'));
+                return;
+            }
+            try {
+                let blob = null;
+                showMsg(t('modalInfo'), (currentLang === 'ar' ? 'جاري تحضير المعاينة...' : 'Preparing preview...'));
+                const oldClick = execBtn.onclick;
+                execBtn.onclick = async () => {
+                    try {
+                        let resultBlob = null;
+                        let isZip = false;
+                        if (currTool === 'merge') resultBlob = await mergeDo();
+                        else if (currTool === 'split') { let z = await splitDo(); if (z) { resultBlob = await z.generateAsync({ type: 'blob' }); isZip = true; } }
+                        else if (currTool === 'remove' || currTool === 'rearrange') resultBlob = await mergeDo();
+                        else if (currTool === 'rotate') resultBlob = await rotateDo();
+                        else if (currTool === 'pdf2img') { let z = await pdf2imgDo(); if (z) { resultBlob = await z.generateAsync({ type: 'blob' }); isZip = true; } }
+                        else if (currTool === 'img2pdf') resultBlob = await img2pdfDo();
+                        else if (currTool === 'watermark') resultBlob = await wmDo();
+                        else if (currTool === 'pagenum') resultBlob = await pnDo();
+                        else if (currTool === 'compress') resultBlob = await compressDo();
+
+                        if (resultBlob) {
+                            const url = URL.createObjectURL(resultBlob);
+                            const previewDiv = document.createElement('div');
+                            previewDiv.className = 'preview-overlay';
+                            previewDiv.innerHTML = `
+                                <div class="preview-box">
+                                    <button class="preview-close" onclick="this.closest('.preview-overlay').remove()">✕</button>
+                                    ${isZip ? '<p class="text-lg font-bold mb-2">📦 ملف مضغوط (ZIP)</p><p class="text-sm text-gray-600">يتضمن عدة ملفات، يمكنك تحميله من زر التحميل.</p>' : `<iframe src="${url}" style="width:80vw;height:70vh;border:none;border-radius:8px;"></iframe>`}
+                                    <div class="mt-4 flex justify-center gap-4">
+                                        <a href="${url}" download="${isZip ? 'preview.zip' : 'preview.pdf'}" class="bg-emerald-600 text-white px-6 py-2 rounded-xl">${t('downloadFile')}</a>
+                                        <button onclick="this.closest('.preview-overlay').remove()" class="bg-slate-300 dark:bg-slate-700 px-6 py-2 rounded-xl">${t('close')}</button>
+                                    </div>
+                                </div>
+                            `;
+                            document.body.appendChild(previewDiv);
+                            previewDiv.addEventListener('click', (e) => {
+                                if (e.target === previewDiv) {
+                                    previewDiv.remove();
+                                    URL.revokeObjectURL(url);
+                                }
+                            });
+                        } else {
+                            showMsg(t('modalError'), t('processingFailed'));
+                        }
+                    } catch (e) {
+                        showMsg(t('modalError'), e.message);
+                    }
+                };
+                await execBtn.onclick();
+                execBtn.onclick = oldClick;
+            } catch (e) {
+                showMsg(t('modalError'), e.message);
+            }
+        };
+
+        // ============================================================
+        // دوال الأداة الأساسية
+        // ============================================================
+        window.switchTool = (tool) => {
+            currTool = tool;
+            dash.classList.add('hidden');
+            work.classList.remove('hidden');
+            const toolName = t('toolNames.' + tool);
+            document.getElementById('currentToolTitle').innerText = (toolName !== 'toolNames.' + tool) ? toolName : tool;
+            clearWorkspace();
+            loadToolSettings(tool);
+            fileInp.accept = (tool === 'img2pdf') ? 'image/*' : 'application/pdf';
+            saveLastSettings();
+        };
+        window.backToDashboard = () => { work.classList.add('hidden'); dash.classList.remove('hidden'); resDiv.classList.add('hidden'); };
+        window.resetToCurrentTool = () => { resDiv.classList.add('hidden'); work.classList.remove('hidden'); clearWorkspace(); };
+
+        function clearWorkspace() {
+            upFiles = [];
+            pagesCont.innerHTML = '';
+            rotMap.clear();
+            intWork.classList.add('hidden');
+            dropZ.classList.remove('hidden');
+            progCont.classList.add('hidden');
+            progBar.style.width = '0%';
+            progText.innerText = '0%';
+            history = [];
+            historyIndex = -1;
+        }
+
+        function loadToolSettings(tool) {
+            let html = '';
+            const isAr = currentLang === 'ar';
+            if(tool === 'split') {
+                const pdfFile = upFiles.find(f => f.type === 'pdf') || (upFiles.length > 0 ? upFiles[0] : null);
+                const fileName = pdfFile ? pdfFile.name : (isAr ? 'ملف الـ PDF المرفوع' : 'Uploaded PDF');
+                const totalPages = pdfFile && pdfFile.pageCount ? pdfFile.pageCount : '';
+
+                html = `<div class="space-y-4 bg-slate-900/90 p-5 rounded-2xl border border-rose-500/20 shadow-xl">
+                    <!-- Clean File Info Badge -->
+                    <div class="flex items-center justify-between p-3 bg-slate-950/80 rounded-xl border border-white/10">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <i class="fa-solid fa-file-pdf text-xl text-rose-500"></i>
+                            <span class="text-xs font-bold text-white truncate max-w-[200px] sm:max-w-md">${fileName}</span>
+                        </div>
+                        ${totalPages ? `<span class="text-[11px] font-black px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30">${totalPages} ${isAr ? 'صفحة' : 'Pages'}</span>` : ''}
+                    </div>
+
+                    <!-- Direct From/To Range Selector (The Main Feature) -->
+                    <div class="p-4 bg-slate-950/90 rounded-2xl border border-rose-500/30 space-y-3">
+                        <p class="text-xs font-extrabold text-rose-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-scissors text-rose-400"></i>
+                            <span>${isAr ? 'حددي الصفحات المراد استخراجها في ملف مستقل:' : 'Specify page range to extract as a PDF file:'}</span>
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-3 pt-1">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1.5">${isAr ? '📄 من صفحة رقم:' : 'From Page:'}</label>
+                                <input type="number" id="splitFromPage" min="1" value="1" class="bg-slate-900 border border-slate-700 text-white rounded-xl p-2.5 text-base w-full font-black text-center focus:outline-none focus:border-rose-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1.5">${isAr ? '📄 إلى صفحة رقم:' : 'To Page:'}</label>
+                                <input type="number" id="splitToPage" min="1" value="${totalPages || 1}" class="bg-slate-900 border border-slate-700 text-white rounded-xl p-2.5 text-base w-full font-black text-center focus:outline-none focus:border-rose-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden default mode flag -->
+                    <input type="hidden" id="splitMode" value="extract_range">
+                </div>`;
+            } else if(tool === 'pdf2img') {
+                html = `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div><label>${t('fileLabel')}</label><select id="pdf2imgFileSelect" class="border rounded p-1 w-full"></select></div>
+                    <div><label>DPI</label><select id="imgDpi" class="border rounded p-1 w-full">
+                        <option value="72">72 (Web)</option><option value="150">150</option><option value="200">200</option>
+                        <option value="300" selected>300 (Print)</option><option value="600">600 (High)</option>
+                    </select></div>
+                    <div><label>${currentLang==='ar'?'وضع القص':'Crop Mode'}</label>
+                    <select id="imgCropMode" class="border rounded p-1 w-full">
+                        <option value="auto" selected>${currentLang==='ar'?'قص الفراغات تلقائيًا (موصى به)':'Auto-crop white space (Recommended)'}</option>
+                        <option value="original">${currentLang==='ar'?'الحفاظ على حجم صفحة PDF':'Keep original PDF page size'}</option>
+                    </select></div>
+                    <div><label>${t('formatLabel')}</label><select id="imgFormat" class="border rounded p-1 w-full"><option value="png">PNG</option><option value="jpeg">JPEG</option></select></div>
+                </div>`;
+            } else if(tool === 'compress') {
+                html = `<div><label>${t('fileLabel')}</label><select id="compressFileSelect" class="border rounded p-1 w-full"></select></div>
+                <div><label>${t('compressLevel')}</label><select id="compressionLevel" class="border rounded p-1 w-full"><option value="low">${t('low')}</option><option value="medium" selected>${t('medium')}</option><option value="high">${t('high')}</option></select></div>`;
+            } else if(tool === 'watermark') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label>${t('watermarkType')}</label>
+                            <select id="wmType" class="border rounded p-1 w-full" onchange="toggleWatermarkType()">
+                                <option value="text">${t('watermarkTextLabel')}</option>
+                                <option value="image">${t('watermarkImageLabel')}</option>
+                            </select>
+                        </div>
+                        <div id="wmTextGroup">
+                            <label>${t('watermarkTextLabel')}</label>
+                            <input type="text" id="wmText" value="" placeholder="${currentLang==='ar'?'أدخل نص العلامة المائية...':'Enter watermark text...'}" class="border rounded p-1 w-full" oninput="updateWatermarkPreview()">
+                            <div id="wmPreview" style="margin-top:8px;padding:10px;background:#f8fafc;border:1.5px dashed #cbd5e1;border-radius:8px;text-align:center;min-height:40px;display:flex;align-items:center;justify-content:center;overflow:hidden;"><span id="wmPreviewText" style="font-size:0.85rem;color:#94a3b8;">${currentLang==='ar'?'معاينة العلامة المائية ستظهر هنا':'Watermark preview will appear here'}</span></div>
+                        </div>
+                        <div id="wmImageGroup" class="hidden">
+                            <label>${t('imageFile')}</label>
+                            <input type="file" id="wmImageInput" accept="image/*" class="border rounded p-1 w-full">
+                        </div>
+                        <div>
+                            <label>${t('fontFamily')}</label>
+                            <select id="wmFont" class="border rounded p-1 w-full">
+                                <option value="Helvetica">Helvetica</option>
+                                <option value="Helvetica-Bold">Helvetica-Bold</option>
+                                <option value="TimesRoman">TimesRoman</option>
+                                <option value="Courier">Courier</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>${t('colorLabel')}</label>
+                            <input type="color" id="wmColor" value="#ff0000" class="border rounded p-1 w-full">
+                        </div>
+                        <div>
+                            <label>${t('sizeLabel')}</label>
+                            <input type="number" id="wmSize" value="48" class="border rounded p-1 w-full">
+                        </div>
+                        <div>
+                            <label>${t('opacity')}</label>
+                            <select id="wmOpacity" class="border rounded p-1 w-full">
+                                <option value="0.1">${t('light')}</option>
+                                <option value="0.25" selected>${t('normal')}</option>
+                                <option value="0.5">${t('bold')}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>${t('angle')}</label>
+                            <input type="number" id="wmAngle" value="45" step="1" class="border rounded p-1 w-full">
+                        </div>
+                        <div>
+                            <label>${t('position')}</label>
+                            <select id="wmPosition" class="border rounded p-1 w-full">
+                                <option value="center">${t('center')}</option>
+                                <option value="top-left">${t('topLeft')}</option>
+                                <option value="top-right">${t('topRight')}</option>
+                                <option value="bottom-left">${t('bottomLeft')}</option>
+                                <option value="bottom-right">${t('bottomRightPos')}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>${t('pagesScope')}</label>
+                            <select id="wmPagesScope" class="border rounded p-1 w-full" onchange="toggleWmRange()">
+                                <option value="all">${t('allPages')}</option>
+                                <option value="odd">${t('oddPages')}</option>
+                                <option value="even">${t('evenPages')}</option>
+                                <option value="range">${t('rangePages')}</option>
+                            </select>
+                        </div>
+                        <div id="wmRangeDiv" class="hidden col-span-2">
+                            <label>${t('rangeHintWatermark')}</label>
+                            <input type="text" id="wmRange" placeholder="1-5" class="border rounded p-1 w-full">
+                        </div>
+                    </div>
+                `;
+            } else if(tool === 'pagenum') {
+                html = `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <label>${t('positionLabel')}</label><select id="pnPos" class="border rounded p-1"><option value="bottom-center">${t('bottomCenter')}</option><option value="bottom-right">${t('bottomRight')}</option></select>
+                    <label>${t('startNum')}</label><input type="number" id="pnStart" value="1" class="border rounded p-1">
+                    <label>${t('formatNum')}</label><select id="pnFormat" class="border rounded p-1"><option value="num">1,2,3</option><option value="dash">- 1 -</option></select>
+                </div>`;
+            } else if(tool === 'rotate') {
+                html = `<div class="flex flex-wrap gap-3 justify-between">
+                    <button id="rotateAll90Btn" class="bg-amber-500 text-white px-4 py-2 rounded-lg text-sm"><i class="fa-solid fa-rotate-right"></i> ${t('rotateAll')}</button>
+                    <button id="resetAllRotateBtn" class="bg-slate-500 text-white px-4 py-2 rounded-lg text-sm"><i class="fa-solid fa-undo-alt"></i> ${t('resetRotate')}</button>
+                    <span class="text-xs">${t('rotateHint')}</span>
+                </div>`;
+            } else {
+                html = `<p class="text-sm">${isAr ? 'اختر ملفاتك ورتب الصفحات ثم اضغط "ابدأ المعالجة".' : 'Select your files, arrange pages, then click "Start Processing".'}</p>`;
+            }
+            setPanel.innerHTML = html;
+            if(tool === 'rotate') setTimeout(() => { document.getElementById('rotateAll90Btn')?.addEventListener('click',()=>rotateAll(90)); document.getElementById('resetAllRotateBtn')?.addEventListener('click',()=>rotateAll(0,true)); }, 10);
+            if(tool === 'watermark') {
+                window.toggleWatermarkType = function() {
+                    const type = document.getElementById('wmType').value;
+                    document.getElementById('wmTextGroup').style.display = type === 'text' ? 'block' : 'none';
+                    document.getElementById('wmImageGroup').style.display = type === 'image' ? 'block' : 'none';
+                };
+                window.toggleWmRange = function() {
+                    const scope = document.getElementById('wmPagesScope').value;
+                    document.getElementById('wmRangeDiv').style.display = scope === 'range' ? 'block' : 'none';
+                };
+                window.updateWatermarkPreview = function() {
+                    const text = document.getElementById('wmText')?.value || '';
+                    const previewText = document.getElementById('wmPreviewText');
+                    const previewBox = document.getElementById('wmPreview');
+                    if (!previewText || !previewBox) return;
+                    if (text.trim() === '') {
+                        previewText.textContent = currentLang==='ar'?'معاينة العلامة المائية ستظهر هنا':'Watermark preview will appear here';
+                        previewText.style.cssText = 'font-size:0.85rem;color:#94a3b8;';
+                        previewBox.style.background = '#f8fafc';
+                    } else {
+                        const color = document.getElementById('wmColor')?.value || '#ff0000';
+                        const size = document.getElementById('wmSize')?.value || '48';
+                        const opacity = document.getElementById('wmOpacity')?.value || '0.25';
+                        const angle = document.getElementById('wmAngle')?.value || '45';
+                        previewText.textContent = text;
+                        previewText.style.cssText = `font-size:${Math.min(parseInt(size)*0.4,24)}px;color:${color};opacity:${opacity};transform:rotate(${angle}deg);font-weight:bold;font-family:'Cairo',sans-serif;white-space:nowrap;`;
+                        previewBox.style.background = 'white';
+                    }
+                };
+                window.validateWatermark = function() {
+                    const type = document.getElementById('wmType')?.value || 'text';
+                    if (type === 'text') {
+                        const text = document.getElementById('wmText')?.value || '';
+                        if (text.trim() === '') {
+                            showMsg(t('modalWarning'), currentLang==='ar'?'يرجى إدخال نص العلامة المائية':'Please enter watermark text');
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+                setTimeout(() => {
+                    toggleWatermarkType();
+                    toggleWmRange();
+                    updateWatermarkPreview();
+                }, 10);
+            }
+            const fillSel = (id) => { let sel=document.getElementById(id); if(sel){ let pdfs=upFiles.filter(f=>f.type==='pdf'); sel.innerHTML=pdfs.map(f=>`<option value="${f.id}">${f.name}</option>`).join(''); if(!pdfs.length) sel.innerHTML='<option disabled>'+(isAr?'لا توجد ملفات PDF':'No PDF files')+'</option>'; } };
+            fillSel('splitFileSelect'); fillSel('pdf2imgFileSelect'); fillSel('compressFileSelect');
+        }
+
+        function rotateAll(deg, reset=false){ document.querySelectorAll('#pagesContainer > div').forEach(el=>{ let k=`${el.dataset.fileId}_${el.dataset.pageIdx}`, cur=rotMap.get(k)||0, n=reset?0:(cur+deg)%360; if(n<0)n+=360; rotMap.set(k,n); let img=el.querySelector('.page-thumb-img'); if(img) img.style.transform=`rotate(${n}deg)`; let badge=el.querySelector('.rotate-angle-badge'); if(badge){ if(n!==0){ badge.innerText=`${n}°`; badge.classList.remove('hidden'); } else { badge.innerText=''; badge.classList.add('hidden'); } } }); }
+
+        window.toggleSplitRange = () => { 
+            const mode = document.getElementById('splitMode')?.value;
+            const fromToDiv = document.getElementById('splitRangeFromToDiv');
+            const customDiv = document.getElementById('splitRangeDiv');
+            if (fromToDiv) fromToDiv.classList.toggle('hidden', mode !== 'extract_range');
+            if (customDiv) customDiv.classList.toggle('hidden', mode !== 'custom_pages');
+        };
+
+        dropZ.addEventListener('click',()=>fileInp.click());
+        dropZ.addEventListener('dragover',(e)=>{e.preventDefault(); dropZ.classList.add('border-pdfRed-500');});
+        dropZ.addEventListener('dragleave',()=>dropZ.classList.remove('border-pdfRed-500'));
+        dropZ.addEventListener('drop', async(e)=>{e.preventDefault(); dropZ.classList.remove('border-pdfRed-500'); await processFiles(Array.from(e.dataTransfer.files));});
+        fileInp.addEventListener('change', async(e)=>{await processFiles(Array.from(e.target.files)); fileInp.value='';});
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function base64ToFile(base64, filename, mimeType) {
+            const byteCharacters = atob(base64);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: mimeType });
+            return new File([blob], filename, { type: mimeType });
+        }
+
+        function lazyLoadThumb(imgEl) {
+            if (!imgEl) return;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const src = imgEl.dataset.src;
+                        if (src) {
+                            imgEl.src = src;
+                            imgEl.classList.add('loaded');
+                        }
+                        observer.unobserve(imgEl);
+                    }
+                });
+            }, { rootMargin: '100px' });
+            observer.observe(imgEl);
+        }
+
+        async function processFiles(files){
+            if(!files.length) return;
+            dropZ.classList.add('hidden');
+            intWork.classList.remove('hidden');
+            const isAr = currentLang === 'ar';
+            for(let f of files){
+                let isPdf=f.type==='application/pdf', isImg=f.type.startsWith('image/');
+                if(currTool==='img2pdf' && !isImg){ showMsg(t('modalError'), `"${f.name}" ${t('fileNotImage')}`); continue; }
+                if(currTool!=='img2pdf' && !isPdf){ showMsg(t('modalError'), `"${f.name}" ${t('fileNotPdf')}`); continue; }
+                let id='id_'+Date.now()+'_'+Math.random();
+                let item={id,file:f,name:f.name,type:isPdf?'pdf':'image',pagesThumbs:[],pdfDoc:null};
+                upFiles.push(item);
+                if(isPdf){
+                    let ab=await f.arrayBuffer();
+                    let doc=await pdfjsLib.getDocument({data:ab}).promise;
+                    item.pdfDoc=doc;
+                    item.pageCount=doc.numPages;
+                    for(let p=1;p<=doc.numPages;p++){
+                        let page=await doc.getPage(p);
+                        let view=page.getViewport({scale:0.75});
+                        let can=document.createElement('canvas');
+                        can.width=view.width; can.height=view.height;
+                        await page.render({canvasContext:can.getContext('2d'),viewport:view}).promise;
+                        let thumbUrl=can.toDataURL();
+                        item.pagesThumbs.push(thumbUrl);
+                        addThumb(id,p-1,thumbUrl,`${f.name} - ص${p}`);
+                    }
+                } else if(isImg){
+                    let url=URL.createObjectURL(f);
+                    item.pagesThumbs.push(url);
+                    addThumb(id,0,url,f.name);
+                }
+            }
+            loadToolSettings(currTool);
+            saveHistory();
+        }
+
+        function addThumb(fid,pidx,src,label){
+            let div=document.createElement('div');
+            div.className="relative border rounded-lg p-2 bg-white dark:bg-slate-700 shadow-md";
+            div.dataset.fileId=fid; div.dataset.pageIdx=pidx;
+            let key=`${fid}_${pidx}`, curRot=rotMap.get(key)||0;
+            if(currTool === 'rearrange') {
+                div.draggable = true;
+                div.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', JSON.stringify({ fileId: fid, pageIdx: pidx }));
+                    div.style.opacity = '0.5';
+                });
+                div.addEventListener('dragend', (e) => {
+                    div.style.opacity = '1';
+                });
+                div.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    div.style.borderColor = '#3b82f6';
+                });
+                div.addEventListener('dragleave', (e) => {
+                    div.style.borderColor = '';
+                });
+                div.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    div.style.borderColor = '';
+                    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                    const sourceId = data.fileId;
+                    const sourceIdx = data.pageIdx;
+                    const sourceEl = document.querySelector(`[data-file-id="${sourceId}"][data-page-idx="${sourceIdx}"]`);
+                    if (sourceEl && sourceEl !== div) {
+                        const parent = pagesCont;
+                        const children = Array.from(parent.children);
+                        const srcIndex = children.indexOf(sourceEl);
+                        const tgtIndex = children.indexOf(div);
+                        if (srcIndex < tgtIndex) {
+                            parent.insertBefore(sourceEl, div.nextSibling);
+                        } else {
+                            parent.insertBefore(sourceEl, div);
+                        }
+                        saveHistory();
+                    }
+                });
+            }
+            div.innerHTML=`
+                <div class="relative flex justify-center mb-2 thumb-container">
+                    <img data-src="${src}" class="page-thumb-img preview-img h-44 sm:h-48 md:h-52 object-contain rounded-md shadow rotate-preview lazy-img" style="transform: rotate(${curRot}deg);" onclick="openFullPreview(this.src)">
+                    ${curRot!==0?`<span class="rotate-angle-badge absolute top-1 right-1 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded-full">${curRot}°</span>`:'<span class="rotate-angle-badge hidden"></span>'}
+                </div>
+                <span class="block text-center text-xs font-medium truncate px-1">${label}</span>
+                <div class="flex justify-center gap-1 mt-2 flex-wrap">
+            `;
+            if(currTool==='rotate'){
+                div.innerHTML+=`<button class="rotate-btn bg-indigo-500 text-white text-xs px-2 py-1 rounded-full" data-delta="-90"><i class="fa-solid fa-rotate-left"></i> 90</button>
+                                <button class="rotate-btn bg-amber-500 text-white text-xs px-2 py-1 rounded-full" data-delta="90"><i class="fa-solid fa-rotate-right"></i> 90</button>
+                                <button class="rotate-btn bg-purple-500 text-white text-xs px-2 py-1 rounded-full" data-delta="180"><i class="fa-solid fa-undo"></i> 180</button>
+                                <button class="rotate-reset bg-slate-500 text-white text-xs px-2 py-1 rounded-full"><i class="fa-solid fa-arrows-rotate"></i> إعادة</button>`;
+            } else {
+                div.innerHTML+=`<button class="move-left bg-slate-500 text-white px-2 py-1 rounded text-xs"><i class="fa-solid fa-arrow-right"></i> نقل</button>
+                                <button class="move-right bg-slate-500 text-white px-2 py-1 rounded text-xs"><i class="fa-solid fa-arrow-left"></i> نقل</button>
+                                <button class="delete-page bg-rose-500 text-white px-2 py-1 rounded text-xs"><i class="fa-regular fa-trash-can"></i> حذف</button>`;
+            }
+            div.innerHTML+=`</div>`;
+            if(currTool==='rotate'){
+                let btns=div.querySelectorAll('.rotate-btn'), resetBtn=div.querySelector('.rotate-reset'), imgE=div.querySelector('.page-thumb-img'), badgeSpan=div.querySelector('.rotate-angle-badge');
+                let upd=(a)=>{ rotMap.set(key,a); imgE.style.transform=`rotate(${a}deg)`; if(a!==0){ badgeSpan.innerText=`${a}°`; badgeSpan.classList.remove('hidden'); } else { badgeSpan.innerText=''; badgeSpan.classList.add('hidden'); } saveHistory(); };
+                btns.forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); let d=parseInt(b.dataset.delta), old=rotMap.get(key)||0, n=(old+d)%360; if(n<0)n+=360; upd(n); });
+                if(resetBtn) resetBtn.onclick=(e)=>{ e.stopPropagation(); upd(0); };
+            } else {
+                div.querySelector('.move-left')?.addEventListener('click',()=>{ let p=div.previousElementSibling; if(p) pagesCont.insertBefore(div,p); saveHistory(); });
+                div.querySelector('.move-right')?.addEventListener('click',()=>{ let n=div.nextElementSibling; if(n) pagesCont.insertBefore(n,div); saveHistory(); });
+                div.querySelector('.delete-page')?.addEventListener('click',()=>{ div.remove(); saveHistory(); });
+            }
+            pagesCont.appendChild(div);
+            const img = div.querySelector('.page-thumb-img');
+            if (img) lazyLoadThumb(img);
+            saveHistory();
+        }
+
+        window.openFullPreview = (src) => { let modal = document.createElement('div'); modal.className='fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4'; modal.onclick=()=>modal.remove(); let img=document.createElement('img'); img.src=src; img.className='max-w-full max-h-full object-contain'; modal.appendChild(img); document.body.appendChild(modal); };
+
+        // ===== دوال المعالجة =====
+        execBtn.onclick = async()=>{
+            if(isProc) return;
+            if(upFiles.length===0 && currTool!=='img2pdf'){ showMsg(t('modalWarning'), t('noFiles')); return; }
+            isProc=true; progCont.classList.remove('hidden'); progBar.style.width='0%'; progText.innerText= currentLang==='ar'?'جاري المعالجة...':'Processing...';
+            try{
+                let blob=null, isZip=false;
+                if(currTool==='merge') blob=await mergeDo();
+                else if(currTool==='split'){ 
+                    let res=await splitDo(); 
+                    if(res instanceof JSZip){ 
+                        blob=await res.generateAsync({type:'blob'}); 
+                        isZip=true; 
+                    } else {
+                        blob=res; // Clean PDF Blob
+                        isZip=false;
+                    }
+                }
+                else if(currTool==='remove' || currTool==='rearrange') blob=await mergeDo();
+                else if(currTool==='rotate') blob=await rotateDo();
+                else if(currTool==='pdf2img'){ let z=await pdf2imgDo(); if(z){ blob=await z.generateAsync({type:'blob'}); isZip=true; } }
+                else if(currTool==='img2pdf') blob=await img2pdfDo();
+                else if(currTool==='watermark') blob=await wmDo();
+                else if(currTool==='pagenum') blob=await pnDo();
+                else if(currTool==='compress') blob=await compressDo();
+                if(blob){
+                    let url=URL.createObjectURL(blob), lnk=document.getElementById('downloadLink');
+                    lnk.href=url; lnk.download=isZip?'Edu_Output.zip':'Edu_Extracted_Range.pdf';
+                    work.classList.add('hidden'); resDiv.classList.remove('hidden');
+                    lnk.onclick=()=>setTimeout(()=>URL.revokeObjectURL(url),100);
+                } else throw new Error(t('processingFailed'));
+            } catch(e){ showMsg(t('modalError'),e.message); } finally{ isProc=false; progCont.classList.add('hidden'); }
+        };
+
+        async function mergeDo(){ let pdf=await PDFLib.PDFDocument.create(), thumbs=Array.from(pagesCont.children); for(let el of thumbs){ let fid=el.dataset.fileId, idx=parseInt(el.dataset.pageIdx), item=upFiles.find(f=>f.id===fid); if(item && item.type==='pdf'){ let buf=await item.file.arrayBuffer(), src=await PDFLib.PDFDocument.load(buf); let [cp]=await pdf.copyPages(src,[idx]); pdf.addPage(cp); } } return new Blob([await pdf.save()],{type:'application/pdf'}); }
+        
+        async function splitDo(){ 
+            let item = upFiles.find(f => f.type === 'pdf') || (upFiles.length > 0 ? upFiles[0] : null);
+            if(!item) throw new Error(currentLang==='ar' ? 'يرجى رفع ملف PDF أولاً' : 'Please upload a PDF file first'); 
+            let mode = document.getElementById('splitMode')?.value || 'extract_range';
+            let buf = await item.file.arrayBuffer(), src = await PDFLib.PDFDocument.load(buf); 
+            let total = src.getPages().length; 
+            
+            // 1. Direct Range Extraction (From Page X to Page Y) -> Single combined PDF file!
+            if(mode === 'extract_range') {
+                let from = parseInt(document.getElementById('splitFromPage')?.value) || 1;
+                let to = parseInt(document.getElementById('splitToPage')?.value) || total;
+                if(from < 1) from = 1;
+                if(to > total) to = total;
+                if(from > to) {
+                    throw new Error(currentLang==='ar' ? `خطأ: رقم البداية (${from}) أكبر من رقم النهاية (${to})!` : `Error: Start page (${from}) is greater than end page (${to})!`);
+                }
+
+                let newPdf = await PDFLib.PDFDocument.create();
+                let pageIndices = [];
+                for(let i = from - 1; i <= to - 1; i++) {
+                    pageIndices.push(i);
+                }
+
+                let copiedPages = await newPdf.copyPages(src, pageIndices);
+                copiedPages.forEach(p => newPdf.addPage(p));
+
+                progBar.style.width = '100%';
+                progText.innerText = currentLang === 'ar' ? `تم استخراج الصفحات من ${from} إلى ${to}` : `Extracted pages from ${from} to ${to}`;
+
+                return new Blob([await newPdf.save()], { type: 'application/pdf' });
+            } 
+            
+            // 2. Custom Pages / Ranges (e.g. 1, 3, 5-8)
+            else if(mode === 'custom_pages') {
+                let rangeStr = document.getElementById('splitRange')?.value || '';
+                if(!rangeStr.trim()) throw new Error(currentLang==='ar'?'يرجى كتابة أرقام الصفحات المطلوبة':'Please specify target page numbers');
+                
+                let pagesIdx = [];
+                let parts = rangeStr.split(/[,،]/);
+                for(let part of parts) {
+                    part = part.trim();
+                    if(part.includes('-')) {
+                        let [s, e] = part.split('-').map(Number);
+                        if(!isNaN(s) && !isNaN(e) && s >= 1 && e <= total && s <= e) {
+                            for(let i = s - 1; i <= e - 1; i++) pagesIdx.push(i);
+                        }
+                    } else {
+                        let num = parseInt(part);
+                        if(!isNaN(num) && num >= 1 && num <= total) {
+                            pagesIdx.push(num - 1);
+                        }
+                    }
+                }
+
+                if(!pagesIdx.length) throw new Error(currentLang==='ar'?'نطاق الصفحات غير صالح':'Invalid page selection');
+                
+                let newPdf = await PDFLib.PDFDocument.create();
+                let copiedPages = await newPdf.copyPages(src, pagesIdx);
+                copiedPages.forEach(p => newPdf.addPage(p));
+                return new Blob([await newPdf.save()], { type: 'application/pdf' });
+            }
+            
+            // 3. Split all pages into separate files (ZIP)
+            else {
+                let pagesIdx = Array.from({length:total},(_,i)=>i);
+                let zip = new JSZip(); 
+                for(let i=0; i<pagesIdx.length; i++){ 
+                    let nd = await PDFLib.PDFDocument.create(); 
+                    let [cp] = await nd.copyPages(src, [pagesIdx[i]]); 
+                    nd.addPage(cp); 
+                    zip.file(`page_${pagesIdx[i]+1}.pdf`, await nd.save()); 
+                    progBar.style.width = `${((i+1)/pagesIdx.length)*100}%`; 
+                    progText.innerText = (currentLang==='ar'?`تقسيم الصفحة ${i+1}/${pagesIdx.length}`:`Splitting page ${i+1}/${pagesIdx.length}`); 
+                } 
+                return zip; 
+            }
+        }
+        async function rotateDo(){ let pdf=await PDFLib.PDFDocument.create(), thumbs=Array.from(pagesCont.children); for(let el of thumbs){ let fid=el.dataset.fileId, idx=parseInt(el.dataset.pageIdx), key=`${fid}_${idx}`, ang=rotMap.get(key)||0; let item=upFiles.find(f=>f.id===fid); if(!item || item.type!=='pdf') continue; let buf=await item.file.arrayBuffer(), src=await PDFLib.PDFDocument.load(buf); let [cp]=await pdf.copyPages(src,[idx]); if(ang!==0) cp.setRotation(PDFLib.degrees(ang)); pdf.addPage(cp); progBar.style.width=`${((thumbs.indexOf(el)+1)/thumbs.length)*100}%`; progText.innerText=(currentLang==='ar'?`تدوير الصفحة ${thumbs.indexOf(el)+1}/${thumbs.length}`:`Rotating page ${thumbs.indexOf(el)+1}/${thumbs.length}`); } return new Blob([await pdf.save()],{type:'application/pdf'}); }
+function autoCropCanvas(canvas, threshold = 250) {
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const imageData = ctx.getImageData(0, 0, w, h);
+    const data = imageData.data;
+    let minX = w, minY = h, maxX = 0, maxY = 0, found = false;
+    for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+            const idx = (y * w + x) * 4;
+            const r = data[idx], g = data[idx+1], b = data[idx+2], a = data[idx+3];
+            if (a > 10 && (r < threshold || g < threshold || b < threshold)) {
+                if (x < minX) minX = x; if (x > maxX) maxX = x;
+                if (y < minY) minY = y; if (y > maxY) maxY = y;
+                found = true;
+            }
+        }
+    }
+    if (!found) return canvas;
+    const pad = 2;
+    minX = Math.max(0, minX - pad); minY = Math.max(0, minY - pad);
+    maxX = Math.min(w - 1, maxX + pad); maxY = Math.min(h - 1, maxY + pad);
+    const nw = maxX - minX + 1, nh = maxY - minY + 1;
+    const nc = document.createElement('canvas');
+    nc.width = nw; nc.height = nh;
+    nc.getContext('2d').drawImage(canvas, minX, minY, nw, nh, 0, 0, nw, nh);
+    return nc;
+}
+
+        async function pdf2imgDo(){
+    let sel=document.getElementById('pdf2imgFileSelect');
+    if(!sel?.value) throw new Error(t('fileLabel')+' '+ (currentLang==='ar'?'غير محدد':'not selected'));
+    let item=upFiles.find(f=>f.id===sel.value);
+    if(!item) throw new Error(t('sessionNotFound'));
+    const dpi = parseInt(document.getElementById('imgDpi')?.value) || 300;
+    const scale = dpi / 72;
+    const fmt = document.getElementById('imgFormat').value;
+    const cropMode = document.getElementById('imgCropMode')?.value || 'auto';
+    const ext = fmt==='png'?'png':'jpg';
+    let doc=await pdfjsLib.getDocument({data:await item.file.arrayBuffer()}).promise, zip=new JSZip();
+    for(let p=1;p<=doc.numPages;p++){
+        let page=await doc.getPage(p), view=page.getViewport({scale}), can=document.createElement('canvas');
+        can.width=view.width; can.height=view.height;
+        await page.render({canvasContext:can.getContext('2d'),viewport:view}).promise;
+        if(cropMode==='auto') can=autoCropCanvas(can);
+        let base64=can.toDataURL(`image/${fmt}`).split(',')[1];
+        zip.file(`page_${p}.${ext}`,base64,{base64:true});
+        progBar.style.width=`${(p/doc.numPages)*100}%`;
+        progText.innerText=(currentLang==='ar'?`تحويل الصفحة ${p}/${doc.numPages}`:`Converting page ${p}/${doc.numPages}`);
+    }
+    return zip;
+}
+        async function img2pdfDo(){ let pdf=await PDFLib.PDFDocument.create(), thumbs=Array.from(pagesCont.children); for(let el of thumbs){ let fid=el.dataset.fileId, item=upFiles.find(f=>f.id===fid); if(item && item.type==='image'){ let bytes=await item.file.arrayBuffer(); let img=item.file.type.includes('png')?await pdf.embedPng(bytes):await pdf.embedJpg(bytes); let page=pdf.addPage([img.width,img.height]); page.drawImage(img,{x:0,y:0,width:img.width,height:img.height}); } } return new Blob([await pdf.save()],{type:'application/pdf'}); }
+
+        // ===== دالة wmDo المعدلة =====
+        async function wmDo(){
+            if (!validateWatermark()) {
+                throw new Error(currentLang==='ar'?'يرجى إدخال نص العلامة المائية':'Please enter watermark text');
+            }
+            let pdfFile = upFiles.find(f => f.type === 'pdf');
+            if(!pdfFile) throw new Error((currentLang==='ar'?'لا يوجد ملف PDF':'No PDF file'));
+            let buf = await pdfFile.file.arrayBuffer();
+            let pdf = await PDFLib.PDFDocument.load(buf);
+            const type = document.getElementById('wmType')?.value || 'text';
+            const fontName = document.getElementById('wmFont')?.value || 'Helvetica';
+            const color = document.getElementById('wmColor')?.value || '#ff0000';
+            const size = parseInt(document.getElementById('wmSize')?.value) || 48;
+            const opacity = parseFloat(document.getElementById('wmOpacity')?.value) || 0.25;
+            const angle = parseFloat(document.getElementById('wmAngle')?.value) || 45;
+            const position = document.getElementById('wmPosition')?.value || 'center';
+            const scope = document.getElementById('wmPagesScope')?.value || 'all';
+            const rangeStr = document.getElementById('wmRange')?.value || '';
+            let r = parseInt(color.slice(1,3),16)/255;
+            let g = parseInt(color.slice(3,5),16)/255;
+            let b = parseInt(color.slice(5,7),16)/255;
+
+            async function renderTextToImage(text, fontSize, fontFamily, colorHex, opacityVal, angleDeg) {
+                return new Promise((resolve) => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const scaleFactor = 2;
+                    ctx.font = `bold ${fontSize * scaleFactor}px "${fontFamily}", "Noto Naskh Arabic", "Amiri", "Cairo", Arial, sans-serif`;
+                    const metrics = ctx.measureText(text);
+                    const textWidth = metrics.width;
+                    const textHeight = fontSize * 1.4 * scaleFactor;
+                    const padding = 40 * scaleFactor;
+                    canvas.width = textWidth + padding * 2;
+                    canvas.height = textHeight + padding * 2;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.translate(canvas.width/2, canvas.height/2);
+                    ctx.rotate(angleDeg * Math.PI / 180);
+                    ctx.translate(-canvas.width/2, -canvas.height/2);
+                    ctx.font = `bold ${fontSize * scaleFactor}px "${fontFamily}", "Noto Naskh Arabic", "Amiri", "Cairo", Arial, sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.globalAlpha = opacityVal;
+                    ctx.fillStyle = colorHex;
+                    ctx.fillText(text, canvas.width/2, canvas.height/2);
+                    ctx.setTransform(1,0,0,1,0,0);
+                    const finalCanvas = document.createElement('canvas');
+                    finalCanvas.width = canvas.width / scaleFactor;
+                    finalCanvas.height = canvas.height / scaleFactor;
+                    finalCanvas.getContext('2d').drawImage(canvas, 0, 0, finalCanvas.width, finalCanvas.height);
+                    resolve(finalCanvas.toDataURL('image/png'));
+                });
+            }
+            function isNonLatin(text) {
+                for (let i = 0; i < text.length; i++) {
+                    if (text.charCodeAt(i) > 127) return true;
+                }
+                return false;
+            }
+            const text = type === 'text' ? (document.getElementById('wmText')?.value || '') : '';
+            if (type === 'text' && text.trim() === '') {
+                throw new Error(currentLang==='ar'?'يرجى إدخال نص العلامة المائية':'Please enter watermark text');
+            }
+            let useImageFallback = false;
+            let imageDataURL = null;
+            if (type === 'text') {
+                useImageFallback = isNonLatin(text);
+                if (useImageFallback) {
+                    try {
+                        imageDataURL = await renderTextToImage(text, size, 'Cairo', color, opacity, angle);
+                    } catch (e) {
+                        throw new Error(currentLang==='ar'?'فشل إنشاء العلامة المائية للنص العربي':'Failed to create Arabic watermark');
+                    }
+                }
+            }
+            let font;
+            if (!useImageFallback && type === 'text') {
+                const fontMap = {
+                    'Helvetica': PDFLib.StandardFonts.Helvetica,
+                    'Helvetica-Bold': PDFLib.StandardFonts.HelveticaBold,
+                    'TimesRoman': PDFLib.StandardFonts.TimesRoman,
+                    'Courier': PDFLib.StandardFonts.Courier
+                };
+                font = await pdf.embedFont(fontMap[fontName] || PDFLib.StandardFonts.Helvetica);
+            }
+            let imageObj = null;
+            if (type === 'image') {
+                const fileInput = document.getElementById('wmImageInput');
+                if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                    const imgFile = fileInput.files[0];
+                    const imgBytes = await imgFile.arrayBuffer();
+                    if (imgFile.type.includes('png')) imageObj = await pdf.embedPng(imgBytes);
+                    else imageObj = await pdf.embedJpg(imgBytes);
+                } else {
+                    throw new Error((currentLang==='ar'?'لم يتم اختيار صورة':'No image selected'));
+                }
+            }
+            const totalPages = pdf.getPageCount();
+            let pagesToApply = [];
+            if (scope === 'all') pagesToApply = Array.from({length: totalPages}, (_, i) => i);
+            else if (scope === 'odd') pagesToApply = Array.from({length: totalPages}, (_, i) => i).filter(i => (i+1) % 2 === 1);
+            else if (scope === 'even') pagesToApply = Array.from({length: totalPages}, (_, i) => i).filter(i => (i+1) % 2 === 0);
+            else if (scope === 'range') {
+                if (rangeStr) {
+                    let [s, e] = rangeStr.split('-').map(Number);
+                    if (!isNaN(s) && !isNaN(e)) {
+                        for (let i = s-1; i <= e-1 && i < totalPages; i++) if (i >= 0) pagesToApply.push(i);
+                    }
+                }
+                if (pagesToApply.length === 0) pagesToApply = Array.from({length: totalPages}, (_, i) => i);
+            } else pagesToApply = Array.from({length: totalPages}, (_, i) => i);
+
+            const margin = 40;
+            for (let idx of pagesToApply) {
+                const page = pdf.getPages()[idx];
+                const { width, height } = page.getSize();
+                let x = 0, y = 0;
+                if (type === 'text') {
+                    if (useImageFallback && imageDataURL) {
+                        const imgBytes = await fetch(imageDataURL).then(r => r.arrayBuffer());
+                        const pngImage = await pdf.embedPng(imgBytes);
+                        const scaleFactor = size / Math.max(pngImage.width, pngImage.height);
+                        let drawWidth = pngImage.width * scaleFactor;
+                        let drawHeight = pngImage.height * scaleFactor;
+                        if (position === 'center') { x = (width - drawWidth) / 2; y = (height - drawHeight) / 2; }
+                        else if (position === 'top-left') { x = margin; y = height - margin - drawHeight; }
+                        else if (position === 'top-right') { x = width - margin - drawWidth; y = height - margin - drawHeight; }
+                        else if (position === 'bottom-left') { x = margin; y = margin; }
+                        else if (position === 'bottom-right') { x = width - margin - drawWidth; y = margin; }
+                        page.drawImage(pngImage, { x, y, width: drawWidth, height: drawHeight, opacity: opacity, rotate: PDFLib.degrees(0) });
+                    } else {
+                        const textWidth = font.widthOfTextAtSize(text, size);
+                        const textHeight = size;
+                        if (position === 'center') { x = (width - textWidth) / 2; y = (height - textHeight) / 2; }
+                        else if (position === 'top-left') { x = margin; y = height - margin - textHeight; }
+                        else if (position === 'top-right') { x = width - margin - textWidth; y = height - margin - textHeight; }
+                        else if (position === 'bottom-left') { x = margin; y = margin; }
+                        else if (position === 'bottom-right') { x = width - margin - textWidth; y = margin; }
+                        page.drawText(text, { x, y, size: size, font: font, color: PDFLib.rgb(r, g, b), opacity: opacity, rotate: PDFLib.degrees(angle) });
+                    }
+                } else if (type === 'image' && imageObj) {
+                    let scaleFactor = size / Math.max(imageObj.width, imageObj.height);
+                    let drawWidth = imageObj.width * scaleFactor;
+                    let drawHeight = imageObj.height * scaleFactor;
+                    if (position === 'center') { x = (width - drawWidth) / 2; y = (height - drawHeight) / 2; }
+                    else if (position === 'top-left') { x = margin; y = height - margin - drawHeight; }
+                    else if (position === 'top-right') { x = width - margin - drawWidth; y = height - margin - drawHeight; }
+                    else if (position === 'bottom-left') { x = margin; y = margin; }
+                    else if (position === 'bottom-right') { x = width - margin - drawWidth; y = margin; }
+                    page.drawImage(imageObj, { x, y, width: drawWidth, height: drawHeight, opacity: opacity, rotate: PDFLib.degrees(angle) });
+                }
+                progBar.style.width = `${((idx+1)/totalPages)*100}%`;
+                progText.innerText = (currentLang==='ar'?`تطبيق العلامة على الصفحة ${idx+1}/${totalPages}`:`Applying watermark to page ${idx+1}/${totalPages}`);
+            }
+            return new Blob([await pdf.save()], {type: 'application/pdf'});
+        }
+
+        async function pnDo(){ let pdfFile=upFiles.find(f=>f.type==='pdf'); if(!pdfFile) throw new Error((currentLang==='ar'?'لا يوجد ملف PDF':'No PDF file')); let buf=await pdfFile.file.arrayBuffer(), pdf=await PDFLib.PDFDocument.load(buf), font=await pdf.embedFont(PDFLib.StandardFonts.Helvetica), pos=document.getElementById('pnPos').value, start=parseInt(document.getElementById('pnStart').value), fmt=document.getElementById('pnFormat').value; for(let i=0;i<pdf.getPages().length;i++){ let txt=(start+i).toString(); if(fmt==='dash') txt=`- ${txt} -`; let page=pdf.getPages()[i], {width,height}=page.getSize(), x=pos==='bottom-center'?width/2:width-50, y=30, tw=font.widthOfTextAtSize(txt,10); page.drawText(txt,{x:x-tw/2,y,size:10,font}); } return new Blob([await pdf.save()],{type:'application/pdf'}); }
+        async function compressDo(){ let sel=document.getElementById('compressFileSelect'); if(!sel?.value) throw new Error(t('fileLabel')+' '+ (currentLang==='ar'?'غير محدد':'not selected')); let item=upFiles.find(f=>f.id===sel.value); if(!item) throw new Error(t('sessionNotFound')); let lvl=document.getElementById('compressionLevel').value, buf=await item.file.arrayBuffer(); if(lvl==='high' || lvl==='medium'){ let quality=lvl==='high'?0.3:0.7; let pdfDoc=await pdfjsLib.getDocument({data:buf}).promise, newPdf=await PDFLib.PDFDocument.create(); for(let i=1;i<=pdfDoc.numPages;i++){ let page=await pdfDoc.getPage(i), view=page.getViewport({scale:1}), can=document.createElement('canvas'); can.width=view.width; can.height=view.height; await page.render({canvasContext:can.getContext('2d'),viewport:view}).promise; let jpg=can.toDataURL('image/jpeg',quality); let imgBytes=await fetch(jpg).then(r=>r.arrayBuffer()), img=await newPdf.embedJpg(imgBytes), newPage=newPdf.addPage([img.width,img.height]); newPage.drawImage(img,{x:0,y:0,width:img.width,height:img.height}); progBar.style.width=`${(i/pdfDoc.numPages)*100}%`; progText.innerText=(currentLang==='ar'?`ضغط الصفحة ${i}/${pdfDoc.numPages}`:`Compressing page ${i}/${pdfDoc.numPages}`); } return new Blob([await newPdf.save()],{type:'application/pdf'}); } else { let src=await PDFLib.PDFDocument.load(buf), nd=await PDFLib.PDFDocument.create(); let pages=await nd.copyPages(src,src.getPageIndices()); pages.forEach(p=>nd.addPage(p)); nd.setProducer('Edu PDF Compressed'); return new Blob([await nd.save({useObjectStreams:true})],{type:'application/pdf'}); } }
+
+        // ============================================================
+        // 4. وظائف إضافية للأزرار
+        // ============================================================
+        window.showHelp = () => {
+            showMsg(t('help'), t('helpText'));
+        };
+
+        window.showSaveModal = () => {
+            if (upFiles.length === 0) {
+                showMsg(t('modalWarning'), t('noFiles'));
+                return;
+            }
+            const name = prompt(currentLang === 'ar' ? 'أدخل اسماً لحفظ الجلسة:' : 'Enter a name to save session:', 'session_' + new Date().toLocaleDateString('ar-EG'));
+            if (!name) return;
+            try {
+                const filePromises = upFiles.map(async (item) => {
+                    const base64 = await fileToBase64(item.file);
+                    return {
+                        name: item.file.name,
+                        type: item.file.type,
+                        base64: base64,
+                        id: item.id,
+                        pageCount: item.pageCount || 0
+                    };
+                });
+                Promise.all(filePromises).then(async (filesData) => {
+                    const data = {
+                        name: name,
+                        files: filesData,
+                        tool: currTool,
+                        savedAt: Date.now()
+                    };
+                    localStorage.setItem('edupdf_session_' + name, JSON.stringify(data));
+                    showMsg(t('modalSuccess'), t('sessionSaved') + name);
+                }).catch((err) => {
+                    showMsg(t('modalError'), err.message);
+                });
+            } catch (e) {
+                showMsg(t('modalError'), e.message);
+            }
+        };
+
+        window.showOpenModal = () => {
+            const keys = Object.keys(localStorage).filter(k => k.startsWith('edupdf_session_'));
+            if (keys.length === 0) {
+                showMsg(t('modalWarning'), t('noSessions'));
+                return;
+            }
+            let msg = (currentLang === 'ar' ? 'الجلسات المحفوظة:\n' : 'Saved sessions:\n') + keys.map(k => '- ' + k.replace('edupdf_session_', '')).join('\n');
+            msg += '\n\n' + (currentLang === 'ar' ? 'أدخل اسم الجلسة لفتحها:' : 'Enter session name to open:');
+            const name = prompt(msg);
+            if (!name) return;
+            const rawData = localStorage.getItem('edupdf_session_' + name);
+            if (!rawData) {
+                showMsg(t('modalError'), t('sessionNotFound'));
+                return;
+            }
+            try {
+                const data = JSON.parse(rawData);
+                if (!data.files || !Array.isArray(data.files) || data.files.length === 0) {
+                    showMsg(t('modalWarning'), (currentLang === 'ar' ? 'الجلسة لا تحتوي على ملفات.' : 'Session contains no files.'));
+                    return;
+                }
+                clearWorkspace();
+                if (data.tool) {
+                    currTool = data.tool;
+                    dash.classList.add('hidden');
+                    work.classList.remove('hidden');
+                    const toolName = t('toolNames.' + currTool);
+                    document.getElementById('currentToolTitle').innerText = (toolName !== 'toolNames.' + currTool) ? toolName : currTool;
+                    fileInp.accept = (currTool === 'img2pdf') ? 'image/*' : 'application/pdf';
+                }
+                const filePromises = data.files.map(async (f) => {
+                    try {
+                        const file = base64ToFile(f.base64, f.name, f.type);
+                        return file;
+                    } catch (e) {
+                        console.error('Error recreating file:', e);
+                        return null;
+                    }
+                });
+                Promise.all(filePromises).then((filesArray) => {
+                    const validFiles = filesArray.filter(f => f !== null);
+                    if (validFiles.length === 0) {
+                        showMsg(t('modalError'), (currentLang === 'ar' ? 'فشل استعادة الملفات.' : 'Failed to restore files.'));
+                        return;
+                    }
+                    processFiles(validFiles).then(() => {
+                        showMsg(t('modalSuccess'), t('sessionOpened') + data.name + ' (' + (data.tool || '') + ')');
+                    }).catch((err) => {
+                        showMsg(t('modalError'), err.message);
+                    });
+                }).catch((err) => {
+                    showMsg(t('modalError'), err.message);
+                });
+            } catch (e) {
+                showMsg(t('modalError'), 'Invalid session data: ' + e.message);
+            }
+        };
+
+        window.exportImage = () => {
+            showMsg(t('export'), t('exportNotice'));
+        };
+
+        window.resetCanvas = () => {
+            if (confirm(t('clearConfirm'))) {
+                clearWorkspace();
+                showMsg(t('modalSuccess'), t('workspaceCleared'));
+            }
+        };
+
+        // ============================================================
+        // 5. التهيئة النهائية
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDarkMode();
+            applyTranslations();
+            dash.classList.remove('hidden');
+            work.classList.add('hidden');
+            resDiv.classList.add('hidden');
+            loadLastSettings();
+            // تحديث رابط الشعار
+            setTimeout(waitForLogoLink, 200);
+        });
+
+        // ============================================================
+        // 6. PDF Workflow JavaScript (تم دمجه)
+        // ============================================================
+        // Workflow state
+        let wfPdfBytes = null;
+        let wfPdfFile = null;
+        let wfOps = [];
+        let wfEditingOpId = null;
+        let wfDragSrcIdx = null;
+
+        // Operation Definitions
+        const WF_OP_DEFS = {
+            remove: {
+                icon: '🗑️',
+                color: 'bg-rose-100',
+                nameAr: 'حذف صفحات',
+                nameEn: 'Delete Pages',
+                defaultSettings: { pages: '' },
+                summaryAr: (s) => s.pages ? `حذف: ${s.pages.split(',').length > 1 || s.pages.includes('-') ? s.pages : 'صفحة '+s.pages}` : 'انقر لاختيار الصفحات',
+                summaryEn: (s) => s.pages ? `Pages: ${s.pages}` : 'No pages set',
+                renderFields: (s, lang) => `
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'الصفحات المراد حذفها' : 'Pages to delete'}</label>
+                        <input type="text" name="pages" value="${s.pages||''}" placeholder="مثال: 3-5 أو 2,6,10">
+                        <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.25rem">${lang==='ar' ? 'أدخل أرقام الصفحات مفصولة بفاصلة أو نطاق مثل 3-5' : 'Enter page numbers separated by comma or range like 3-5'}</p>
+                    </div>`
+            },
+            rearrange: {
+                icon: '↕️',
+                color: 'bg-indigo-100',
+                nameAr: 'ترتيب الصفحات',
+                nameEn: 'Reorder Pages',
+                defaultSettings: { order: '' },
+                summaryAr: (s) => s.order ? `${s.order.split(',').length} صفحة مُرتَّبة` : 'انقر لترتيب الصفحات',
+                summaryEn: (s) => s.order ? `Order: ${s.order}` : 'Original order',
+                renderFields: (s, lang) => `
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'الترتيب الجديد' : 'New order'}</label>
+                        <input type="text" name="order" value="${s.order||''}" placeholder="مثال: 3,1,2,4">
+                        <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.25rem">${lang==='ar' ? 'أدخل أرقام الصفحات بالترتيب المطلوب مفصولة بفاصلة' : 'Enter page numbers in desired order, comma-separated'}</p>
+                    </div>`
+            },
+            rotate: {
+                icon: '🔄',
+                color: 'bg-amber-100',
+                nameAr: 'تدوير الصفحات',
+                nameEn: 'Rotate Pages',
+                defaultSettings: { degrees: '90', pages: 'all' },
+                summaryAr: (s) => { if(s.rotations){try{const c=Object.keys(JSON.parse(s.rotations)).length;return `${c} صفحة مُدوَّرة`;}catch(e){}}return `${s.degrees||90}° — ${s.pages==='all'?'جميع الصفحات':s.pages||'لم يُحدَّد'}`; },
+                summaryEn: (s) => { if(s.rotations){try{const c=Object.keys(JSON.parse(s.rotations)).length;return `${c} page(s) rotated`;}catch(e){}}return `${s.degrees||90}° — ${s.pages==='all'?'All pages':s.pages||'not set'}`; },
+                renderFields: (s, lang) => `
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'درجة التدوير' : 'Rotation degrees'}</label>
+                        <select name="degrees">
+                            <option value="90" ${s.degrees==='90'?'selected':''}>90°</option>
+                            <option value="180" ${s.degrees==='180'?'selected':''}>180°</option>
+                            <option value="270" ${s.degrees==='270'?'selected':''}>270° (−90°)</option>
+                        </select>
+                    </div>
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'الصفحات' : 'Pages'}</label>
+                        <input type="text" name="pages" value="${s.pages||'all'}" placeholder="all أو 1,3,5 أو 2-4">
+                        <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.25rem">${lang==='ar' ? 'اكتب all لجميع الصفحات أو أرقام محددة' : 'Write all for all pages or specific numbers'}</p>
+                    </div>`
+            },
+            pagenum: {
+                icon: '🔢',
+                color: 'bg-teal-100',
+                nameAr: 'ترقيم الصفحات',
+                nameEn: 'Page Numbers',
+                defaultSettings: { position: 'bottom-center', size: '12', color: '#000000', startNum: '1' },
+                summaryAr: (s) => `بدءاً من ${s.startNum} — حجم ${s.size}`,
+                summaryEn: (s) => `Start ${s.startNum} — Size ${s.size}`,
+                renderFields: (s, lang) => `
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'الموضع' : 'Position'}</label>
+                        <select name="position">
+                            <option value="bottom-center" ${s.position==='bottom-center'?'selected':''}>${lang==='ar'?'أسفل المنتصف':'Bottom Center'}</option>
+                            <option value="bottom-right" ${s.position==='bottom-right'?'selected':''}>${lang==='ar'?'أسفل اليمين':'Bottom Right'}</option>
+                            <option value="bottom-left" ${s.position==='bottom-left'?'selected':''}>${lang==='ar'?'أسفل اليسار':'Bottom Left'}</option>
+                            <option value="top-center" ${s.position==='top-center'?'selected':''}>${lang==='ar'?'أعلى المنتصف':'Top Center'}</option>
+                        </select>
+                    </div>
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'حجم الخط' : 'Font size'}</label>
+                        <input type="number" name="size" value="${s.size||'12'}" min="6" max="36">
+                    </div>
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'لون الرقم' : 'Number color'}</label>
+                        <input type="color" name="color" value="${s.color||'#000000'}">
+                    </div>
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'رقم البداية' : 'Start number'}</label>
+                        <input type="number" name="startNum" value="${s.startNum||'1'}" min="1">
+                    </div>`
+            },
+            watermark: {
+                icon: '🔖',
+                color: 'bg-purple-100',
+                nameAr: 'علامة مائية',
+                nameEn: 'Watermark',
+                defaultSettings: { type: 'text', text: 'Confidential', opacity: '0.3', size: '48', angle: '45', color: '#888888' },
+                summaryAr: (s) => s.type==='text' ? `"${s.text}" — شفافية ${Math.round(s.opacity*100||30)}%` : 'صورة',
+                summaryEn: (s) => s.type==='text' ? `"${s.text}" — opacity ${Math.round(s.opacity*100||30)}%` : 'Image',
+                renderFields: (s, lang) => `
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'نوع العلامة' : 'Watermark type'}</label>
+                        <select name="type" onchange="wfToggleWatermarkFields(this.value)">
+                            <option value="text" ${s.type==='text'?'selected':''}>${lang==='ar'?'نص':'Text'}</option>
+                        </select>
+                    </div>
+                    <div class="wf-field" id="wfWatermarkTextFields">
+                        <label>${lang==='ar' ? 'نص العلامة' : 'Watermark text'}</label>
+                        <input type="text" name="text" value="${(s.text||'Confidential').replace(/"/g,'&quot;')}">
+                    </div>
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'اللون' : 'Color'}</label>
+                        <input type="color" name="color" value="${s.color||'#888888'}">
+                    </div>
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'الشفافية' : 'Opacity'} (0.1 – 1.0)</label>
+                        <input type="number" name="opacity" value="${s.opacity||'0.3'}" min="0.05" max="1" step="0.05">
+                    </div>
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'حجم النص' : 'Text size'}</label>
+                        <input type="number" name="size" value="${s.size||'48'}" min="10" max="200">
+                    </div>
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'زاوية التدوير' : 'Rotation angle'}</label>
+                        <input type="number" name="angle" value="${s.angle||'45'}" min="0" max="360">
+                    </div>`
+            },
+            compress: {
+                icon: '🗜️',
+                color: 'bg-cyan-100',
+                nameAr: 'ضغط PDF',
+                nameEn: 'Compress PDF',
+                defaultSettings: { level: 'medium' },
+                summaryAr: (s) => `مستوى: ${s.level==='low'?'منخفض':s.level==='medium'?'متوسط':'عالي'}`,
+                summaryEn: (s) => `Level: ${s.level}`,
+                renderFields: (s, lang) => `
+                    <div class="wf-field">
+                        <label>${lang==='ar' ? 'مستوى الضغط' : 'Compression level'}</label>
+                        <select name="level">
+                            <option value="low" ${s.level==='low'?'selected':''}>${lang==='ar'?'منخفض (جودة عالية)':'Low (high quality)'}</option>
+                            <option value="medium" ${s.level==='medium'?'selected':''}>${lang==='ar'?'متوسط':'Medium'}</option>
+                            <option value="high" ${s.level==='high'?'selected':''}>${lang==='ar'?'عالي (أصغر حجم)':'High (smallest size)'}</option>
+                        </select>
+                    </div>`
+            }
+        };
+
+        function wfLang() { return currentLang || 'ar'; }
+        function wfOpName(type) { return wfLang()==='ar' ? WF_OP_DEFS[type].nameAr : WF_OP_DEFS[type].nameEn; }
+        function wfUid() { return Date.now() + '_' + Math.random().toString(36).slice(2,7); }
+
+        function wfParsePages(str, totalPages) {
+            const result = new Set();
+            if (!str || str.trim().toLowerCase() === 'all') {
+                for (let i = 1; i <= totalPages; i++) result.add(i);
+                return result;
+            }
+            const parts = str.split(',');
+            for (const part of parts) {
+                const trimmed = part.trim();
+                if (trimmed.includes('-')) {
+                    const [a, b] = trimmed.split('-').map(Number);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        for (let i = Math.min(a,b); i <= Math.max(a,b); i++) {
+                            if (i >= 1 && i <= totalPages) result.add(i);
+                        }
+                    }
+                } else {
+                    const n = parseInt(trimmed);
+                    if (!isNaN(n) && n >= 1 && n <= totalPages) result.add(n);
+                }
+            }
+            return result;
+        }
+
+        function openWorkflow() {
+            const mainEl = document.querySelector('main');
+            if (mainEl) mainEl.classList.add('hidden');
+            document.getElementById('workflowSection').classList.remove('hidden');
+            wfRenderAvailableOps();
+            wfUpdateTexts();
+        }
+
+        function closeWorkflow() {
+            document.getElementById('workflowSection').classList.add('hidden');
+            const mainEl = document.querySelector('main');
+            if (mainEl) mainEl.classList.remove('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            wfOps = [];
+            wfPdfBytes = null;
+            wfPdfFile = null;
+            document.getElementById('wfUploadStep').classList.remove('hidden');
+            document.getElementById('wfBuilderStep').classList.add('hidden');
+            document.getElementById('wfProgressStep').classList.add('hidden');
+            document.getElementById('wfResultStep').classList.add('hidden');
+        }
+
+        function wfHandleDrop(e) {
+            e.preventDefault();
+            document.getElementById('wfDropZone').style.borderColor = '';
+            const file = e.dataTransfer.files[0];
+            if (file) wfHandleFile(file);
+        }
+
+        function wfHandleFile(file) {
+            if (!file || file.type !== 'application/pdf') {
+                alert(wfLang()==='ar' ? 'الرجاء اختيار ملف PDF فقط' : 'Please select a PDF file only');
+                return;
+            }
+            wfPdfFile = file;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                wfPdfBytes = new Uint8Array(e.target.result);
+                try {
+                    const pdfDoc = await PDFLib.PDFDocument.load(wfPdfBytes);
+                    const pageCount = pdfDoc.getPageCount();
+                    document.getElementById('wfFileName').textContent = file.name;
+                    const sizeKB = Math.round(file.size / 1024);
+                    const lang = wfLang();
+                    document.getElementById('wfFileInfo').textContent = 
+                        lang==='ar' ? `${pageCount} صفحة · ${sizeKB} KB` : `${pageCount} pages · ${sizeKB} KB`;
+                } catch(err) {
+                    document.getElementById('wfFileName').textContent = file.name;
+                    document.getElementById('wfFileInfo').textContent = '';
+                }
+                document.getElementById('wfUploadStep').classList.add('hidden');
+                document.getElementById('wfBuilderStep').classList.remove('hidden');
+                wfRenderQueue();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function wfReset() {
+            wfPdfBytes = null; wfPdfFile = null; wfOps = [];
+            document.getElementById('wfBuilderStep').classList.add('hidden');
+            document.getElementById('wfProgressStep').classList.add('hidden');
+            document.getElementById('wfResultStep').classList.add('hidden');
+            document.getElementById('wfUploadStep').classList.remove('hidden');
+            document.getElementById('wfFileInput').value = '';
+        }
+
+        function wfRunAgain() {
+            wfOps = [];
+            document.getElementById('wfResultStep').classList.add('hidden');
+            document.getElementById('wfBuilderStep').classList.remove('hidden');
+            wfRenderQueue();
+        }
+
+        function wfRenderAvailableOps() {
+            const container = document.getElementById('wfAvailableOps');
+            container.innerHTML = '';
+            Object.entries(WF_OP_DEFS).forEach(([type, def]) => {
+                const btn = document.createElement('button');
+                btn.className = 'wf-available-btn';
+                btn.innerHTML = `<span>${def.icon}</span><span>${wfOpName(type)}</span><span style="color:#94a3b8;font-size:1rem">+</span>`;
+                btn.onclick = () => wfAddOp(type);
+                container.appendChild(btn);
+            });
+        }
+
+        function wfRenderQueue() {
+            const queue = document.getElementById('wfOpsQueue');
+            const emptyState = document.getElementById('wfEmptyState');
+            const countBadge = document.getElementById('wfQueueCount');
+            countBadge.textContent = wfOps.length;
+
+            if (wfOps.length === 0) {
+                queue.innerHTML = '';
+                if (emptyState) { queue.appendChild(emptyState); emptyState.classList.remove('hidden'); }
+                document.getElementById('wfExecuteBtn').disabled = true;
+                return;
+            }
+
+            document.getElementById('wfExecuteBtn').disabled = false;
+            queue.innerHTML = '';
+
+            wfOps.forEach((op, idx) => {
+                const def = WF_OP_DEFS[op.type];
+                const lang = wfLang();
+                const summary = lang==='ar' ? def.summaryAr(op.settings) : def.summaryEn(op.settings);
+                const name = lang==='ar' ? def.nameAr : def.nameEn;
+                const editTxt = lang==='ar' ? 'تعديل' : 'Edit';
+                const delTxt = lang==='ar' ? 'حذف' : 'Del';
+
+                const card = document.createElement('div');
+                card.className = 'wf-op-card';
+                card.dataset.opId = op.id;
+                card.dataset.idx = idx;
+                card.draggable = true;
+
+                card.innerHTML = `
+                    <span class="wf-op-handle" title="اسحب لتغيير الترتيب">⠿</span>
+                    <div class="wf-op-icon ${def.color}">${def.icon}</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="wf-op-name">${idx+1}. ${name}</div>
+                        <div class="wf-op-summary truncate">${summary}</div>
+                    </div>
+                    <div class="wf-op-btns">
+                        <button class="wf-op-btn" onclick="wfEditOp('${op.id}')">${editTxt} ✏️</button>
+                        <button class="wf-op-btn danger" onclick="wfRemoveOp('${op.id}')">${delTxt} ✕</button>
+                    </div>`;
+
+                card.addEventListener('dragstart', (e) => { wfDragSrcIdx = idx; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+                card.addEventListener('dragend', () => { card.classList.remove('dragging'); document.querySelectorAll('.wf-op-card').forEach(c => c.classList.remove('drag-over')); });
+                card.addEventListener('dragover', (e) => { e.preventDefault(); card.classList.add('drag-over'); });
+                card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    const targetIdx = parseInt(card.dataset.idx);
+                    if (wfDragSrcIdx !== null && wfDragSrcIdx !== targetIdx) {
+                        const moved = wfOps.splice(wfDragSrcIdx, 1)[0];
+                        wfOps.splice(targetIdx, 0, moved);
+                        wfRenderQueue();
+                    }
+                    wfDragSrcIdx = null;
+                });
+
+                queue.appendChild(card);
+            });
+        }
+
+        function wfAddOp(type) {
+            const op = { id: wfUid(), type, settings: {...WF_OP_DEFS[type].defaultSettings} };
+            wfOps.push(op);
+            wfRenderQueue();
+            wfEditOp(op.id);
+        }
+
+        function wfRemoveOp(id) {
+            wfOps = wfOps.filter(o => o.id !== id);
+            wfRenderQueue();
+        }
+
+        function wfEditOp(id) {
+            const op = wfOps.find(o => o.id === id);
+            if (!op) return;
+            if (op.type === 'remove' || op.type === 'rearrange' || op.type === 'rotate') {
+                wfOpenPageModal(id);
+                return;
+            }
+            wfEditingOpId = id;
+            const def = WF_OP_DEFS[op.type];
+            const lang = wfLang();
+            document.getElementById('wfModalTitle').textContent = (lang==='ar' ? 'إعدادات: ' : 'Settings: ') + (lang==='ar' ? def.nameAr : def.nameEn);
+            document.getElementById('wfModalBody').innerHTML = def.renderFields(op.settings, lang);
+            document.getElementById('wfSettingsModal').classList.remove('hidden');
+        }
+
+        function wfToggleWatermarkFields(val) {
+            const textFields = document.getElementById('wfWatermarkTextFields');
+            if (textFields) textFields.style.display = val === 'text' ? '' : 'none';
+        }
+
+        function wfCloseSettings() {
+            document.getElementById('wfSettingsModal').classList.add('hidden');
+            wfEditingOpId = null;
+        }
+
+        function wfSaveSettings() {
+            const op = wfOps.find(o => o.id === wfEditingOpId);
+            if (!op) return;
+            const fields = document.querySelectorAll('#wfModalBody [name]');
+            fields.forEach(field => { op.settings[field.name] = field.value; });
+            wfCloseSettings();
+            wfRenderQueue();
+        }
+
+        // Visual Page Picker
+        let wfPageModalOpId = null;
+        let wfPageModalMode = null;
+        let wfPageThumbCache = null;
+        let wfRotateMapLocal = new Map();
+        let wfRearrangeOrder = [];
+        let wfDeleteSet = new Set();
+        let wfPageDragSrc = null;
+
+        async function wfOpenPageModal(opId) {
+            const op = wfOps.find(o => o.id === opId);
+            if (!op) return;
+            if (!wfPdfBytes) return;
+
+            wfPageModalOpId = opId;
+            wfPageModalMode = op.type;
+
+            const lang = wfLang();
+            const modal = document.getElementById('wfPageModal');
+            const toolbar = document.getElementById('wfPageModalToolbar');
+
+            const titles = { remove: lang==='ar'?'اختر الصفحات للحذف':'Select pages to delete',
+                             rearrange: lang==='ar'?'رتّب الصفحات بالسحب أو النقل':'Reorder pages by drag or move buttons',
+                             rotate: lang==='ar'?'دوّر الصفحات':'Rotate pages' };
+            document.getElementById('wfPageModalTitle').textContent = titles[op.type] || '';
+            document.getElementById('wfPageSaveTxt').textContent   = lang==='ar'?'حفظ':'Save';
+            document.getElementById('wfPageCancelTxt').textContent = lang==='ar'?'إلغاء':'Cancel';
+
+            if (op.type === 'remove') {
+                toolbar.classList.remove('hidden');
+                document.getElementById('wfPageModalToolbarLabel').textContent = lang==='ar'?'انقر على صفحة لتحديدها أو:':'Click a page to select or:';
+                document.getElementById('wfDelSelectAllBtn').classList.remove('hidden');
+                document.getElementById('wfDelClearBtn').classList.remove('hidden');
+                document.getElementById('wfDelRangeWrap').classList.remove('hidden');
+            } else {
+                toolbar.classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden');
+
+            if (!wfPageThumbCache) {
+                await wfRenderThumbs();
+            }
+
+            if (op.type === 'remove') {
+                wfDeleteSet = new Set();
+                if (op.settings.pages && op.settings.pages !== 'all') {
+                    const total = wfPageThumbCache.length;
+                    const set = wfParsePages(op.settings.pages, total);
+                    set.forEach(n => wfDeleteSet.add(n - 1));
+                }
+            } else if (op.type === 'rearrange') {
+                const priorDeleted = new Set();
+                const total = wfPageThumbCache.length;
+                for (const prevOp of wfOps) {
+                    if (prevOp.id === opId) break;
+                    if (prevOp.type === 'remove' && prevOp.settings.pages) {
+                        wfParsePages(prevOp.settings.pages, total).forEach(n => priorDeleted.add(n - 1));
+                    }
+                }
+
+                if (op.settings.order && op.settings.order.trim()) {
+                    const arr = op.settings.order.split(',').map(s=>parseInt(s.trim())-1).filter(n=>!isNaN(n)&&n>=0&&n<total&&!priorDeleted.has(n));
+                    const inArr = new Set(arr);
+                    for (let i=0;i<total;i++) if (!inArr.has(i) && !priorDeleted.has(i)) arr.push(i);
+                    wfRearrangeOrder = arr;
+                } else {
+                    wfRearrangeOrder = Array.from({length:total},(_,i)=>i).filter(i=>!priorDeleted.has(i));
+                }
+            } else if (op.type === 'rotate') {
+                wfRotateMapLocal = new Map();
+                if (op.settings.rotations) {
+                    try {
+                        const obj = JSON.parse(op.settings.rotations);
+                        Object.entries(obj).forEach(([k,v]) => wfRotateMapLocal.set(parseInt(k), parseInt(v)));
+                    } catch(e) {}
+                }
+            }
+
+            wfRenderPageGrid();
+        }
+
+        async function wfRenderThumbs() {
+            const grid = document.getElementById('wfThumbGrid');
+            grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#94a3b8">${wfLang()==='ar'?'جاري تحميل الصفحات...':'Loading pages...'}</div>`;
+            try {
+                const pdfJs = await pdfjsLib.getDocument({ data: new Uint8Array(wfPdfBytes) }).promise;
+                wfPageThumbCache = [];
+                for (let p = 1; p <= pdfJs.numPages; p++) {
+                    const page = await pdfJs.getPage(p);
+                    const vp   = page.getViewport({ scale: 0.35 });
+                    const canvas = document.createElement('canvas');
+                    canvas.width  = vp.width;
+                    canvas.height = vp.height;
+                    await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+                    wfPageThumbCache.push({ dataURL: canvas.toDataURL('image/jpeg', 0.7), origIdx: p - 1 });
+                }
+            } catch(e) {
+                wfPageThumbCache = [];
+            }
+        }
+
+        function wfRenderPageGrid() {
+            const grid = document.getElementById('wfThumbGrid');
+            grid.innerHTML = '';
+            const lang = wfLang();
+
+            if (!wfPageThumbCache || wfPageThumbCache.length === 0) {
+                grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#94a3b8">${lang==='ar'?'لا توجد صفحات':'No pages'}</div>`;
+                return;
+            }
+
+            if (wfPageModalMode === 'remove') {
+                wfPageThumbCache.forEach((page, idx) => {
+                    const card = wfMakeThumbCard(page.dataURL, idx + 1);
+                    const chk = document.createElement('input');
+                    chk.type = 'checkbox'; chk.className = 'wf-del-check';
+                    chk.checked = wfDeleteSet.has(idx);
+                    chk.onclick = (e) => e.stopPropagation();
+                    chk.onchange = () => {
+                        if (chk.checked) wfDeleteSet.add(idx); else wfDeleteSet.delete(idx);
+                        card.classList.toggle('selected', chk.checked);
+                    };
+                    card.querySelector('.wf-thumb-canvas-wrap').appendChild(chk);
+                    if (wfDeleteSet.has(idx)) card.classList.add('selected');
+                    card.onclick = () => { chk.checked = !chk.checked; chk.dispatchEvent(new Event('change')); };
+                    grid.appendChild(card);
+                });
+
+            } else if (wfPageModalMode === 'rearrange') {
+                wfRearrangeOrder.forEach((origIdx, pos) => {
+                    const page = wfPageThumbCache[origIdx];
+                    const card = wfMakeThumbCard(page.dataURL, pos + 1);
+                    card.dataset.pos = pos;
+                    const badge = document.createElement('div');
+                    badge.className = 'wf-order-badge';
+                    badge.textContent = pos + 1;
+                    card.querySelector('.wf-thumb-canvas-wrap').appendChild(badge);
+                    const mvDiv = document.createElement('div');
+                    mvDiv.className = 'wf-mv-controls';
+                    if (lang === 'ar') {
+                        mvDiv.innerHTML = `
+                            <button class="wf-mv-btn" title="نقل يميناً" onclick="wfMovePageRight(${pos})"><i class="fa-solid fa-arrow-right"></i></button>
+                            <button class="wf-mv-btn" title="نقل يساراً" onclick="wfMovePageLeft(${pos})"><i class="fa-solid fa-arrow-left"></i></button>`;
+                    } else {
+                        mvDiv.innerHTML = `
+                            <button class="wf-mv-btn" title="Move left" onclick="wfMovePageLeft(${pos})"><i class="fa-solid fa-arrow-left"></i></button>
+                            <button class="wf-mv-btn" title="Move right" onclick="wfMovePageRight(${pos})"><i class="fa-solid fa-arrow-right"></i></button>`;
+                    }
+                    card.appendChild(mvDiv);
+                    card.draggable = true;
+                    card.addEventListener('dragstart', (e) => { wfPageDragSrc = pos; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+                    card.addEventListener('dragend',   () => { card.classList.remove('dragging'); grid.querySelectorAll('.wf-thumb-card').forEach(c=>c.classList.remove('drag-over-page')); });
+                    card.addEventListener('dragover',  (e) => { e.preventDefault(); card.classList.add('drag-over-page'); });
+                    card.addEventListener('dragleave', () => card.classList.remove('drag-over-page'));
+                    card.addEventListener('drop', (e) => {
+                        e.preventDefault(); card.classList.remove('drag-over-page');
+                        const tgt = parseInt(card.dataset.pos);
+                        if (wfPageDragSrc !== null && wfPageDragSrc !== tgt) {
+                            const moved = wfRearrangeOrder.splice(wfPageDragSrc, 1)[0];
+                            wfRearrangeOrder.splice(tgt, 0, moved);
+                            wfRenderPageGrid();
+                        }
+                        wfPageDragSrc = null;
+                    });
+                    grid.appendChild(card);
+                });
+
+            } else if (wfPageModalMode === 'rotate') {
+                wfPageThumbCache.forEach((page, idx) => {
+                    const card = wfMakeThumbCard(page.dataURL, idx + 1);
+                    const imgEl = card.querySelector('canvas, img');
+                    const wrap  = card.querySelector('.wf-thumb-canvas-wrap');
+                    const angle = wfRotateMapLocal.get(idx) || 0;
+                    if (imgEl) imgEl.style.transform = `rotate(${angle}deg)`;
+                    const badge = document.createElement('div');
+                    badge.className = 'wf-rot-badge' + (angle ? ' visible' : '');
+                    badge.textContent = angle + '°';
+                    badge.id = `wfRotBadge_${idx}`;
+                    wrap.appendChild(badge);
+                    const rDiv = document.createElement('div');
+                    rDiv.className = 'wf-rot-controls';
+                    rDiv.innerHTML = `
+                        <button class="wf-rot-btn" onclick="wfRotatePage(${idx},-90,event)"><i class="fa-solid fa-rotate-left"></i> 90</button>
+                        <button class="wf-rot-btn" onclick="wfRotatePage(${idx},90,event)"><i class="fa-solid fa-rotate-right"></i> 90</button>
+                        <button class="wf-rot-btn" onclick="wfRotatePage(${idx},180,event)">180°</button>
+                        <button class="wf-rot-btn" onclick="wfRotateReset(${idx},event)"><i class="fa-solid fa-arrows-rotate"></i></button>`;
+                    card.appendChild(rDiv);
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        function wfMakeThumbCard(dataURL, pageNum) {
+            const card = document.createElement('div');
+            card.className = 'wf-thumb-card';
+            const wrap = document.createElement('div');
+            wrap.className = 'wf-thumb-canvas-wrap';
+            const img = document.createElement('img');
+            img.src = dataURL;
+            img.style.cssText = 'width:100%;height:100%;object-fit:contain;transition:transform 0.2s ease;';
+            wrap.appendChild(img);
+            const footer = document.createElement('div');
+            footer.className = 'wf-thumb-footer';
+            footer.textContent = wfLang()==='ar' ? `صفحة ${pageNum}` : `Page ${pageNum}`;
+            card.appendChild(wrap);
+            card.appendChild(footer);
+            return card;
+        }
+
+        function wfRotatePage(idx, delta, e) {
+            if (e) e.stopPropagation();
+            const cur  = wfRotateMapLocal.get(idx) || 0;
+            let newAng = ((cur + delta) % 360 + 360) % 360;
+            if (newAng) wfRotateMapLocal.set(idx, newAng); else wfRotateMapLocal.delete(idx);
+            const grid   = document.getElementById('wfThumbGrid');
+            const cards  = grid.querySelectorAll('.wf-thumb-card');
+            const card   = cards[idx];
+            if (card) {
+                const img   = card.querySelector('img');
+                const badge = document.getElementById(`wfRotBadge_${idx}`);
+                if (img)   img.style.transform = `rotate(${newAng}deg)`;
+                if (badge) { badge.textContent = newAng + '°'; badge.className = 'wf-rot-badge' + (newAng?'  visible':''); }
+            }
+        }
+
+        function wfRotateReset(idx, e) {
+            if (e) e.stopPropagation();
+            wfRotateMapLocal.delete(idx);
+            const grid  = document.getElementById('wfThumbGrid');
+            const cards = grid.querySelectorAll('.wf-thumb-card');
+            const card  = cards[idx];
+            if (card) {
+                const img   = card.querySelector('img');
+                const badge = document.getElementById(`wfRotBadge_${idx}`);
+                if (img)   img.style.transform = 'rotate(0deg)';
+                if (badge) { badge.textContent = ''; badge.className = 'wf-rot-badge'; }
+            }
+        }
+
+        function wfMovePageLeft(pos) {
+            if (pos <= 0) return;
+            [wfRearrangeOrder[pos-1], wfRearrangeOrder[pos]] = [wfRearrangeOrder[pos], wfRearrangeOrder[pos-1]];
+            wfRenderPageGrid();
+        }
+
+        function wfMovePageRight(pos) {
+            if (pos >= wfRearrangeOrder.length - 1) return;
+            [wfRearrangeOrder[pos+1], wfRearrangeOrder[pos]] = [wfRearrangeOrder[pos], wfRearrangeOrder[pos+1]];
+            wfRenderPageGrid();
+        }
+
+        function wfDelSelectAll() {
+            wfPageThumbCache.forEach((_,i) => wfDeleteSet.add(i));
+            wfRenderPageGrid();
+        }
+
+        function wfDelClear() {
+            wfDeleteSet.clear();
+            wfRenderPageGrid();
+        }
+
+        function wfDelApplyRange() {
+            const str = document.getElementById('wfDelRangeInput').value;
+            if (!str) return;
+            const total = wfPageThumbCache.length;
+            const set = wfParsePages(str, total);
+            set.forEach(n => wfDeleteSet.add(n - 1));
+            wfRenderPageGrid();
+        }
+
+        function wfClosePageModal() {
+            document.getElementById('wfPageModal').classList.add('hidden');
+            wfPageModalOpId = null; wfPageModalMode = null;
+        }
+
+        function wfSavePageModal() {
+            const op = wfOps.find(o => o.id === wfPageModalOpId);
+            if (!op) { wfClosePageModal(); return; }
+            const total = wfPageThumbCache ? wfPageThumbCache.length : 0;
+
+            if (wfPageModalMode === 'remove') {
+                if (wfDeleteSet.size === 0) {
+                    op.settings.pages = '';
+                } else {
+                    const nums = Array.from(wfDeleteSet).map(i=>i+1).sort((a,b)=>a-b);
+                    op.settings.pages = nums.join(',');
+                }
+            } else if (wfPageModalMode === 'rearrange') {
+                op.settings.order = wfRearrangeOrder.map(i=>i+1).join(',');
+            } else if (wfPageModalMode === 'rotate') {
+                if (wfRotateMapLocal.size === 0) {
+                    op.settings.rotations = '';
+                    op.settings.pages = 'all';
+                    op.settings.degrees = '90';
+                } else {
+                    const obj = {};
+                    wfRotateMapLocal.forEach((ang, idx) => { obj[idx] = ang; });
+                    op.settings.rotations = JSON.stringify(obj);
+                    op.settings.pages = Array.from(wfRotateMapLocal.keys()).map(i=>i+1).join(',');
+                    const angles = Array.from(wfRotateMapLocal.values());
+                    op.settings.degrees = String(angles[0] || 90);
+                }
+            }
+
+            wfClosePageModal();
+            wfRenderQueue();
+        }
+
+        // Override wfReset to clear thumb cache
+        const _wfResetOrig = wfReset;
+        window.wfReset = function() {
+            wfPageThumbCache = null;
+            wfRotateMapLocal = new Map();
+            wfRearrangeOrder = [];
+            wfDeleteSet = new Set();
+            _wfResetOrig();
+        };
+
+        // ============================================================
+        // PDF Workflow Processors
+        // ============================================================
+        const WF_PROCESSORS = {
+            remove: async (pdfBytes, settings) => {
+                const wfBar  = document.getElementById('wfProgressBar');
+                const wfTxt  = document.getElementById('wfProgressText');
+                const srcDoc = await PDFLib.PDFDocument.load(new Uint8Array(pdfBytes));
+                const total  = srcDoc.getPageCount();
+                const toDelete = wfParsePages(settings.pages, total);
+                const newDoc = await PDFLib.PDFDocument.create();
+                for (let i = 0; i < total; i++) {
+                    if (toDelete.has(i + 1)) continue;
+                    const [cp] = await newDoc.copyPages(srcDoc, [i]);
+                    newDoc.addPage(cp);
+                    if (wfBar) wfBar.style.width = `${Math.round(((i+1)/total)*100)}%`;
+                    if (wfTxt) wfTxt.textContent = `حذف: الصفحة ${i+1}/${total}`;
+                }
+                return await newDoc.save();
+            },
+            rearrange: async (pdfBytes, settings) => {
+                const wfBar  = document.getElementById('wfProgressBar');
+                const wfTxt  = document.getElementById('wfProgressText');
+                const srcDoc = await PDFLib.PDFDocument.load(new Uint8Array(pdfBytes));
+                const total  = srcDoc.getPageCount();
+                const orderStr = (settings.order || '').trim();
+                const newOrder = orderStr
+                    ? orderStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 1 && n <= total)
+                    : Array.from({length: total}, (_, i) => i + 1);
+                if (newOrder.length === 0) return pdfBytes;
+                const newDoc  = await PDFLib.PDFDocument.create();
+                const indices = newOrder.map(n => n - 1);
+                const copied  = await newDoc.copyPages(srcDoc, indices);
+                copied.forEach((p, i) => {
+                    newDoc.addPage(p);
+                    if (wfBar) wfBar.style.width = `${Math.round(((i+1)/copied.length)*100)}%`;
+                    if (wfTxt) wfTxt.textContent = `ترتيب: الصفحة ${i+1}/${copied.length}`;
+                });
+                return await newDoc.save();
+            },
+            rotate: async (pdfBytes, settings) => {
+                const wfBar  = document.getElementById('wfProgressBar');
+                const wfTxt  = document.getElementById('wfProgressText');
+                const newDoc = await PDFLib.PDFDocument.create();
+                const srcDoc = await PDFLib.PDFDocument.load(new Uint8Array(pdfBytes));
+                const total  = srcDoc.getPageCount();
+
+                let rotMap = new Map();
+                if (settings.rotations && settings.rotations.trim()) {
+                    try {
+                        const obj = JSON.parse(settings.rotations);
+                        Object.entries(obj).forEach(([k,v]) => rotMap.set(parseInt(k), parseInt(v)));
+                    } catch(e) {}
+                }
+                if (rotMap.size === 0) {
+                    const deg = parseInt(settings.degrees) || 90;
+                    const targetPages = wfParsePages(settings.pages, total);
+                    targetPages.forEach(p => rotMap.set(p - 1, deg));
+                }
+
+                for (let i = 0; i < total; i++) {
+                    const [cp] = await newDoc.copyPages(srcDoc, [i]);
+                    if (rotMap.has(i)) {
+                        const ang = rotMap.get(i);
+                        if (ang !== 0) cp.setRotation(PDFLib.degrees(ang % 360));
+                    }
+                    newDoc.addPage(cp);
+                    if (wfBar) wfBar.style.width = `${Math.round(((i+1)/total)*100)}%`;
+                    if (wfTxt) wfTxt.textContent = `تدوير: الصفحة ${i+1}/${total}`;
+                }
+                return await newDoc.save();
+            },
+            pagenum: async (pdfBytes, settings) => {
+                const wfBar    = document.getElementById('wfProgressBar');
+                const wfTxt    = document.getElementById('wfProgressText');
+                const pdfDoc   = await PDFLib.PDFDocument.load(new Uint8Array(pdfBytes));
+                const font     = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                const total    = pdfDoc.getPageCount();
+                const fontSize = parseInt(settings.size) || 10;
+                const startNum = parseInt(settings.startNum) || 1;
+                const position = settings.position || 'bottom-center';
+                const fmt      = settings.format || 'plain';
+                const colorHex = settings.color || '#000000';
+                const r = parseInt(colorHex.slice(1,3),16)/255;
+                const g = parseInt(colorHex.slice(3,5),16)/255;
+                const b = parseInt(colorHex.slice(5,7),16)/255;
+                const margin   = 30;
+
+                for (let i = 0; i < total; i++) {
+                    let txt = String(startNum + i);
+                    if (fmt === 'dash') txt = `- ${txt} -`;
+                    const page = pdfDoc.getPage(i);
+                    const { width, height } = page.getSize();
+                    const tw = font.widthOfTextAtSize(txt, fontSize);
+                    let x, y;
+                    if (position === 'bottom-center') { x = (width - tw) / 2;       y = margin; }
+                    else if (position === 'bottom-right') { x = width - tw - margin; y = margin; }
+                    else if (position === 'bottom-left')  { x = margin;              y = margin; }
+                    else if (position === 'top-center')   { x = (width - tw) / 2;   y = height - margin - fontSize; }
+                    else if (position === 'top-right')    { x = width - tw - margin; y = height - margin - fontSize; }
+                    else if (position === 'top-left')     { x = margin;              y = height - margin - fontSize; }
+                    else { x = (width - tw) / 2; y = margin; }
+                    page.drawText(txt, { x, y, size: fontSize, font, color: PDFLib.rgb(r, g, b) });
+                    if (wfBar) wfBar.style.width = `${Math.round(((i+1)/total)*100)}%`;
+                    if (wfTxt) wfTxt.textContent = `ترقيم: الصفحة ${i+1}/${total}`;
+                }
+                return await pdfDoc.save();
+            },
+            watermark: async (pdfBytes, settings) => {
+                const wfBar = document.getElementById('wfProgressBar');
+                const wfTxt = document.getElementById('wfProgressText');
+
+                const pdf       = await PDFLib.PDFDocument.load(new Uint8Array(pdfBytes));
+                const type      = settings.wmType    || 'text';
+                const fontName  = settings.wmFont    || 'Helvetica';
+                const colorHex  = settings.wmColor   || '#ff0000';
+                const size      = parseInt(settings.wmSize)    || 48;
+                const opacity   = parseFloat(settings.wmOpacity) || 0.25;
+                const angle     = parseFloat(settings.wmAngle)   || 45;
+                const position  = settings.wmPosition || 'center';
+                const scope     = settings.wmScope    || 'all';
+                const rangeStr  = settings.wmRange    || '';
+                const text      = settings.wmText     || '';
+                if (!text || text.trim() === '') {
+                    throw new Error(lang==='ar'?'نص العلامة المائية فارغ':'Watermark text is empty');
+                }
+                const r = parseInt(colorHex.slice(1,3),16)/255;
+                const g = parseInt(colorHex.slice(3,5),16)/255;
+                const b = parseInt(colorHex.slice(5,7),16)/255;
+
+                function isNonLatin(str) {
+                    for (let c of str) if (c.charCodeAt(0) > 127) return true;
+                    return false;
+                }
+                async function renderTextToImage(str, fontSize, fontFamily, hexColor, opacityVal, angleDeg) {
+                    return new Promise(resolve => {
+                        const canvas = document.createElement('canvas');
+                        const ctx    = canvas.getContext('2d');
+                        ctx.font = `bold ${fontSize}px "${fontFamily}", Arial, sans-serif`;
+                        const metrics = ctx.measureText(str);
+                        const pad = 20;
+                        canvas.width  = metrics.width + pad * 2;
+                        canvas.height = fontSize * 1.4 + pad * 2;
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.translate(canvas.width/2, canvas.height/2);
+                        ctx.rotate(angleDeg * Math.PI / 180);
+                        ctx.translate(-canvas.width/2, -canvas.height/2);
+                        ctx.font          = `bold ${fontSize}px "${fontFamily}", Arial, sans-serif`;
+                        ctx.textAlign     = 'center';
+                        ctx.textBaseline  = 'middle';
+                        ctx.globalAlpha   = opacityVal;
+                        ctx.fillStyle     = hexColor;
+                        ctx.fillText(str, canvas.width/2, canvas.height/2);
+                        ctx.setTransform(1,0,0,1,0,0);
+                        resolve(canvas.toDataURL('image/png'));
+                    });
+                }
+
+                let useImageFallback = false;
+                let imageDataURL     = null;
+                let font;
+                if (type === 'text') {
+                    if (isNonLatin(text)) {
+                        useImageFallback = true;
+                        try { imageDataURL = await renderTextToImage(text, size, 'Cairo, Arial', colorHex, opacity, angle); }
+                        catch(e) { useImageFallback = false; }
+                    }
+                    if (!useImageFallback) {
+                        const fontMap = {
+                            'Helvetica':       PDFLib.StandardFonts.Helvetica,
+                            'Helvetica-Bold':  PDFLib.StandardFonts.HelveticaBold,
+                            'TimesRoman':      PDFLib.StandardFonts.TimesRoman,
+                            'Courier':         PDFLib.StandardFonts.Courier,
+                        };
+                        font = await pdf.embedFont(fontMap[fontName] || PDFLib.StandardFonts.Helvetica);
+                    }
+                }
+
+                let imageObj = null;
+                if (type === 'image') {
+                    const wmImgB64 = settings.wmImageData || null;
+                    if (wmImgB64) {
+                        const imgBytes = await fetch(wmImgB64).then(resp => resp.arrayBuffer());
+                        imageObj = wmImgB64.includes('image/png')
+                            ? await pdf.embedPng(imgBytes)
+                            : await pdf.embedJpg(imgBytes);
+                    } else {
+                        throw new Error('لم يتم اختيار صورة للعلامة المائية');
+                    }
+                }
+
+                const totalPages = pdf.getPageCount();
+                let pagesToApply = [];
+                if (scope === 'odd')       pagesToApply = Array.from({length:totalPages},(_,i)=>i).filter(i=>(i+1)%2===1);
+                else if (scope === 'even') pagesToApply = Array.from({length:totalPages},(_,i)=>i).filter(i=>(i+1)%2===0);
+                else if (scope === 'range') {
+                    if (rangeStr) {
+                        const [s, e] = rangeStr.split('-').map(Number);
+                        if (!isNaN(s) && !isNaN(e)) for (let i=s-1;i<=e-1&&i<totalPages;i++) if(i>=0) pagesToApply.push(i);
+                    }
+                    if (pagesToApply.length === 0) pagesToApply = Array.from({length:totalPages},(_,i)=>i);
+                } else {
+                    pagesToApply = Array.from({length:totalPages},(_,i)=>i);
+                }
+
+                const margin = 40;
+                for (const idx of pagesToApply) {
+                    const page = pdf.getPages()[idx];
+                    const { width, height } = page.getSize();
+                    let x = 0, y = 0;
+
+                    if (type === 'text') {
+                        if (useImageFallback && imageDataURL) {
+                            const imgBytes  = await fetch(imageDataURL).then(resp => resp.arrayBuffer());
+                            const pngImage  = await pdf.embedPng(imgBytes);
+                            const scale     = size / Math.max(pngImage.width, pngImage.height);
+                            const dw = pngImage.width * scale, dh = pngImage.height * scale;
+                            if (position==='center')       { x=(width-dw)/2;          y=(height-dh)/2; }
+                            else if (position==='top-left')    { x=margin;            y=height-margin-dh; }
+                            else if (position==='top-right')   { x=width-margin-dw;   y=height-margin-dh; }
+                            else if (position==='bottom-left') { x=margin;            y=margin; }
+                            else if (position==='bottom-right'){ x=width-margin-dw;   y=margin; }
+                            page.drawImage(pngImage, { x, y, width:dw, height:dh, opacity, rotate: PDFLib.degrees(0) });
+                        } else {
+                            const tw = font.widthOfTextAtSize(text, size);
+                            if (position==='center')       { x=(width-tw)/2;          y=(height-size)/2; }
+                            else if (position==='top-left')    { x=margin;            y=height-margin-size; }
+                            else if (position==='top-right')   { x=width-margin-tw;   y=height-margin-size; }
+                            else if (position==='bottom-left') { x=margin;            y=margin; }
+                            else if (position==='bottom-right'){ x=width-margin-tw;   y=margin; }
+                            page.drawText(text, { x, y, size, font, color:PDFLib.rgb(r,g,b), opacity, rotate:PDFLib.degrees(angle) });
+                        }
+                    } else if (type === 'image' && imageObj) {
+                        const scale = size / Math.max(imageObj.width, imageObj.height);
+                        const dw = imageObj.width*scale, dh = imageObj.height*scale;
+                        if (position==='center')       { x=(width-dw)/2;          y=(height-dh)/2; }
+                        else if (position==='top-left')    { x=margin;            y=height-margin-dh; }
+                        else if (position==='top-right')   { x=width-margin-dw;   y=height-margin-dh; }
+                        else if (position==='bottom-left') { x=margin;            y=margin; }
+                        else if (position==='bottom-right'){ x=width-margin-dw;   y=margin; }
+                        page.drawImage(imageObj, { x, y, width:dw, height:dh, opacity, rotate:PDFLib.degrees(angle) });
+                    }
+                    if (wfBar) wfBar.style.width = `${Math.round(((idx+1)/totalPages)*100)}%`;
+                    if (wfTxt) wfTxt.textContent = `علامة مائية: الصفحة ${idx+1}/${totalPages}`;
+                }
+                return await pdf.save();
+            },
+            compress: async (pdfBytes, settings) => {
+                const wfBar   = document.getElementById('wfProgressBar');
+                const wfTxt   = document.getElementById('wfProgressText');
+                const level   = settings.level || 'medium';
+
+                if (level === 'high' || level === 'medium') {
+                    const quality  = level === 'high' ? 0.3 : 0.7;
+                    const pdfJsDoc = await pdfjsLib.getDocument({ data: new Uint8Array(pdfBytes) }).promise;
+                    const newPdf   = await PDFLib.PDFDocument.create();
+                    for (let i = 1; i <= pdfJsDoc.numPages; i++) {
+                        const page   = await pdfJsDoc.getPage(i);
+                        const view   = page.getViewport({ scale: 1 });
+                        const canvas = document.createElement('canvas');
+                        canvas.width  = view.width;
+                        canvas.height = view.height;
+                        await page.render({ canvasContext: canvas.getContext('2d'), viewport: view }).promise;
+                        const jpg      = canvas.toDataURL('image/jpeg', quality);
+                        const imgBytes = await fetch(jpg).then(r => r.arrayBuffer());
+                        const img      = await newPdf.embedJpg(imgBytes);
+                        const np       = newPdf.addPage([img.width, img.height]);
+                        np.drawImage(img, { x:0, y:0, width:img.width, height:img.height });
+                        if (wfBar) wfBar.style.width = `${Math.round((i/pdfJsDoc.numPages)*100)}%`;
+                        if (wfTxt) wfTxt.textContent = `ضغط: الصفحة ${i}/${pdfJsDoc.numPages}`;
+                    }
+                    return await newPdf.save();
+                } else {
+                    const src  = await PDFLib.PDFDocument.load(new Uint8Array(pdfBytes));
+                    const nd   = await PDFLib.PDFDocument.create();
+                    const pages = await nd.copyPages(src, src.getPageIndices());
+                    pages.forEach(p => nd.addPage(p));
+                    nd.setProducer('Edu PDF Compressed');
+                    if (wfBar) wfBar.style.width = '100%';
+                    if (wfTxt) wfTxt.textContent = 'ضغط: اكتمل';
+                    return await nd.save({ useObjectStreams: true });
+                }
+            }
+        };
+
+        // ============================================================
+        // Execute Workflow
+        // ============================================================
+        async function wfExecute() {
+            if (!wfPdfBytes || wfOps.length === 0) return;
+
+            const lang = wfLang();
+            document.getElementById('wfBuilderStep').classList.add('hidden');
+            document.getElementById('wfProgressStep').classList.remove('hidden');
+
+            const stepsLog = document.getElementById('wfStepsLog');
+            stepsLog.innerHTML = '';
+            document.getElementById('wfProgressTitle').textContent = lang==='ar' ? 'جاري تنفيذ العمليات...' : 'Running operations...';
+
+            function showFatal(msg) {
+                document.getElementById('wfProgressTitle').textContent = lang==='ar' ? '❌ حدث خطأ' : '❌ Error';
+                const errDiv = document.createElement('div');
+                errDiv.style.cssText = 'background:#fee2e2;border-radius:0.75rem;padding:0.75rem;font-size:0.85rem;color:#991b1b;margin-top:0.5rem;white-space:pre-wrap;';
+                errDiv.textContent = msg;
+                stepsLog.appendChild(errDiv);
+                const backBtn = document.createElement('button');
+                backBtn.className = 'wf-available-btn mt-3';
+                backBtn.textContent = lang==='ar' ? '← العودة وتعديل' : '← Back to edit';
+                backBtn.onclick = () => {
+                    document.getElementById('wfProgressStep').classList.add('hidden');
+                    document.getElementById('wfBuilderStep').classList.remove('hidden');
+                };
+                stepsLog.appendChild(backBtn);
+            }
+
+            let stepEls;
+            try {
+                stepEls = wfOps.map((op, idx) => {
+                    const def = WF_OP_DEFS[op.type];
+                    if (!def) throw new Error(`Unknown operation type: "${op.type}"`);
+                    const name = lang==='ar' ? def.nameAr : def.nameEn;
+                    const div = document.createElement('div');
+                    div.className = 'wf-step-indicator pending';
+                    div.id = `wfStep_${op.id}`;
+                    div.innerHTML = `<span>${def.icon}</span><span>${lang==='ar'?'العملية':'Step'} ${idx+1} ${lang==='ar'?'من':'of'} ${wfOps.length}: ${name}</span><span style="margin-right:auto;margin-left:auto"></span><span class="wf-step-status">⏳</span>`;
+                    stepsLog.appendChild(div);
+                    return div;
+                });
+            } catch(mapErr) {
+                showFatal((lang==='ar' ? 'خطأ في إعداد العمليات: ' : 'Setup error: ') + mapErr.message);
+                return;
+            }
+
+            let currentBytes;
+            try {
+                if (wfPdfBytes instanceof Uint8Array) {
+                    currentBytes = wfPdfBytes.slice(0);
+                } else if (wfPdfBytes instanceof ArrayBuffer) {
+                    currentBytes = new Uint8Array(wfPdfBytes.slice(0));
+                } else {
+                    throw new Error('Invalid PDF data type: ' + typeof wfPdfBytes);
+                }
+            } catch(byteErr) {
+                showFatal((lang==='ar' ? 'خطأ في قراءة الملف: ' : 'File read error: ') + byteErr.message);
+                return;
+            }
+
+            for (let i = 0; i < wfOps.length; i++) {
+                const op = wfOps[i];
+                const def = WF_OP_DEFS[op.type];
+                const name = lang==='ar' ? def.nameAr : def.nameEn;
+                const stepEl = stepEls[i];
+
+                const pct = Math.round((i / wfOps.length) * 100);
+                document.getElementById('wfProgressBar').style.width = pct + '%';
+                document.getElementById('wfProgressText').textContent = `${lang==='ar'?'العملية':'Step'} ${i+1} ${lang==='ar'?'من':'of'} ${wfOps.length} — ${name}`;
+
+                stepEl.className = 'wf-step-indicator running';
+                stepEl.querySelector('.wf-step-status').textContent = '⚙️';
+
+                try {
+                    const processor = WF_PROCESSORS[op.type];
+                    if (!processor) throw new Error('Unknown operation: ' + op.type);
+                    const inputCopy = new Uint8Array(currentBytes);
+                    const resultBytes = await processor(inputCopy, op.settings);
+                    currentBytes = new Uint8Array(resultBytes);
+                    stepEl.className = 'wf-step-indicator done';
+                    stepEl.querySelector('.wf-step-status').textContent = '✔';
+                } catch (err) {
+                    stepEl.className = 'wf-step-indicator error';
+                    stepEl.querySelector('.wf-step-status').textContent = '✗';
+                    document.getElementById('wfProgressTitle').textContent = (lang==='ar' ? 'فشلت العملية: ' : 'Failed: ') + name;
+                    document.getElementById('wfProgressText').textContent = err.message || '';
+                    const errDiv = document.createElement('div');
+                    errDiv.style.cssText = 'background:#fee2e2;border-radius:0.75rem;padding:0.75rem;font-size:0.85rem;color:#991b1b;margin-top:0.5rem;';
+                    errDiv.textContent = (lang==='ar' ? 'الخطأ: ' : 'Error: ') + (err.message || err);
+                    stepsLog.appendChild(errDiv);
+                    const backBtn = document.createElement('button');
+                    backBtn.className = 'wf-available-btn mt-3';
+                    backBtn.textContent = lang==='ar' ? '← العودة وتعديل' : '← Back to edit';
+                    backBtn.onclick = () => {
+                        document.getElementById('wfProgressStep').classList.add('hidden');
+                        document.getElementById('wfBuilderStep').classList.remove('hidden');
+                    };
+                    stepsLog.appendChild(backBtn);
+                    return;
+                }
+            }
+
+            document.getElementById('wfProgressBar').style.width = '100%';
+            document.getElementById('wfProgressText').textContent = lang==='ar' ? 'اكتملت جميع العمليات!' : 'All operations completed!';
+
+            const blob = new Blob([currentBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const originalName = wfPdfFile ? wfPdfFile.name.replace('.pdf','') : 'document';
+            document.getElementById('wfDownloadLink').href = url;
+            document.getElementById('wfDownloadLink').download = `${originalName}_workflow.pdf`;
+
+            const summary = document.getElementById('wfResultSummary');
+            summary.innerHTML = wfOps.map((op, i) => {
+                const def = WF_OP_DEFS[op.type];
+                return `<div class="wf-step-indicator done"><span>${def.icon}</span><span>${i+1}. ${lang==='ar'?def.nameAr:def.nameEn}</span><span style="margin-right:auto"></span><span>✔</span></div>`;
+            }).join('') + `<p style="font-size:0.8rem;color:#64748b;margin-top:0.5rem;text-align:center;">${lang==='ar'?'تم تنفيذ جميع العمليات بنجاح':'All operations completed successfully'}</p>`;
+
+            document.getElementById('wfProgressStep').classList.add('hidden');
+            document.getElementById('wfResultStep').classList.remove('hidden');
+        }
+
+        // ============================================================
+        // i18n for Workflow
+        // ============================================================
+        function wfUpdateTexts() {
+            const lang = wfLang();
+            const isAr = lang === 'ar';
+            const titleEl = document.getElementById('wfTitle');
+            const subEl = document.getElementById('wfSubtitle');
+            if (titleEl) titleEl.textContent = isAr ? 'Multiple operations - PDF Workflow' : 'PDF Workflow - Multi-Operation';
+            if (subEl) subEl.textContent = isAr ? 'نفّذ عدة عمليات على ملف PDF واحد بضغطة واحدة' : 'Chain multiple operations on a single PDF file';
+
+            const dropText = document.getElementById('wfDropText');
+            if (dropText) dropText.textContent = isAr ? 'اسحب ملف PDF هنا أو انقر للاختيار' : 'Drag a PDF here or click to select';
+            const dropHint = document.getElementById('wfDropHint');
+            if (dropHint) dropHint.textContent = isAr ? 'ملف PDF واحد فقط' : 'Single PDF file only';
+            const changeBtn = document.getElementById('wfChangeBtnTxt');
+            if (changeBtn) changeBtn.textContent = isAr ? 'تغيير الملف' : 'Change file';
+            const addLabel = document.getElementById('wfAddOpLabel');
+            if (addLabel) addLabel.textContent = isAr ? 'إضافة عملية:' : 'Add operation:';
+            const queueLabel = document.getElementById('wfQueueLabel');
+            if (queueLabel) {
+                const count = document.getElementById('wfQueueCount');
+                queueLabel.innerHTML = (isAr ? 'قائمة العمليات ' : 'Operations queue ') + (count ? count.outerHTML : '');
+            }
+            const execBtn = document.getElementById('wfExecuteBtnTxt');
+            if (execBtn) execBtn.textContent = isAr ? 'تنفيذ العمليات' : 'Execute Operations';
+            const saveBtn = document.getElementById('wfSaveBtnTxt');
+            if (saveBtn) saveBtn.textContent = isAr ? 'حفظ الإعدادات' : 'Save Settings';
+            const cancelBtn = document.getElementById('wfCancelBtnTxt');
+            if (cancelBtn) cancelBtn.textContent = isAr ? 'إلغاء' : 'Cancel';
+            const downloadTxt = document.getElementById('wfDownloadTxt');
+            if (downloadTxt) downloadTxt.textContent = isAr ? 'تحميل الملف النهائي' : 'Download Final File';
+            const runAgain = document.getElementById('wfRunAgainTxt');
+            if (runAgain) runAgain.textContent = isAr ? 'تنفيذ workflow جديد' : 'Run new workflow';
+            const emptyTxt = document.getElementById('wfEmptyText');
+            if (emptyTxt) emptyTxt.textContent = isAr ? 'أضف عملية من القائمة أعلاه' : 'Add an operation from the list above';
+            const successTitle = document.getElementById('wfSuccessTitle');
+            if (successTitle) successTitle.textContent = isAr ? 'تمت جميع العمليات بنجاح!' : 'All operations completed successfully!';
+
+            wfRenderAvailableOps();
+            if (wfOps.length > 0) wfRenderQueue();
+        }
+    </script>
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+</body>
+</html>

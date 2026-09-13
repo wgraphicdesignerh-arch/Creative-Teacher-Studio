@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة مقارنة وتتبع أداء الفصول (EduCompare) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-3d {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 0 #047857, 0 8px 20px rgba(16, 185, 129, 0.4);
+            transition: all 0.15s ease-in-out;
+        }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #047857, 0 12px 25px rgba(16, 185, 129, 0.6); }
+        .btn-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 #047857; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-emerald-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center text-white text-base shadow-lg">
+                    <i class="fa-solid fa-code-compare"></i>
+                </div>
+                <span class="font-extrabold text-white text-base">أداة مقارنة وتتبع نتائج الفصول والفترات (EduCompare)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Comparison Input Form -->
+        <div class="lg:col-span-5 glass-card p-6 rounded-3xl flex flex-col space-y-5 border border-white/10">
+            <h2 class="text-lg font-extrabold text-white border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-emerald-400"></i> إعدادات بيانات المقارنة
+            </h2>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">عنوان أداة المقارنة</label>
+                <input type="text" id="compareTitle" placeholder="مثال: مقارنة الفترة الأولى والفترة الثانية / الفصل A ضد الفصل B" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400">
+            </div>
+
+            <!-- Group A Input -->
+            <div>
+                <label class="block text-xs font-bold text-emerald-400 mb-2">الفصل / الفترة الأولى (اسم الطالبة : الدرجة)</label>
+                <textarea id="groupAInput" rows="5" placeholder="سارة : 85
+نورة : 90
+ريم : 70" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400 font-sans"></textarea>
+            </div>
+
+            <!-- Group B Input -->
+            <div>
+                <label class="block text-xs font-bold text-cyan-400 mb-2">الفصل / الفترة الثانية (اسم الطالبة : الدرجة)</label>
+                <textarea id="groupBInput" rows="5" placeholder="سارة : 95
+نورة : 92
+ريم : 82" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400 font-sans"></textarea>
+            </div>
+
+            <button onclick="compareEduGroups()" class="btn-3d w-full py-3.5 rounded-2xl text-white font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer mt-2">
+                <i class="fa-solid fa-code-compare"></i>
+                <span>بدء تحليل وتوليد المقارنة البصرية 📊</span>
+            </button>
+        </div>
+
+        <!-- Comparison Display & Visual Results -->
+        <div class="lg:col-span-7 flex flex-col space-y-4">
+            <div class="glass-card p-6 rounded-3xl border border-white/10 flex-1 flex flex-col">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
+                    <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-column text-emerald-400"></i> لوحة المقارنة التفاعلية ونسبة النمو
+                    </h3>
+                </div>
+
+                <!-- Comparison Summary -->
+                <div id="compareStatsBar" class="hidden grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl text-center">
+                        <span class="text-[11px] text-slate-400 block font-bold">متوسط الفترة/الفصل الأول</span>
+                        <span id="avgA" class="text-lg font-black text-emerald-400">0</span>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl text-center">
+                        <span class="text-[11px] text-slate-400 block font-bold">متوسط الفترة/الفصل الثاني</span>
+                        <span id="avgB" class="text-lg font-black text-cyan-400">0</span>
+                    </div>
+                </div>
+
+                <!-- Canvas Chart -->
+                <div id="compareChartBox" class="hidden bg-slate-900/50 rounded-2xl p-4 border border-slate-800 mb-4 h-64 flex items-center justify-center">
+                    <canvas id="compareChart"></canvas>
+                </div>
+
+                <!-- Report Output -->
+                <div id="compareOutput" class="flex-1 text-slate-400 text-xs flex items-center justify-center">
+                    <div class="text-center py-16">
+                        <i class="fa-solid fa-code-compare text-5xl mb-3 text-slate-700"></i>
+                        <p class="font-bold text-slate-400">أدخلي درجات الفترتين أو الفصلين واضغطي "بدء المقارنة" لمعاينة الفروقات ونسبة التحسن.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let compareChartInstance = null;
+
+        function compareEduGroups() {
+            const rawA = document.getElementById('groupAInput').value.trim();
+            const rawB = document.getElementById('groupBInput').value.trim();
+            const output = document.getElementById('compareOutput');
+            const statsBar = document.getElementById('compareStatsBar');
+            const chartBox = document.getElementById('compareChartBox');
+
+            if (!rawA || !rawB) {
+                showToast("يرجى إدخال بيانات الفترتين أو الفصلين للمقارنة!");
+                return;
+            }
+
+            const dataA = parseGroup(rawA);
+            const dataB = parseGroup(rawB);
+
+            if (!dataA.students.length || !dataB.students.length) {
+                showToast("صيغة البيانات غير صحيحة! استخدمي الصيغة: اسم الطالبة : الدرجة");
+                return;
+            }
+
+            const avgA = (dataA.total / dataA.students.length).toFixed(1);
+            const avgB = (dataB.total / dataB.students.length).toFixed(1);
+            const diff = (avgB - avgA).toFixed(1);
+
+            document.getElementById('avgA').innerText = avgA;
+            document.getElementById('avgB').innerText = avgB;
+            statsBar.classList.remove('hidden');
+            chartBox.classList.remove('hidden');
+
+            renderCompareChart(dataA, dataB);
+
+            let growthText = '';
+            if (currentLang === 'en') {
+                growthText = diff > 0 ? `<span class="text-emerald-400 font-bold">Positive Improvement of +${diff} points 🚀</span>` : (diff < 0 ? `<span class="text-red-400 font-bold">Decline of ${diff} points ⚠️</span>` : `<span class="text-amber-400 font-bold">Stable Performance ⚖️</span>`);
+                output.innerHTML = `
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl text-slate-200 space-y-3 w-full text-left">
+                        <h4 class="font-extrabold text-sm text-emerald-400 border-b border-slate-800 pb-2">📈 Analytical Comparison Summary:</h4>
+                        <p class="text-xs">Comparison Outcome: ${growthText}</p>
+                        <ul class="list-disc pl-4 space-y-1 text-xs text-slate-300">
+                            <li>Period 1 Average: <strong>${avgA}</strong> | Period 2 Average: <strong>${avgB}</strong></li>
+                            <li>Total Students Analyzed: <strong>${Math.max(Object.keys(dataA.students).length, Object.keys(dataB.students).length)}</strong> students.</li>
+                        </ul>
+                    </div>
+                `;
+                showToast("Performance comparison generated successfully!");
+            } else if (currentLang === 'fr') {
+                growthText = diff > 0 ? `<span class="text-emerald-400 font-bold">Amélioration Positive de +${diff} points 🚀</span>` : (diff < 0 ? `<span class="text-red-400 font-bold">Baisse de ${diff} points ⚠️</span>` : `<span class="text-amber-400 font-bold">Performance Stable ⚖️</span>`);
+                output.innerHTML = `
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl text-slate-200 space-y-3 w-full text-left">
+                        <h4 class="font-extrabold text-sm text-emerald-400 border-b border-slate-800 pb-2">📈 Résumé Analytique Comparatif :</h4>
+                        <p class="text-xs">Résultat de la comparaison : ${growthText}</p>
+                        <ul class="list-disc pl-4 space-y-1 text-xs text-slate-300">
+                            <li>Moyenne Période 1 : <strong>${avgA}</strong> | Moyenne Période 2 : <strong>${avgB}</strong></li>
+                            <li>Nombre d'élèves analysés : <strong>${Math.max(Object.keys(dataA.students).length, Object.keys(dataB.students).length)}</strong> élèves.</li>
+                        </ul>
+                    </div>
+                `;
+                showToast("Comparaison des performances générée avec succès !");
+            } else {
+                growthText = diff > 0 ? `<span class="text-emerald-400 font-bold">تحسن إيجابي بمقدار +${diff} درجة 🚀</span>` : (diff < 0 ? `<span class="text-red-400 font-bold">تراجع بمقدار ${diff} درجة ⚠️</span>` : `<span class="text-amber-400 font-bold">استقرار تام في الأداء ⚖️</span>`);
+                output.innerHTML = `
+                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl text-slate-200 space-y-3 w-full">
+                        <h4 class="font-extrabold text-sm text-emerald-400 border-b border-slate-800 pb-2">📈 ملخص تحليلي للمقارنة:</h4>
+                        <p class="text-xs">نتيجة المقارنة تشير إلى: ${growthText}</p>
+                        <ul class="list-disc pr-4 space-y-1 text-xs text-slate-300">
+                            <li>متوسط الفترة الأولى: <strong>${avgA}</strong> | متوسط الفترة الثانية: <strong>${avgB}</strong></li>
+                            <li>عدد الطالبات المعالجات في العينة: <strong>${Math.max(Object.keys(dataA.students).length, Object.keys(dataB.students).length)}</strong> طالبة.</li>
+                        </ul>
+                    </div>
+                `;
+                showToast("تم توليد مقارنة الأداء بنجاح!");
+            }
+        }
+
+        function parseGroup(text) {
+            const lines = text.split('\n');
+            const students = {};
+            let total = 0;
+            let count = 0;
+            lines.forEach(l => {
+                const parts = l.split(/[:=,]/);
+                if (parts.length >= 2) {
+                    const name = parts[0].trim();
+                    const mark = parseFloat(parts[1].trim());
+                    if (!isNaN(mark)) {
+                        students[name] = mark;
+                        total += mark;
+                        count++;
+                    }
+                }
+            });
+            return { students, total, count };
+        }
+
+        function renderCompareChart(dataA, dataB) {
+            const ctx = document.getElementById('compareChart').getContext('2d');
+            if (compareChartInstance) compareChartInstance.destroy();
+
+            const allNames = Array.from(new Set([...Object.keys(dataA.students), ...Object.keys(dataB.students)]));
+            const marksA = allNames.map(n => dataA.students[n] || 0);
+            const marksB = allNames.map(n => dataB.students[n] || 0);
+
+            compareChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: allNames,
+                    datasets: [
+                        { label: 'الفترة / الفصل الأول', data: marksA, backgroundColor: 'rgba(16, 185, 129, 0.8)', borderRadius: 6 },
+                        { label: 'الفترة / الفصل الثاني', data: marksB, backgroundColor: 'rgba(6, 182, 212, 0.8)', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    }
+                }
+            });
+        }
+    </script>
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عجلة الاختيار العشوائي والمجموعات (Student Picker & Groups AI) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-pink-400 transition font-bold">
+                <i class="fa-solid fa-arrow-right text-lg"></i>
+                <span>العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-2 space-x-reverse">
+                <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white text-sm">
+                    <i class="fa-solid fa-users-viewfinder"></i>
+                </div>
+                <span class="font-bold text-white">عجلة الاختيار العشوائي وتقسيم المجموعات الصفية</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Roster Section -->
+        <div class="lg:col-span-4 bg-slate-900/80 backdrop-blur border border-white/10 p-6 rounded-3xl flex flex-col justify-between">
+            <div>
+                <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
+                    <i class="fa-solid fa-list-ol text-pink-500"></i> قائمة طالبات الفصل
+                </h2>
+                <p class="text-xs text-slate-400 mb-3">أدخلي أسماء الطالبات (اسم في كل سطر):</p>
+                <textarea id="studentsList" rows="12" class="w-full bg-slate-950 border border-white/10 rounded-2xl p-4 text-xs text-slate-200 focus:outline-none focus:border-pink-500 font-bold leading-relaxed" placeholder="سارة خالد&#10;نورة محمد&#10;ريم أحمد&#10;شهد عبد الله&#10;أميرة علي&#10;هدى حسن"></textarea>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-white/10 flex justify-between text-xs text-slate-400">
+                <span id="studentsCount">عدد الطالبات: 6</span>
+                <button onclick="saveRoster()" class="text-pink-400 hover:underline font-bold">حفظ القائمة</button>
+            </div>
+        </div>
+
+        <!-- Interactive Playground -->
+        <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Random Picker -->
+            <div class="bg-slate-900/80 backdrop-blur border border-white/10 p-6 rounded-3xl flex flex-col items-center justify-between text-center">
+                <h3 class="text-base font-bold text-white flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-spinner text-amber-400"></i> الاختيار العشوائي الفردي
+                </h3>
+                <p class="text-xs text-slate-400 mb-6">اختيار طالبة بشكل عشوائي ومباشر للإجابة أو المشاركة</p>
+
+                <div id="pickerDisplay" class="w-48 h-48 rounded-full border-4 border-dashed border-amber-400/50 flex flex-col items-center justify-center p-4 my-4 bg-amber-500/10 shadow-2xl shadow-amber-500/10 transition-all">
+                    <i class="fa-solid fa-crown text-4xl text-amber-400 mb-2"></i>
+                    <span id="winnerName" class="text-xl font-black text-amber-300">من الفائزة؟</span>
+                </div>
+
+                <button onclick="pickRandomStudent()" class="w-full py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm transition shadow-lg shadow-amber-500/20 cursor-pointer">
+                    <i class="fa-solid fa-shuffle ml-1"></i> اختيار طالبة الآن!
+                </button>
+            </div>
+
+            <!-- Group Maker -->
+            <div class="bg-slate-900/80 backdrop-blur border border-white/10 p-6 rounded-3xl flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-white flex items-center gap-2 mb-2 border-b border-white/10 pb-3">
+                        <i class="fa-solid fa-people-group text-purple-400"></i> تقسيم الفصل لمجموعات
+                    </h3>
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-slate-300 mb-2">عدد المجموعات المطلوبة</label>
+                        <select id="groupCount" class="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-xs text-slate-200">
+                            <option value="2">مجموعتان (2)</option>
+                            <option value="3" selected>3 مجموعات</option>
+                            <option value="4">4 مجموعات</option>
+                            <option value="5">5 مجموعات</option>
+                        </select>
+                    </div>
+
+                    <button onclick="makeGroups()" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition mb-4 cursor-pointer">
+                        <i class="fa-solid fa-diagram-project ml-1"></i> توليد المجموعات عشوائياً
+                    </button>
+
+                    <div id="groupsOutput" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                        <div class="text-center py-6 text-slate-500 text-xs">اضغطي زر التوليد لتقسيم الطالبات تلقائياً.</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function getRoster() {
+            const txt = document.getElementById('studentsList').value;
+            return txt.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+        }
+
+        document.getElementById('studentsList').addEventListener('input', () => {
+            document.getElementById('studentsCount').innerText = `عدد الطالبات: ${getRoster().length}`;
+        });
+
+        function pickRandomStudent() {
+            const roster = getRoster();
+            if (roster.length === 0) {
+                alert('يرجى إدخال أسماء الطالبات أولاً!');
+                return;
+            }
+            const winnerSpan = document.getElementById('winnerName');
+            let counter = 0;
+            const interval = setInterval(() => {
+                winnerSpan.innerText = roster[Math.floor(Math.random() * roster.length)];
+                counter++;
+                if (counter > 15) {
+                    clearInterval(interval);
+                    const finalWinner = roster[Math.floor(Math.random() * roster.length)];
+                    winnerSpan.innerText = finalWinner;
+                    confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+                }
+            }, 100);
+        }
+
+        function makeGroups() {
+            const roster = getRoster().sort(() => Math.random() - 0.5);
+            const numGroups = parseInt(document.getElementById('groupCount').value);
+            if (roster.length === 0) return;
+
+            const groups = Array.from({ length: numGroups }, () => []);
+            roster.forEach((student, i) => {
+                groups[i % numGroups].push(student);
+            });
+
+            let html = '';
+            groups.forEach((g, idx) => {
+                html += `
+                    <div class="bg-slate-950 p-3 rounded-xl border border-white/5 text-xs">
+                        <span class="font-bold text-pink-400 block mb-1">المجموعة ${idx + 1}:</span>
+                        <span class="text-slate-300">${g.join('، ')}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('groupsOutput').innerHTML = html;
+        }
+
+        function saveRoster() {
+            localStorage.setItem('hubRoster', document.getElementById('studentsList').value);
+            alert('تم حفظ القائمة بنجاح!');
+        }
+
+        window.onload = () => {
+            const saved = localStorage.getItem('hubRoster');
+            if (saved) document.getElementById('studentsList').value = saved;
+            document.getElementById('studentsCount').innerText = `عدد الطالبات: ${getRoster().length}`;
+        };
+    </script>
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>

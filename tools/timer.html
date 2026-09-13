@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مؤقت وإدارة زمن الحصة التفاعلي (EduTimer) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .timer-mono { font-family: 'JetBrains Mono', monospace; }
+        .btn-3d {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            box-shadow: 0 4px 0 #0e7490, 0 8px 20px rgba(6, 182, 212, 0.4);
+            transition: all 0.15s ease-in-out;
+        }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #0e7490, 0 12px 25px rgba(6, 182, 212, 0.6); }
+        .btn-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 #0e7490; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-cyan-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center text-white text-base shadow-lg">
+                    <i class="fa-solid fa-stopwatch"></i>
+                </div>
+                <span class="font-extrabold text-white text-base">مؤقت تفاعلي وموزّع زمن الحصة (EduTimer Pro)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Controls & Phases Setup Side -->
+        <div class="lg:col-span-5 glass-card p-6 rounded-3xl flex flex-col space-y-5 border border-white/10">
+            <h2 class="text-lg font-extrabold text-white border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-cyan-400"></i> إعداد وقت وقوالب الحصة
+            </h2>
+
+            <!-- Total Duration & Presets -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">إجمالي مدة الحصة (بالدقائق)</label>
+                <input type="number" id="totalSessionMinutes" value="45" min="1" max="180" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400 font-bold">
+            </div>
+
+            <!-- Presets Select -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">قوالب التقسيم التعليمية الجاهزة</label>
+                <select id="presetTemplateSelect" onchange="applyEduPreset()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
+                    <option value="standard" selected>🎒 حصة قياسية 45 دقيقة (تمهيد 5د | شرح 30د | ختام 10د)</option>
+                    <option value="active">⚡ حصة تفاعلية سريعة 30 دقيقة (3د / 20د / 7د)</option>
+                    <option value="lab">🔬 مختبر وتجارب 60 دقيقة (7د / 40د / 13د)</option>
+                    <option value="exam">📝 تقييم واختبار 90 دقيقة (10د / 70د / 10د)</option>
+                </select>
+            </div>
+
+            <!-- Sound & Auto Advance Options -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-2">صوت التنبيه عند النهاية</label>
+                    <select id="timerSoundSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-cyan-400">
+                        <option value="birds" selected>🐦 زقزقة عصافير</option>
+                        <option value="bell">🔔 جرس كلاسيكي</option>
+                        <option value="silent">🔕 صامت</option>
+                    </select>
+                </div>
+                <div class="flex items-center pt-5">
+                    <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-300">
+                        <input type="checkbox" id="autoAdvanceCheck" checked class="accent-cyan-400 w-4 h-4">
+                        <span>انتقال تلقائي للمرحلة التالية</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Global Action Buttons -->
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="toggleMainEduTimer()" id="startTimerBtn" class="btn-3d w-full py-3.5 rounded-2xl text-white font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-play"></i>
+                    <span id="startBtnText">ابدأ الحصة</span>
+                </button>
+                <button onclick="resetEduTimer()" class="w-full py-3.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-2xl font-extrabold text-sm transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>إعادة ضبط</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Big Display Screen -->
+        <div class="lg:col-span-7 flex flex-col space-y-4">
+            <div class="glass-card p-8 rounded-3xl border border-white/10 flex-1 flex flex-col justify-between items-center text-center relative overflow-hidden min-h-[420px]">
+                
+                <!-- Current Phase Label Badge -->
+                <div class="w-full flex justify-between items-center mb-6">
+                    <span id="currentPhaseBadge" class="px-4 py-1.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-extrabold text-xs">
+                        جاهز للبدء 🎯
+                    </span>
+                    <button onclick="skipToNextEduPhase()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition flex items-center gap-1">
+                        <span>المرحلة التالية</span>
+                        <i class="fa-solid fa-forward text-[10px]"></i>
+                    </button>
+                </div>
+
+                <!-- Clock Display -->
+                <div class="my-auto">
+                    <div id="bigTimerDisplay" class="timer-mono text-7xl sm:text-8xl lg:text-9xl font-black text-white tracking-widest drop-shadow-2xl">
+                        00:00
+                    </div>
+                    <p id="subPhaseStatus" class="text-xs font-bold text-slate-400 mt-3">اضغطي "ابدأ الحصة" لبدء التنازلي التفاعلي.</p>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full space-y-2 mt-6">
+                    <div class="flex justify-between text-xs font-bold text-slate-400">
+                        <span>تقدم المرحلة المحددة</span>
+                        <span id="phasePercentVal">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-800 p-0.5">
+                        <div id="timerProgressBar" class="bg-cyan-400 h-full w-0 rounded-full transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let timerInterval = null;
+        let isTimerRunning = false;
+        let currentPhaseIndex = 0;
+        let phases = [];
+        let secondsLeft = 0;
+        let totalPhaseSeconds = 0;
+
+        function applyEduPreset() {
+            const preset = document.getElementById('presetTemplateSelect').value;
+            if (preset === 'standard') {
+                document.getElementById('totalSessionMinutes').value = 45;
+                phases = [
+                    { name: 'التهيئة والتمهيد', durationMin: 5 },
+                    { name: 'الشرح والعرض الأساسي', durationMin: 30 },
+                    { name: 'التقويم والتأمل الختامي', durationMin: 10 }
+                ];
+            } else if (preset === 'active') {
+                document.getElementById('totalSessionMinutes').value = 30;
+                phases = [
+                    { name: 'عصف ذهني سريع', durationMin: 3 },
+                    { name: 'نشاط وتفاعل صفّي', durationMin: 20 },
+                    { name: 'مراجعة ختامية', durationMin: 7 }
+                ];
+            } else if (preset === 'lab') {
+                document.getElementById('totalSessionMinutes').value = 60;
+                phases = [
+                    { name: 'تعليمات السلامة والتجربة', durationMin: 7 },
+                    { name: 'التطبيق العلمي والتجارب', durationMin: 40 },
+                    { name: 'استنتاج النتائج', durationMin: 13 }
+                ];
+            } else if (preset === 'exam') {
+                document.getElementById('totalSessionMinutes').value = 90;
+                phases = [
+                    { name: 'قراءة وتعليمات الأسئلة', durationMin: 10 },
+                    { name: 'إجابة الاختبار', durationMin: 70 },
+                    { name: 'مراجعة وتسليم الأوراق', durationMin: 10 }
+                ];
+            }
+            resetEduTimer();
+        }
+
+        function toggleMainEduTimer() {
+            if (!phases.length) applyEduPreset();
+
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                document.getElementById('startBtnText').innerText = "استئناف الحصة";
+            } else {
+                if (secondsLeft <= 0) loadPhase(currentPhaseIndex);
+                timerInterval = setInterval(tickTimer, 1000);
+                isTimerRunning = true;
+                document.getElementById('startBtnText').innerText = "إيقاف مؤقت";
+            }
+        }
+
+        function loadPhase(index) {
+            if (index >= phases.length) {
+                finishLesson();
+                return;
+            }
+            currentPhaseIndex = index;
+            const p = phases[index];
+            totalPhaseSeconds = p.durationMin * 60;
+            secondsLeft = totalPhaseSeconds;
+
+            document.getElementById('currentPhaseBadge').innerText = `${p.name} (${p.durationMin} دقيقة)`;
+            document.getElementById('subPhaseStatus').innerText = `المرحلة ${index + 1} من ${phases.length}: ${p.name}`;
+            updateDisplay();
+        }
+
+        function tickTimer() {
+            if (secondsLeft > 0) {
+                secondsLeft--;
+                updateDisplay();
+            } else {
+                playAlertSound();
+                if (document.getElementById('autoAdvanceCheck').checked && currentPhaseIndex + 1 < phases.length) {
+                    loadPhase(currentPhaseIndex + 1);
+                } else {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    document.getElementById('startBtnText').innerText = "ابدأ الحصة";
+                    if (currentPhaseIndex + 1 >= phases.length) finishLesson();
+                }
+            }
+        }
+
+        function updateDisplay() {
+            const m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+            const s = (secondsLeft % 60).toString().padStart(2, '0');
+            document.getElementById('bigTimerDisplay').innerText = `${m}:${s}`;
+
+            const pct = Math.round(((totalPhaseSeconds - secondsLeft) / totalPhaseSeconds) * 100) || 0;
+            document.getElementById('timerProgressBar').style.width = pct + '%';
+            document.getElementById('phasePercentVal').innerText = pct + '%';
+        }
+
+        function skipToNextEduPhase() {
+            if (currentPhaseIndex + 1 < phases.length) {
+                loadPhase(currentPhaseIndex + 1);
+            } else {
+                finishLesson();
+            }
+        }
+
+        function finishLesson() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            document.getElementById('bigTimerDisplay').innerText = "00:00";
+            document.getElementById('currentPhaseBadge').innerText = "اكتملت الحصة بنجاح 🏆";
+            document.getElementById('subPhaseStatus').innerText = "تم إنهاء كافة مراحل وقت الحصة الموزعة بنجاح!";
+            document.getElementById('startBtnText').innerText = "ابدأ الحصة";
+            showToast("اكتملت الحصة بنجاح!");
+        }
+
+        function resetEduTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            currentPhaseIndex = 0;
+            secondsLeft = 0;
+            document.getElementById('bigTimerDisplay').innerText = "00:00";
+            document.getElementById('timerProgressBar').style.width = '0%';
+            document.getElementById('phasePercentVal').innerText = '0%';
+            document.getElementById('currentPhaseBadge').innerText = "جاهز للبدء 🎯";
+            document.getElementById('subPhaseStatus').innerText = "اضغطي \"ابدأ الحصة\" لبدء التنازلي التفاعلي.";
+            document.getElementById('startBtnText').innerText = "ابدأ الحصة";
+        }
+
+        function playAlertSound() {
+            const sound = document.getElementById('timerSoundSelect').value;
+            if (sound === 'silent') return;
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 note
+            osc.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.6);
+        }
+
+        applyEduPreset();
+    </script>
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>

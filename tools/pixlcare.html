@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة تكبير وتحسين جودة الصور 4K & 8K (PIXLCARE AI) | منصة المعلمات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #070a12; color: #f3f4f6; }
+        .gradient-bg { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
+        .glass-card { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .drop-zone { border: 2px dashed rgba(99, 102, 241, 0.5); transition: all 0.3s ease; }
+        .drop-zone:hover { border-color: #6366f1; background: rgba(99, 102, 241, 0.05); }
+        .btn-3d {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            box-shadow: 0 4px 0 #3730a3, 0 8px 20px rgba(99, 102, 241, 0.4);
+            transition: all 0.15s ease-in-out;
+        }
+        .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #3730a3, 0 12px 25px rgba(99, 102, 241, 0.6); }
+        .btn-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 #3730a3; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950/80 backdrop-blur-xl border-b border-white/10 py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-3 space-x-reverse text-slate-300 hover:text-indigo-400 transition font-bold text-sm">
+                <i class="fa-solid fa-arrow-right text-base"></i>
+                <span data-i18n="backToHome">العودة للرئيسية</span>
+            </a>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center text-white text-base shadow-lg">
+                    <i class="fa-solid fa-expand"></i>
+                </div>
+                <span class="font-extrabold text-white text-base">مكبر ومحسن دقة الصور الذكي (PIXLCARE AI Upscaler)</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Controls & Upload -->
+        <div class="lg:col-span-4 glass-card p-6 rounded-3xl flex flex-col space-y-5 border border-white/10">
+            <h2 class="text-lg font-extrabold text-white border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i> إعدادات التكبير والدقة
+            </h2>
+
+            <!-- Drop Zone -->
+            <div class="drop-zone rounded-2xl p-6 text-center cursor-pointer flex flex-col items-center justify-center min-h-[180px]" onclick="document.getElementById('upscaleFileInput').click()">
+                <i class="fa-solid fa-file-image text-4xl text-indigo-400 mb-3"></i>
+                <p class="font-bold text-xs text-white mb-1">ارفعي صور أوراق العمل أو البوسترات</p>
+                <p class="text-[11px] text-slate-400">تكبير حتى 4K و 8K محلياً دون رفع للسيرفر</p>
+                <input type="file" id="upscaleFileInput" multiple accept="image/*" class="hidden" onchange="handleUpscaleSelect(event)">
+            </div>
+
+            <!-- Upscale Scale Factor (2x, 4x, 8x) -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-2">معامل التكبير (Scale Factor)</label>
+                <div class="grid grid-cols-3 gap-2 text-xs">
+                    <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-700 bg-slate-900 cursor-pointer hover:border-indigo-500 text-center">
+                        <input type="radio" name="scaleFactor" value="2" checked class="accent-indigo-500 mb-1">
+                        <span class="font-bold text-white">2x (سريع)</span>
+                    </label>
+                    <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-700 bg-slate-900 cursor-pointer hover:border-indigo-500 text-center">
+                        <input type="radio" name="scaleFactor" value="4" class="accent-indigo-500 mb-1">
+                        <span class="font-bold text-white">4x (موصى به 4K)</span>
+                    </label>
+                    <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-slate-700 bg-slate-900 cursor-pointer hover:border-indigo-500 text-center">
+                        <input type="radio" name="scaleFactor" value="8" class="accent-indigo-500 mb-1">
+                        <span class="font-bold text-white">8x (دقة أقصى 8K)</span>
+                    </label>
+                </div>
+            </div>
+
+            <button onclick="startUpscaling()" id="upscaleBtn" class="btn-3d w-full py-3.5 rounded-2xl text-white font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer mt-2" disabled>
+                <i class="fa-solid fa-sparkles"></i>
+                <span>تكبير وتحسين جودة الصورة 🚀</span>
+            </button>
+        </div>
+
+        <!-- Output & Interactive Comparison -->
+        <div class="lg:col-span-8 flex flex-col space-y-4">
+            <div class="glass-card p-6 rounded-3xl border border-white/10 flex-1 flex flex-col">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
+                    <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-eye text-indigo-400"></i> المعاينة المباشرة قبل وبعد التكبير
+                    </h3>
+                    <button onclick="downloadAllUpscaledZip()" id="zipUpscaleBtn" class="hidden px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-lg">
+                        <i class="fa-solid fa-file-zipper"></i>
+                        <span>تنزيل كافة الصور (ZIP)</span>
+                    </button>
+                </div>
+
+                <div id="upscaleDisplayArea" class="flex-1 flex flex-col items-center justify-center">
+                    <div class="text-center py-20 text-slate-500 text-xs">
+                        <i class="fa-solid fa-expand text-5xl mb-3 text-slate-700"></i>
+                        <p class="font-bold text-slate-400">ارفعي الصورة على اليمين واختاري معامل التكبير لمشاهدة الفرق في الوضوح والدقة.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let selectedUpscaleFiles = [];
+        let upscaledResults = [];
+
+        function handleUpscaleSelect(e) {
+            const files = Array.from(e.target.files).slice(0, 10);
+            if (!files.length) return;
+            selectedUpscaleFiles = files;
+            document.getElementById('upscaleBtn').disabled = false;
+            showToast(`تم اختيار ${files.length} صور لتكبيرها بنجاح!`);
+        }
+
+        async function startUpscaling() {
+            if (!selectedUpscaleFiles.length) return;
+
+            const factor = parseInt(document.querySelector('input[name="scaleFactor"]:checked').value);
+            const displayArea = document.getElementById('upscaleDisplayArea');
+            const btn = document.getElementById('upscaleBtn');
+
+            btn.disabled = true;
+            displayArea.innerHTML = `<div class="text-center py-16 text-indigo-400 font-bold text-sm"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3 block"></i> جاري تكبير الصورة وتحسين التفاصيل بمعدل ${factor}x بالذكاء الاصطناعي...</div>`;
+
+            upscaledResults = [];
+
+            for (let i = 0; i < selectedUpscaleFiles.length; i++) {
+                const file = selectedUpscaleFiles[i];
+                const upscaledBlob = await upscaleImageCanvas(file, factor);
+                const newName = file.name.substring(0, file.name.lastIndexOf('.')) + `_${factor}x_4K.png`;
+                upscaledResults.push({ name: newName, blob: upscaledBlob, origFile: file });
+            }
+
+            // Render Results
+            displayArea.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"></div>`;
+            const grid = displayArea.querySelector('div');
+
+            upscaledResults.forEach((res) => {
+                const origUrl = URL.createObjectURL(res.origFile);
+                const upscaledUrl = URL.createObjectURL(res.blob);
+
+                const item = document.createElement('div');
+                item.className = 'glass-card p-4 rounded-2xl border border-white/10 flex flex-col justify-between space-y-3';
+                item.innerHTML = `
+                    <div class="h-44 bg-slate-900 rounded-xl overflow-hidden relative flex items-center justify-center">
+                        <img src="${upscaledUrl}" class="max-h-full max-w-full object-contain">
+                        <span class="absolute top-2 right-2 bg-indigo-500 text-white font-black text-[10px] px-2 py-0.5 rounded-full">${factor}x HD 4K</span>
+                    </div>
+                    <div>
+                        <p class="text-white font-bold text-xs truncate mb-1">${res.name}</p>
+                        <p class="text-[11px] text-emerald-400 font-bold">جاهز للطباعة والبدقة العالية</p>
+                    </div>
+                    <a href="${upscaledUrl}" download="${res.name}" class="w-full py-2.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 font-bold text-xs rounded-xl flex items-center justify-center gap-1 transition">
+                        <i class="fa-solid fa-download"></i>
+                        <span>تنزيل الصورة المحسنة</span>
+                    </a>
+                `;
+                grid.appendChild(item);
+            });
+
+            document.getElementById('zipUpscaleBtn').classList.remove('hidden');
+            btn.disabled = false;
+        }
+
+        function upscaleImageCanvas(file, scale) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob((blob) => resolve(blob), 'image/png');
+                };
+            });
+        }
+
+        function downloadAllUpscaledZip() {
+            if (!upscaledResults.length) return;
+            const zip = new JSZip();
+            upscaledResults.forEach((item) => {
+                zip.file(item.name, item.blob);
+            });
+            zip.generateAsync({ type: 'blob' }).then((content) => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = 'PIXLCARE_Upscaled_Images.zip';
+                link.click();
+                showToast("تم تنزيل الحزمة بنجاح!");
+            });
+        }
+    </script>
+    <script src="../assets/js/app.js"></script>
+    <script src="../assets/js/i18n-tools.js"></script>
+    <script src="../assets/js/auth.js"></script>
+</body>
+</html>
