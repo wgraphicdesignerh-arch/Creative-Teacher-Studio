@@ -333,10 +333,10 @@
                         <option value="en">English</option>
                         <option value="fr">Français</option>
                     </select>
-                    <button onclick="logoutUser()" id="headerLogoutBtn" title="تسجيل الخروج" class="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/30 text-xs font-extrabold transition cursor-pointer">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <span class="hidden sm:inline">خروج</span>
-                    </button>
+                    <a href="https://wa.me/201013614191?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D8%A3%2F%D9%88%D9%84%D8%A7%D8%A1%20%D8%AD%D8%B3%D9%86%20-%20%D9%85%D9%86%D8%B5%D8%A9%20%D8%AD%D8%B5%D8%A9%20%D9%85%D8%A8%D9%87%D8%B1%D8%A9" target="_blank" id="headerWhatsappBtn" title="تواصل عبر واتساب • WhatsApp" class="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500 hover:text-white border border-emerald-500/40 text-xs font-extrabold transition cursor-pointer shadow-lg shadow-emerald-500/20 group">
+                        <i class="fa-brands fa-whatsapp text-sm text-emerald-400 group-hover:text-white transition"></i>
+                        <span class="font-bold">واتساب 💬</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -4399,59 +4399,6 @@ const walaaChaptersData = [
 if (typeof window !== "undefined") { window.walaaChaptersData = walaaChaptersData; }
 if (typeof module !== "undefined") { module.exports = walaaChaptersData; }
 
-
-/* NON-INTRUSIVE AUTH / LOGOUT SYSTEM */
-window.getDeviceFingerprint = function() {
-  var id = localStorage.getItem('hesah_device_hwid');
-  if (!id) {
-    id = 'HWID-' + Math.random().toString(36).substring(2, 9).toUpperCase();
-    localStorage.setItem('hesah_device_hwid', id);
-  }
-  return id;
-};
-
-window.getAuthSession = function() {
-  try {
-    var str = localStorage.getItem('hesah_auth_session');
-    if (!str) {
-      var defaultSession = { email: 'admin@hassa.com', deviceId: getDeviceFingerprint(), loginTime: new Date().toISOString() };
-      localStorage.setItem('hesah_auth_session', JSON.stringify(defaultSession));
-      return defaultSession;
-    }
-    return JSON.parse(str);
-  } catch(e) {
-    return { email: 'admin@hassa.com' };
-  }
-};
-
-window.logoutUser = function() {
-  if (confirm('هل ترغب في تسجيل الخروج؟')) {
-    localStorage.removeItem('hesah_auth_session');
-    location.reload();
-  }
-};
-
-(function() {
-  var session = getAuthSession();
-  var langSelect = document.getElementById('languageSelector');
-  var headerContainer = langSelect ? langSelect.parentElement : document.querySelector('header .max-w-7xl');
-  if (headerContainer && !document.getElementById('authLogoutBtnContainer')) {
-    var logoutContainer = document.createElement('div');
-    logoutContainer.id = 'authLogoutBtnContainer';
-    logoutContainer.className = 'flex items-center gap-2 nav-3d-btn px-3 py-1.5 rounded-xl border border-purple-500/30 bg-slate-900/90 shadow-lg';
-    logoutContainer.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>' +
-      '<span class="text-xs font-extrabold text-slate-200 max-w-[120px] truncate">' + (session.email || 'admin@hassa.com') + '</span>' +
-      '<button onclick="logoutUser()" id="authLogoutBtn" class="mr-1 text-rose-400 hover:text-rose-300 transition cursor-pointer text-xs font-extrabold flex items-center gap-1">' +
-      '<i class="fa-solid fa-right-from-bracket"></i>' +
-      '<span class="hidden sm:inline">خروج</span>' +
-      '</button>';
-    if (langSelect) {
-      langSelect.parentElement.insertBefore(logoutContainer, langSelect);
-    } else {
-      headerContainer.appendChild(logoutContainer);
-    }
-  }
-})();
 </script>
 </body>
 </html>
