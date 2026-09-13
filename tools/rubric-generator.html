@@ -257,42 +257,29 @@
                     `;
                 }
 
-                document.getElementById('rubricOutput').innerHTML = `
-                    <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-4">
-                        ${titleBlock}
-                        <table class="w-full ${currentLang === 'ar' ? 'text-right' : 'text-left'} border-collapse text-xs">
-                            <thead>
-                                <tr>${headersHtml}</tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-800">
-                                ${rowsHtml}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            });
-                            <tbody>
-                                ${rowsHtml}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            });
-            html += `
-                    </tbody>
-                </table>
-            `;
+                    document.getElementById('rubricOutput').innerHTML = `
+                        <div class="bg-slate-900 p-4 rounded-2xl border border-white/10 space-y-4">
+                            ${titleBlock}
+                            <table class="w-full ${currentLang === 'ar' ? 'text-right' : 'text-left'} border-collapse text-xs">
+                                <thead>
+                                    <tr>${headersHtml}</tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800">
+                                    ${rowsHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                });
+            }
 
-            document.getElementById('rubricOutput').innerHTML = html;
-        }
-
-        function copyRubricText() {
-            const container = document.getElementById('rubricOutput');
-            navigator.clipboard.writeText(container.innerText);
-            const btn = document.getElementById('copyBtnTxt');
-            btn.innerText = 'تم النسخ بنجاح! ✓';
-            setTimeout(() => btn.innerText = 'نسخ جدول التقييم', 2000);
-        }
-    </script>
-</body>
-</html>
+            function copyRubricText() {
+                const container = document.getElementById('rubricOutput');
+                navigator.clipboard.writeText(container.innerText);
+                const btn = document.getElementById('copyBtnTxt');
+                btn.innerText = 'تم النسخ بنجاح! ✓';
+                setTimeout(() => btn.innerText = 'نسخ جدول التقييم', 2000);
+            }
+        </script>
+    </body>
+    </html>
